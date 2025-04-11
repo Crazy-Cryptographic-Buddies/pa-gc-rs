@@ -8,6 +8,7 @@ galois_field = "0.1.11"
 galois_2p8 = "0.1.2"
 aes = "0.8.4"
 generic-array = "1.2.0"
+blake3 = "1.8.1"
 
 [[bin]]
 name = "pa-gc-rs"
