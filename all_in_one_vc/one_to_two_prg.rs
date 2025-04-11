@@ -1,6 +1,6 @@
 use aes::Aes128;
 use aes::cipher::{BlockEncrypt, KeyInit, generic_array::GenericArray};
-use crate::all_in_one_vc::SeedU8x16;
+use crate::all_in_one_vc::{SeedU8x16, AES_BYTE_LEN};
 // We imitate the below link for implementing OneToTwoPRG
 // https://github.com/GaloisInc/swanky/blob/dev/schmivitz/src/all_but_one_vc.rs
 
@@ -44,6 +44,7 @@ fn test_one_to_two_prg() {
     let seed: SeedU8x16 = [10u8; 16];
     let prg: OneToTwoPRG = OneToTwoPRG::new(&seed);
     let res = prg.generate_double(&[255u8; 16]);
+    assert_eq!(res.0.len(), AES_BYTE_LEN);
     println!("{:?} {:?}", seed, res);
 
     let seed = [10u8; 16];
