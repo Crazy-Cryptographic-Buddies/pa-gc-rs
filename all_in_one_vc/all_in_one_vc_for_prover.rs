@@ -2,16 +2,16 @@ use blake3::Hash;
 use crate::all_in_one_vc::{SeedU8x16, one_to_two_prg::OneToTwoPRG, generating_message_and_com_prg::GeneratingMessageAndComPRG, Message};
 
 struct AllInOneVCForProver {
-    tau: u8,
-    big_n: u16,
-    tree_len: u16,
-    first_leaf_index: u16,
-    one_to_two_prg: OneToTwoPRG,
-    message_len: usize,
+    tau: u8, // public
+    big_n: u16, // public
+    tree_len: u16, // public
+    first_leaf_index: u16, // public
+    one_to_two_prg: OneToTwoPRG, // public
+    message_len: usize, // public
     tree: Option<Vec<SeedU8x16>>,
     message_vec: Option<Vec<Message>>,
     com_vec: Option<Vec<SeedU8x16>>,
-    com_hash: Option<Hash>,
+    com_hash: Option<Hash>, // public
 }
 
 impl AllInOneVCForProver {
