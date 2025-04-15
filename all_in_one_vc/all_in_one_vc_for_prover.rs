@@ -15,7 +15,7 @@ struct AllInOneVCForProver {
 }
 
 impl AllInOneVCForProver {
-    pub fn new(tau: u8, master_seed: &SeedU8x16, message_len: usize) -> AllInOneVCForProver {
+    pub fn new(tau: u8, master_key: &SeedU8x16, message_len: usize) -> AllInOneVCForProver {
         let big_n: u16 = 1 << tau;
         let tree_len: u16 = (big_n << 1) - 1;
         AllInOneVCForProver {
@@ -23,7 +23,7 @@ impl AllInOneVCForProver {
             big_n,
             tree_len,
             first_leaf_index: tree_len - big_n,
-            one_to_two_prg: OneToTwoPRG::new(master_seed),
+            one_to_two_prg: OneToTwoPRG::new(master_key),
             message_len,
             tree: None,
             message_vec: None,
