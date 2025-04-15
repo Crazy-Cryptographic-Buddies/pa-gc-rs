@@ -10,8 +10,8 @@ pub struct OneToTwoPRG {
 }
 
 impl OneToTwoPRG {
-    pub fn new(seed: &SeedU8x16) -> OneToTwoPRG {
-        let cipher = Aes128::new(&GenericArray::from(*seed));
+    pub fn new(key: &SeedU8x16) -> OneToTwoPRG {
+        let cipher = Aes128::new(&GenericArray::from(*key));
 
         let mut block = GenericArray::from([255u8; 16]);
         cipher.encrypt_block(&mut block);
@@ -27,15 +27,23 @@ impl OneToTwoPRG {
         }
     }
 
-    pub fn generate_double(&self, key: &SeedU8x16) -> (SeedU8x16, SeedU8x16) {
-        let mut cloned_key_0 = GenericArray::from(*key);
+    pub fn generate_double(&self, seed: &SeedU8x16) -> (SeedU8x16, SeedU8x16) {
+        let mut cloned_key_0 = GenericArray::from(*seed);
         self.aes_cipher_0.encrypt_block(&mut cloned_key_0);
-        let mut cloned_key_1 = GenericArray::from(*key);
+        let mut cloned_key_1 = GenericArray::from(*seed);
         self.aes_cipher_1.encrypt_block(&mut cloned_key_1);
         (
             cloned_key_0.into(),
             cloned_key_1.into()
         )
+    }
+
+    pub fn generating_tree(&self, seed: &SeedU8x16, depth: u8) {
+        let mut tree: Vec<SeedU8x16> = Vec::new();
+        tree.push(seed.clone());
+        for i in 1..(1u16 << (depth + 1)) - 1 {
+            // TODO: continue here
+        }
     }
 }
 
