@@ -5,6 +5,7 @@ pub struct Hasher;
 
 impl Hasher {
     pub fn hash_all_coms(com_vec: &Vec<SeedU8x16>) -> Hash {
+        println!("com_vec: {:?}", com_vec);
         let mut hasher = blake3::Hasher::new();
         for com in com_vec.iter() {
             hasher.update(com);

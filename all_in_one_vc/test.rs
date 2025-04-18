@@ -32,6 +32,7 @@ fn test_committing_and_reconstructing() {
     let com_hash_from_prover = all_in_one_vc_for_prover.get_com_hash();
     let (com_at_excluded_index_by_prover, seed_trace_by_prover) 
         = all_in_one_vc_for_prover.open(excluded_index as usize);
+    println!("com_at_excluded_index: {:?}", com_at_excluded_index_by_prover);
     
     // then generate in the verifier side
     let all_in_one_vc_for_verifier = AllInOneVCForVerifier::new(tau, &master_key);

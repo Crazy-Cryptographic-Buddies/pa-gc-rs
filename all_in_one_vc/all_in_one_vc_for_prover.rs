@@ -61,14 +61,14 @@ impl AllInOneVCForProver {
         // the excluded index must be in [0, 2^8]
         // this can be understood the index among the leaves, i.e., the excluded_index-th leaf
         assert!(excluded_index < 1 << 8);
-        let mut index_in_tree = self.first_leaf_index as usize + excluded_index;
+        let mut index_in_tree = self.first_leaf_index + excluded_index;
         let com_at_excluded_index = self.tree.as_ref().unwrap()[self.first_leaf_index + excluded_index];
         let mut seed_trace: Vec<SeedU8x16> = Vec::new();
         for i in 0..self.tau {
             if (excluded_index >> i) & 1 == 1 {
-                seed_trace.push(self.tree.as_ref().unwrap()[index_in_tree + 1]);
-            } else {
                 seed_trace.push(self.tree.as_ref().unwrap()[index_in_tree - 1]);
+            } else {
+                seed_trace.push(self.tree.as_ref().unwrap()[index_in_tree + 1]);
             }
             index_in_tree = (index_in_tree - 1) >> 1;
         }
