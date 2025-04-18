@@ -28,12 +28,9 @@ impl AllInOneVCForVerifier {
                 sibling = (excluded_index >> i) + 1;
             }
             let from_index = sibling << i;
-            let to_index = !((!sibling) << i);
-            println!("from_index: {}, to_index: {}", from_index, to_index);
-            assert_eq!(to_index - from_index + 1, 1 << i);
             let subtree = self.one_to_two_prg.generate_tree(&seed_trace[i as usize], i);
             let first_leaf_index_in_subtree = (1 << i) - 1;
-            for j in from_index..to_index {
+            for j in from_index..from_index + (1 << i) {
                 coms_at_leaves[j] = subtree[j - from_index + first_leaf_index_in_subtree];
             }
         }
