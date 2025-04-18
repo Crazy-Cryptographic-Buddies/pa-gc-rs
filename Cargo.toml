@@ -9,6 +9,7 @@ galois_2p8 = "0.1.2"
 aes = "0.8.4"
 generic-array = "1.2.0"
 blake3 = "1.8.1"
+rand = "0.9.1" # this is used for testing purpose
 
 [[bin]]
 name = "pa-gc-rs"

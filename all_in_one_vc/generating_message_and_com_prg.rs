@@ -1,10 +1,11 @@
-use crate::all_in_one_vc::{SeedU8x16, one_to_two_prg::OneToTwoPRG, AES_BYTE_LEN};
+use crate::all_in_one_vc::{one_to_two_prg::OneToTwoPRG};
+use crate::comm_types_and_constants::{SEED_BYTE_LEN, SeedU8x16};
 
 pub struct GeneratingMessageAndComPRG<'a> {
     one_to_two_prg: &'a OneToTwoPRG,
 }
 
-impl GeneratingMessageAndComPRG {
+impl GeneratingMessageAndComPRG<'_> {
 
     pub fn new(one_to_two_prg: &OneToTwoPRG) -> GeneratingMessageAndComPRG {
         GeneratingMessageAndComPRG {
@@ -13,10 +14,10 @@ impl GeneratingMessageAndComPRG {
     }
 
     pub fn generate(&self, seed: &SeedU8x16, message_len: usize) -> (Vec<u8>, SeedU8x16) {
-        assert_eq!(message_len % AES_BYTE_LEN, 0,
-                   "Message length must be a multiple of {}", AES_BYTE_LEN
+        assert_eq!(message_len % SEED_BYTE_LEN, 0,
+                   "Message length must be a multiple of {}", SEED_BYTE_LEN
         );
-        let message_aes_byte_len = message_len / AES_BYTE_LEN;
+        let message_aes_byte_len = message_len / SEED_BYTE_LEN;
 
         let (mut seed_message, com) = self.one_to_two_prg.generate_double(seed);
         let mut message: Vec<u8> = Vec::new();
