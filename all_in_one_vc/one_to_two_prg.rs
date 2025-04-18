@@ -47,7 +47,7 @@ impl OneToTwoPRG {
         let mut tree: Vec<SeedU8x16> = Vec::new();
         tree.push(seed.clone());
         for i in 0..(1u16 << depth) - 1 {
-            let (key_0, key_1) = self.generate_double(&tree[i as usize - 1]);
+            let (key_0, key_1) = self.generate_double(&tree[i as usize]);
             tree.push(key_0);
             tree.push(key_1);
         }
