@@ -1,3 +1,4 @@
+use galois_2p8::{Field, GeneralField};
 use rand::prelude::*;
 use crate::comm_types_and_constants::{SeedU8x16, SEED_BYTE_LEN};
 use crate::all_in_one_vc::{
@@ -21,24 +22,47 @@ fn test_committing_and_reconstructing() {
     let master_key: SeedU8x16 = generate_random_seed();
     let master_seed: SeedU8x16 = generate_random_seed();
     let tau = 8;
-    let message_len = 16;
-    let excluded_index: u8 = rng.random::<u8>();
+    let message_len = 160;
+    let nabla: u8 = rng.random::<u8>();
     // first generate in the prover side
     let mut all_in_one_vc_for_prover = AllInOneVCForProver::new(
         tau, &master_key, message_len
     );
     all_in_one_vc_for_prover.commit(&master_seed);
-    let com_hash_from_prover = all_in_one_vc_for_prover.get_com_hash();
     let (com_at_excluded_index_by_prover, seed_trace_by_prover) 
-        = all_in_one_vc_for_prover.open(excluded_index as usize);
+        = all_in_one_vc_for_prover.open(nabla as usize);
     
     // then generate in the verifier side
-    let all_in_one_vc_for_verifier = AllInOneVCForVerifier::new(tau, &master_key);
-    let reconstructed_hash = all_in_one_vc_for_verifier.reconstruct(
-        excluded_index as usize, &com_at_excluded_index_by_prover, &seed_trace_by_prover
+    let mut all_in_one_vc_for_verifier = AllInOneVCForVerifier::new(tau, &master_key, message_len);
+    all_in_one_vc_for_verifier.reconstruct(
+        nabla, &com_at_excluded_index_by_prover, &seed_trace_by_prover
     );
-    println!("com_hash_from_prover: {:?}", com_hash_from_prover);
-    println!("reconstructed hash: {:?}", reconstructed_hash);
-    assert_eq!(com_hash_from_prover.as_bytes(), reconstructed_hash.as_bytes());
-    println!("test passed!");
+    println!("com_hash_from_prover: {:?}", all_in_one_vc_for_prover.get_com_hash());
+    println!("reconstructed hash: {:?}", all_in_one_vc_for_verifier.get_reconstructed_com_hash());
+    assert_eq!(
+        all_in_one_vc_for_prover.get_com_hash().as_bytes(), 
+        all_in_one_vc_for_verifier.get_reconstructed_com_hash().as_bytes()
+    );
+    println!("com hash checking passed!");
+    
+    let galois_field = GeneralField::new(
+        galois_2p8::IrreducablePolynomial::Poly84310
+    );
+    let message = all_in_one_vc_for_prover.get_message_to_be_deleted();
+    let voleith_mac_tag = all_in_one_vc_for_prover.get_voleith_mac_tag_to_be_deleted();
+    let voleith_mac_key = all_in_one_vc_for_verifier.get_voleith_mac_key_to_be_deleted();
+    for j in 0..message_len {
+        let mut shifted_nabla = 0;
+        if message[j] == 1 {
+            shifted_nabla = nabla;
+        }
+        println!("mac + message * nabla, key, mac, msg: {:?}, {:?}, {:?}, {:?}",
+                 galois_field.add(voleith_mac_tag[j], shifted_nabla),
+                 voleith_mac_key[j],
+                 voleith_mac_tag[j], 
+                 message[j]
+        );
+        assert_eq!(voleith_mac_key[j], galois_field.add(voleith_mac_tag[j], shifted_nabla));
+    }
+    println!("voleith correlation checking passed!");
 }

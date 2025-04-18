@@ -57,7 +57,7 @@ impl OneToTwoPRG {
 
 #[test]
 fn test_one_to_two_prg() {
-    let seed: SeedU8x16 = [10u8; 16];
+    let seed: SeedU8x16 = [10u8; SEED_BYTE_LEN];
     let prg: OneToTwoPRG = OneToTwoPRG::new(&seed);
     let res = prg.generate_double(&[255u8; 16]);
     assert_eq!(res.0.len(), SEED_BYTE_LEN);
