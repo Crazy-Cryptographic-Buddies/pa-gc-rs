@@ -11,7 +11,7 @@ pub struct AllInOneVCForVerifier {
     nabla: Option<u8>,
     reconstructed_com_hash: Option<Hash>,
     galois_field: GeneralField,
-    voleith_mac_key: Option<VOLEitHMACKey>,
+    voleith_key: Option<VOLEitHMACKey>,
 }
 
 impl AllInOneVCForVerifier {
@@ -25,7 +25,7 @@ impl AllInOneVCForVerifier {
             galois_field: GeneralField::new(
                 galois_2p8::IrreducablePolynomial::Poly84310
             ),
-            voleith_mac_key: None,
+            voleith_key: None,
         }
     }
     
@@ -58,26 +58,26 @@ impl AllInOneVCForVerifier {
         self.reconstructed_com_hash = Some(Hasher::hash_all_coms(&coms_at_leaves));
 
         // now recover the key
-        let mut voleith_mac_key = vec![0; self.message_len];
+        let mut voleith_key = vec![0; self.message_len];
         for i in 0..1 << self.tau {
             if i != excluded_index {
                 let i_shifted = self.galois_field.add(i as u8, self.nabla.unwrap());
                 let message_i = &reconstructed_message_vec[i];
                 for j in 0..self.message_len {
                     if message_i[j] == 1 {
-                        voleith_mac_key[j] = self.galois_field.add(voleith_mac_key[j], i_shifted);
+                        voleith_key[j] = self.galois_field.add(voleith_key[j], i_shifted);
                     }
                 }
             }
         }
-        self.voleith_mac_key = Some(voleith_mac_key);
+        self.voleith_key = Some(voleith_key);
     }
     
     pub fn get_reconstructed_com_hash(&self) -> &Hash {
         &self.reconstructed_com_hash.as_ref().unwrap()
     }
     
-    pub fn get_voleith_mac_key_to_be_deleted(&self) -> &VOLEitHMACKey {
-        &self.voleith_mac_key.as_ref().unwrap()
+    pub fn get_voleith_key_to_be_deleted(&self) -> &VOLEitHMACKey {
+        &self.voleith_key.as_ref().unwrap()
     }
 }

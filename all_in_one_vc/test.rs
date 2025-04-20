@@ -49,20 +49,20 @@ fn test_committing_and_reconstructing() {
         galois_2p8::IrreducablePolynomial::Poly84310
     );
     let message = all_in_one_vc_for_prover.get_message_to_be_deleted();
-    let voleith_mac_tag = all_in_one_vc_for_prover.get_voleith_mac_tag_to_be_deleted();
-    let voleith_mac_key = all_in_one_vc_for_verifier.get_voleith_mac_key_to_be_deleted();
+    let voleith_mac = all_in_one_vc_for_prover.get_voleith_mac_to_be_deleted();
+    let voleith_key = all_in_one_vc_for_verifier.get_voleith_key_to_be_deleted();
     for j in 0..message_len {
         let mut shifted_nabla = 0;
         if message[j] == 1 {
             shifted_nabla = nabla;
         }
         println!("mac + message * nabla, key, mac, msg: {:?}, {:?}, {:?}, {:?}",
-                 galois_field.add(voleith_mac_tag[j], shifted_nabla),
-                 voleith_mac_key[j],
-                 voleith_mac_tag[j], 
+                 galois_field.add(voleith_mac[j], shifted_nabla),
+                 voleith_key[j],
+                 voleith_mac[j], 
                  message[j]
         );
-        assert_eq!(voleith_mac_key[j], galois_field.add(voleith_mac_tag[j], shifted_nabla));
+        assert_eq!(voleith_key[j], galois_field.add(voleith_mac[j], shifted_nabla));
     }
     println!("voleith correlation checking passed!");
 }

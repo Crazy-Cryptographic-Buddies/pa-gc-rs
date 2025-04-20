@@ -15,7 +15,7 @@ pub struct AllInOneVCForProver {
     com_hash: Option<Hash>, // public
     galois_field: GeneralField,
     message: Option<Message>, // unified message after computing from the leaves of the tree
-    voleith_mac_tag: Option<VOLEitHMACTag>, // unified mac tag after computing from the leaves of the tree
+    voleith_mac: Option<VOLEitHMACTag>, // unified mac tag after computing from the leaves of the tree
 }
 
 impl AllInOneVCForProver {
@@ -35,7 +35,7 @@ impl AllInOneVCForProver {
                 galois_2p8::IrreducablePolynomial::Poly84310
             ),
             message: None,
-            voleith_mac_tag: None,       
+            voleith_mac: None,       
         }
     }
 
@@ -62,19 +62,19 @@ impl AllInOneVCForProver {
         
         // compute message and mac tag
         let mut message: Message = vec![0; self.message_len];
-        let mut voleith_mac_tag: VOLEitHMACTag = vec![0; self.message_len];
+        let mut voleith_mac: VOLEitHMACTag = vec![0; self.message_len];
         for i in 0..1 << self.tau {
             let iu8 = i as u8;
             let message_i = &message_vec[i];
             for j in 0..self.message_len {
                 message[j] ^= message_i[j];
                 if message_i[j] == 1 {
-                    voleith_mac_tag[j] = self.galois_field.add(voleith_mac_tag[j], iu8);
+                    voleith_mac[j] = self.galois_field.add(voleith_mac[j], iu8);
                 }        
             }
         }
         self.message = Some(message);
-        self.voleith_mac_tag = Some(voleith_mac_tag);       
+        self.voleith_mac = Some(voleith_mac);       
     }
 
     pub fn open(&self, excluded_index: usize) -> (SeedU8x16, Vec<SeedU8x16>) {
@@ -103,7 +103,7 @@ impl AllInOneVCForProver {
         self.message.as_ref().unwrap()
     }
     
-    pub fn get_voleith_mac_tag_to_be_deleted(&self) -> &VOLEitHMACTag {
-        self.voleith_mac_tag.as_ref().unwrap()
+    pub fn get_voleith_mac_to_be_deleted(&self) -> &VOLEitHMACTag {
+        self.voleith_mac.as_ref().unwrap()
     }
 }
