@@ -8,6 +8,12 @@ pub const SEED_BYTE_LEN: usize = 16;
 
 pub type SeedU8x16 = [u8; SEED_BYTE_LEN];
 
+pub enum GateType {
+    AND,
+    XOR,
+    NOT,
+}
+
 pub trait Zero {
     fn zero() -> Self;
 }

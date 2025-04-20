@@ -1,0 +1,1 @@
+mod bristol_fashion_adaptor;
