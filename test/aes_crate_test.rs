@@ -1,5 +1,5 @@
 use aes::Aes128;
-use aes::cipher::{BlockEncrypt, BlockDecrypt, KeyInit, BlockCipher, generic_array::GenericArray};
+use aes::cipher::{BlockEncrypt, BlockDecrypt, KeyInit, generic_array::GenericArray};
 
 #[test]
 fn aes128_test() {

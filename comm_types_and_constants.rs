@@ -1,5 +1,3 @@
-use galois_2p8::{Field, GeneralField};
-
 pub type Message = Vec<u8>;
 pub type VOLEitHMACTag = Vec<u8>;
 pub type VOLEitHMACKey = Vec<u8>;

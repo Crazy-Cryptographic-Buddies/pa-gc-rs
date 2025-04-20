@@ -8,7 +8,6 @@ use crate::comm_types_and_constants::{GateType};
 use crate::utils::conversion::Conversion;
 
 struct BristolFashionAdaptor {
-    num_gates: usize,
     num_wires: usize,
     num_input_bits: usize,
     num_output_bits: usize,
@@ -90,7 +89,6 @@ impl BristolFashionAdaptor {
         }
 
         Self {
-            num_gates,
             num_wires,
             num_input_bits,
             num_output_bits,

@@ -6,7 +6,6 @@ use galois_2p8::{Field, GeneralField};
 
 pub struct AllInOneVCForProver {
     tau: u8, // public
-    big_n: usize, // public
     tree_len: usize, // public
     pub first_leaf_index: usize, // public
     one_to_two_prg: OneToTwoPRG, // public
@@ -25,7 +24,6 @@ impl AllInOneVCForProver {
         let tree_len: usize = (big_n << 1) - 1;
         AllInOneVCForProver {
             tau,
-            big_n,
             tree_len,
             first_leaf_index: (1 << tau) - 1,
             one_to_two_prg: OneToTwoPRG::new(master_key),

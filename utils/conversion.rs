@@ -1,4 +1,3 @@
-use std::os::unix::raw::blkcnt_t;
 use crate::comm_types_and_constants::NUM_BITS_PER_HEX;
 
 pub struct Conversion;
@@ -35,7 +34,7 @@ impl Conversion {
         assert_eq!(bit_vec.len(), NUM_BITS_PER_HEX);
         let mut c_value: u8 = 0;
         for i in 0..NUM_BITS_PER_HEX {
-            c_value |= (bit_vec[NUM_BITS_PER_HEX - i - 1] << i);
+            c_value |= bit_vec[NUM_BITS_PER_HEX - i - 1] << i;
         }
         match c_value {
             0 => '0',
@@ -87,12 +86,12 @@ impl Conversion {
         bit_vec   
     }
     
-    pub fn bit_vec_to_u64(bit_vec: &Vec<u8>) -> u64 {
-        assert_eq!(bit_vec.len(), 64);
-        let mut u64_value: u64 = 0;
-        for i in 0..64 {
-            u64_value |= (bit_vec[i] as u64) << i;
-        }
-        u64_value
-    }
+    // pub fn bit_vec_to_u64(bit_vec: &Vec<u8>) -> u64 {
+    //     assert_eq!(bit_vec.len(), 64);
+    //     let mut u64_value: u64 = 0;
+    //     for i in 0..64 {
+    //         u64_value |= (bit_vec[i] as u64) << i;
+    //     }
+    //     u64_value
+    // }
 }
