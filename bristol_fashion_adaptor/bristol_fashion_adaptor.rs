@@ -182,3 +182,21 @@ pub fn adder64_test_compute_output_hex_string_from_input_hex_string() {
     assert_eq!(output_bit_vec, expected_output_bit_vec);
     println!("test passed");
 }
+
+#[test]
+pub fn sub64_test_compute_output_hex_string_from_input_hex_string() {
+    let mut rng = rand::rng();
+    let a: u64 = rng.random::<u64>();
+    let b: u64 = rng.random::<u64>();
+    let sum =  a.wrapping_sub(b);
+    println!("a: {:?}, b: {:?}, sum: {:?}", a, b, sum);
+    let expected_output_bit_vec = Conversion::u64_to_bit_vec(sum);
+    let mut input_bit_vec = Conversion::u64_to_bit_vec(a);
+    input_bit_vec.append(&mut Conversion::u64_to_bit_vec(b));
+    let bristol_fashion_adaptor = BristolFashionAdaptor::new(&"sub64.txt".to_string());
+    let output_bit_vec = bristol_fashion_adaptor.compute_output_bits(&input_bit_vec);
+    println!("         output_bit_vec: {:?}", output_bit_vec);
+    println!("expected_output_bit_vec: {:?}", expected_output_bit_vec);
+    assert_eq!(output_bit_vec, expected_output_bit_vec);
+    println!("test passed");
+}
