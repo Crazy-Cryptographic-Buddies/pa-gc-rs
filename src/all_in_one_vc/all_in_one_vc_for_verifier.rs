@@ -40,12 +40,13 @@ impl<GF: Clone + Zero + U8ForGF + GFAdd> AllInOneVCForVerifier<GF> {
         let excluded_index = self.nabla.as_ref().unwrap().get_u8() as usize;
         coms_at_leaves[excluded_index] = com_at_excluded_index.clone();
         for i in 0..self.tau {
-            let sibling;
-            if (excluded_index >> i) & 1 == 1 {
-                sibling = (excluded_index >> i) - 1;
-            } else {
-                sibling = (excluded_index >> i) + 1;
-            }
+            let sibling = {
+                if (excluded_index >> i) & 1 == 1 {
+                    (excluded_index >> i) - 1
+                } else {
+                    (excluded_index >> i) + 1
+                }
+            };
             let from_index = sibling << i;
             let subtree = self.one_to_two_prg.generate_tree(&seed_trace[i as usize], i);
             let mut index_in_subtree_leaves = (1 << i) - 1;
