@@ -1,5 +1,5 @@
 use std::ops::{Index, IndexMut};
-use crate::vec_type::ZeroVec;
+use crate::vec_type::{ZeroVec};
 
 #[derive(Clone)]
 pub struct BitVec {
@@ -16,6 +16,14 @@ impl BitVec {
     
     pub fn push(&mut self, value: u8) {
         self.val.push(value);
+    }
+
+    pub fn len(&self) -> usize {
+        self.val.len()
+    }
+
+    pub fn iter(&self) -> std::slice::Iter<'_, u8> {
+        self.val.iter()
     }
 }
 
