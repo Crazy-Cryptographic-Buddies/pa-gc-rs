@@ -1,52 +1,123 @@
 use std::ops::BitXor;
 use rand::Rng;
-use crate::gf::{Random, gf256::GF256};
+use crate::gf::{Random, GFAdd, GFMultiplyingBit};
+use crate::gf::gf256::GF256;
+use itertools::izip;
 
-struct FunctionalityPre<GF: BitXor + Random> {
+struct FunctionalityPre<GF: Random + GFAdd + GFMultiplyingBit> {
     delta_a: GF,
     delta_b: GF,
-    s_vec: Vec<u8>,
-    vole_mac_s_vec: Vec<GF>,
-    vole_key_s_vec: Vec<GF>,
-    r_vec: Vec<u8>,
-    vole_mac_r_vec: Vec<GF>,
-    vole_key_r_vec: Vec<GF>,
+    rand_r_vec: Option<Vec<u8>>,
+    vole_mac_rand_r_vec: Option<Vec<GF>>,
+    vole_key_rand_r_vec: Option<Vec<GF>>,
+    rand_s_vec: Option<Vec<u8>>,
+    vole_mac_rand_s_vec: Option<Vec<GF>>,
+    vole_key_rand_s_vec: Option<Vec<GF>>,
 }
 
-impl<GF: BitXor + Random> FunctionalityPre<GF> {
+impl<GF: Random + GFAdd + GFMultiplyingBit> FunctionalityPre<GF> {
     fn new() -> Self {
         Self {
             delta_a: GF::random(),
             delta_b: GF::random(),
+            rand_r_vec: None,
+            vole_mac_rand_r_vec: None,
+            vole_key_rand_r_vec: None,
+            rand_s_vec: None,
+            vole_mac_rand_s_vec: None,
+            vole_key_rand_s_vec: None,
         }
     }
 
-    pub fn get_delta_a(&self) -> &GF {
-        &self.delta_a
-    }
-    pub fn get_delta_b(&self) -> &GF {
-        &self.delta_b
-    }
+    // pub fn get_delta_a(&self) -> &GF {
+    //     &self.delta_a
+    // }
+    // pub fn get_delta_b(&self) -> &GF {
+    //     &self.delta_b
+    // }
 
-    pub fn generate(&mut self, num_tuples: usize) {
+    pub fn generate_random(&mut self, num_random_voles: usize) {
         let mut rng = rand::rng();
-        self.s_vec = Vec::new();
-        self.r_vec = Vec::new();
-        self.vole_mac_s_vec = Vec::new();
-        self.vole_key_s_vec = Vec::new();
-        self.vole_mac_r_vec = Vec::new();
-        self.vole_key_r_vec = Vec::new();
-        for _ in 0..num_tuples {
-            let s = rng.random::<u8>() & 1;
-            let r = rng.random::<u8>() & 1;
-            // TODO: continue here
+        let mut rand_r_vec: Vec<u8> = Vec::new();
+        let mut vole_mac_rand_r_vec: Vec<GF> = Vec::new();
+        let mut vole_key_rand_r_vec: Vec<GF> = Vec::new();
+        let mut rand_s_vec: Vec<u8> = Vec::new();
+        let mut vole_mac_rand_s_vec: Vec<GF> = Vec::new();
+        let mut vole_key_rand_s_vec: Vec<GF> = Vec::new();
+        for _ in 0..num_random_voles {
+            let rand_r = rng.random::<u8>() & 1;
+            let rand_s = rng.random::<u8>() & 1;
+
+            // sample M[r] and K[s]
+            let mac_rand_r = GF::random();
+            let key_rand_s = GF::random();
+
+            // now compute M[s] and K[r]
+            let mac_rand_s = key_rand_s.add(&self.delta_a.multiply_bit(&rand_s));
+            let key_rand_r = mac_rand_r.add(&self.delta_b.multiply_bit(&rand_r));
+
+            // push to vectors
+            rand_r_vec.push(rand_r);
+            vole_mac_rand_r_vec.push(mac_rand_r);
+            vole_key_rand_r_vec.push(key_rand_r);
+            rand_s_vec.push(rand_s);
+            vole_mac_rand_s_vec.push(mac_rand_s);
+            vole_key_rand_s_vec.push(key_rand_s);
         }
+        self.rand_r_vec = Some(rand_r_vec);
+        self.vole_mac_rand_r_vec = Some(vole_mac_rand_r_vec);
+        self.vole_key_rand_r_vec = Some(vole_key_rand_r_vec);
+        self.rand_s_vec = Some(rand_s_vec);
+        self.vole_mac_rand_s_vec = Some(vole_mac_rand_s_vec);
+        self.vole_key_rand_s_vec = Some(vole_key_rand_s_vec);
+    }
+
+    pub fn get_random_for_pa(&self) -> (&Vec<u8>, &Vec<GF>, &Vec<GF>) {
+        (
+            self.rand_r_vec.as_ref().unwrap(),
+            self.vole_mac_rand_r_vec.as_ref().unwrap(),
+            self.vole_key_rand_s_vec.as_ref().unwrap(),
+        )
+    }
+
+    pub fn get_random_for_pb(&self) -> (&Vec<u8>, &Vec<GF>, &Vec<GF>) {
+        (
+            self.rand_s_vec.as_ref().unwrap(),
+            self.vole_mac_rand_s_vec.as_ref().unwrap(),
+            self.vole_key_rand_r_vec.as_ref().unwrap(),
+        )
     }
 }
 
 #[test]
 fn test_functionality_pre_generation() {
-    let f_pre = FunctionalityPre::<GF256>::new();
-    println!("delta_a: {:?}", f_pre.get_delta_a());
-    println!("delta_b: {:?}", f_pre.get_delta_b());
+    let mut f_pre = FunctionalityPre::<GF256>::new();
+    println!("delta_a: {:?}", f_pre.delta_a);
+    println!("delta_b: {:?}", f_pre.delta_b);
+
+    let num_random_voles = 100;
+    f_pre.generate_random(num_random_voles);
+
+    let (rand_r_vec, vole_mac_rand_r_vec, vole_key_rand_s_vec) = f_pre.get_random_for_pa();
+    let (rand_s_vec, vole_mac_rand_s_vec, vole_key_rand_r_vec) = f_pre.get_random_for_pb();
+
+    // check the lengths
+    assert_eq!(rand_r_vec.len(), num_random_voles);
+    assert_eq!(vole_mac_rand_r_vec.len(), num_random_voles);
+    assert_eq!(vole_key_rand_r_vec.len(), num_random_voles);
+    assert_eq!(rand_s_vec.len(), num_random_voles);
+    assert_eq!(vole_mac_rand_s_vec.len(), num_random_voles);
+    assert_eq!(vole_key_rand_s_vec.len(), num_random_voles);
+
+    for (rand_r, vole_mac_rand_r, vole_key_rand_r) in izip!(
+        rand_r_vec.iter(), vole_mac_rand_r_vec.iter(), vole_key_rand_r_vec
+    ) {
+        assert_eq!(vole_key_rand_r, &vole_mac_rand_r.add(&f_pre.delta_b.multiply_bit(rand_r)));
+    }
+
+    for (rand_s, vole_mac_rand_s, vole_key_rand_s) in izip!(
+        rand_s_vec.iter(), vole_mac_rand_s_vec.iter(), vole_key_rand_s_vec
+    ) {
+        assert_eq!(vole_key_rand_s, &vole_mac_rand_s.add(&f_pre.delta_a.multiply_bit(rand_s)));
+    }
 }

@@ -1,8 +1,8 @@
 use std::ops::BitXor;
 use rand::Rng;
-use crate::gf::Random;
+use crate::gf::{GFAdd, GFMultiplyingBit, Random};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GF256 {
     val: (u64, u64, u64, u64)
 }
@@ -13,9 +13,8 @@ impl GF256 {
     }
 }
 
-impl BitXor for GF256 {
-    type Output = Self;
-    fn bitxor(self, rhs: Self) -> Self {
+impl GFAdd for GF256 {
+    fn add(&self, rhs: &Self) -> Self {
         Self {
             val: (
                 self.val.0 ^ rhs.val.0,
@@ -23,6 +22,20 @@ impl BitXor for GF256 {
                 self.val.2 ^ rhs.val.2,
                 self.val.3 ^ rhs.val.3
             )
+        }
+    }
+}
+
+impl GFMultiplyingBit for GF256 {
+    fn multiply_bit(&self, bit: &u8) -> Self {
+        if *bit == 0 {
+            Self {
+                val: (0, 0, 0, 0)
+            }
+        } else if *bit == 1 {
+            self.clone()
+        } else {
+            panic!("{:?} is not binary!", bit);
         }
     }
 }

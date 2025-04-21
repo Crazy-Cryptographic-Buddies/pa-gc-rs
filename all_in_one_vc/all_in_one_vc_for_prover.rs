@@ -1,8 +1,18 @@
 use blake3::Hash;
-use crate::all_in_one_vc::{one_to_two_prg::OneToTwoPRG, generating_message_and_com_prg::GeneratingMessageAndComPRG};
-use crate::comm_types_and_constants::{SeedU8x16, Message, VOLEitHMACTag};
+use crate::all_in_one_vc::{
+    one_to_two_prg::OneToTwoPRG,
+    generating_message_and_com_prg::GeneratingMessageAndComPRG
+};
+use crate::comm_types_and_constants::{
+    SeedU8x16,
+    Message,
+    VOLEitHMACTag
+};
 use crate::all_in_one_vc::hasher::hasher::Hasher;
-use galois_2p8::{Field, GeneralField};
+use galois_2p8::{
+    Field,
+    GeneralField
+};
 
 pub struct AllInOneVCForProver {
     tau: u8, // public
@@ -99,11 +109,17 @@ impl AllInOneVCForProver {
         self.com_hash.as_ref().unwrap()
     }
     
-    pub fn get_message_to_be_deleted(&self) -> &Message {
+    pub fn get_message_for_testing(&self) -> &Message {
+        if !cfg!(test) {
+            panic!("This is not called during testing!");
+        }
         self.message.as_ref().unwrap()
     }
     
-    pub fn get_voleith_mac_to_be_deleted(&self) -> &VOLEitHMACTag {
+    pub fn get_voleith_mac_for_testing(&self) -> &VOLEitHMACTag {
+        if !cfg!(test) {
+            panic!("This is not called during testing!");
+        }
         self.voleith_mac.as_ref().unwrap()
     }
 }
