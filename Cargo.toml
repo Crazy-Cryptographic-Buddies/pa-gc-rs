@@ -14,4 +14,4 @@ itertools = "0.14.0" # this is used for testing purpose
 
 [[bin]]
 name = "pa-gc-rs"
-path = "main.rs"
+path = "src/main.rs"

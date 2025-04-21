@@ -1,20 +1,24 @@
 use crate::all_in_one_vc::{one_to_two_prg::OneToTwoPRG, hasher::hasher::Hasher};
-use crate::comm_types_and_constants::{Message, SeedU8x16, VOLEitHMACKey, Zero};
 use blake3::Hash;
-use galois_2p8::{Field, GeneralField};
 use crate::all_in_one_vc::generating_message_and_com_prg::GeneratingMessageAndComPRG;
+use crate::value_type::{GFAdd, U8ForGF, Zero};
+use crate::value_type::seed_u8x16::SeedU8x16;
+use crate::vec_type::{
+    bit_vec::BitVec,
+    ZeroVec
+};
+use crate::vec_type::gf_vec::GFVec;
 
-pub struct AllInOneVCForVerifier {
+pub struct AllInOneVCForVerifier<GF: Clone + Zero> {
     tau: u8,
     one_to_two_prg: OneToTwoPRG,
     message_len: usize,
-    nabla: Option<u8>,
+    nabla: Option<GF>,
     reconstructed_com_hash: Option<Hash>,
-    galois_field: GeneralField,
-    voleith_key: Option<VOLEitHMACKey>,
+    voleith_key: Option<GFVec<GF>>,
 }
 
-impl AllInOneVCForVerifier {
+impl<GF: Clone + Zero + U8ForGF + GFAdd> AllInOneVCForVerifier<GF> {
     pub fn new(tau: u8, master_key: &SeedU8x16, message_len: usize) -> Self {
         Self {
             tau,
@@ -22,21 +26,18 @@ impl AllInOneVCForVerifier {
             message_len,
             nabla: None,
             reconstructed_com_hash: None,
-            galois_field: GeneralField::new(
-                galois_2p8::IrreducablePolynomial::Poly84310
-            ),
             voleith_key: None,
         }
     }
     
-    pub fn reconstruct(&mut self, nabla: u8,
+    pub fn reconstruct(&mut self, nabla: &GF,
                        com_at_excluded_index: &SeedU8x16, seed_trace: &Vec<SeedU8x16>,
     ) {
-        self.nabla = Some(nabla);
+        self.nabla = Some(nabla.clone());
         let generating_message_and_com_prg = GeneratingMessageAndComPRG::new(&self.one_to_two_prg);
         let mut coms_at_leaves: Vec<SeedU8x16> = vec![SeedU8x16::zero(); 1 << self.tau];
-        let mut reconstructed_message_vec: Vec<Message> = vec![Vec::new(); 1 << self.tau];
-        let excluded_index = nabla as usize;
+        let mut reconstructed_message_vec: Vec<BitVec> = vec![BitVec::zero_vec(self.message_len); 1 << self.tau];
+        let excluded_index = self.nabla.as_ref().unwrap().get_u8() as usize;
         coms_at_leaves[excluded_index] = com_at_excluded_index.clone();
         for i in 0..self.tau {
             let sibling;
@@ -58,14 +59,14 @@ impl AllInOneVCForVerifier {
         self.reconstructed_com_hash = Some(Hasher::hash_all_coms(&coms_at_leaves));
 
         // now recover the key
-        let mut voleith_key = vec![0; self.message_len];
+        let mut voleith_key = GFVec::<GF>::zero_vec(self.message_len);
         for i in 0..1 << self.tau {
             if i != excluded_index {
-                let i_shifted = self.galois_field.add(i as u8, self.nabla.unwrap());
+                let i_shifted = self.nabla.as_ref().unwrap().add(&GF::from_u8(i as u8));
                 let message_i = &reconstructed_message_vec[i];
                 for j in 0..self.message_len {
                     if message_i[j] == 1 {
-                        voleith_key[j] = self.galois_field.add(voleith_key[j], i_shifted);
+                        voleith_key[j] = voleith_key[j].add(&i_shifted);
                     }
                 }
             }
@@ -77,7 +78,7 @@ impl AllInOneVCForVerifier {
         &self.reconstructed_com_hash.as_ref().unwrap()
     }
     
-    pub fn get_voleith_key_for_testing(&self) -> &VOLEitHMACKey {
+    pub fn get_voleith_key_for_testing(&self) -> &GFVec<GF> {
         if !cfg!(test) {
             panic!("This is not called during testing!");
         }

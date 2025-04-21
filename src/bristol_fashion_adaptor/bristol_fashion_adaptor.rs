@@ -81,7 +81,7 @@ impl BristolFashionAdaptor {
                 "AND" => GateType::AND,
                 "XOR" => GateType::XOR,
                 "INV" => GateType::NOT,
-                _ => panic!("Unknown gate type: {}", gate_name),
+                _ => panic!("Unknown gate vec_type: {}", gate_name),
             };
             gate_vec.push(
                 (left_gate_input_wire, right_gate_input_wire, gate_output_wire, gate_type)

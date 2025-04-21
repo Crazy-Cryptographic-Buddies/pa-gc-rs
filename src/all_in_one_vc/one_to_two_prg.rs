@@ -1,8 +1,7 @@
 use aes::Aes128;
 use aes::cipher::{BlockEncrypt, KeyInit, generic_array::GenericArray};
-use crate::comm_types_and_constants::{
-    SeedU8x16,  SEED_BYTE_LEN
-};
+use crate::comm_types_and_constants::{SEED_BYTE_LEN};
+use crate::value_type::seed_u8x16::SeedU8x16;
 // We imitate the below link for implementing OneToTwoPRG
 // https://github.com/GaloisInc/swanky/blob/dev/schmivitz/src/all_but_one_vc.rs
 
@@ -23,7 +22,7 @@ impl OneToTwoPRG {
         cipher.encrypt_block(&mut block);
         let aes_cipher_1 = Aes128::new(&block);
 
-        OneToTwoPRG{
+        Self {
             aes_cipher_0,
             aes_cipher_1
         }

@@ -1,20 +1,18 @@
 use blake3::Hash;
 use crate::all_in_one_vc::{
+    generating_message_and_com_prg::GeneratingMessageAndComPRG,
     one_to_two_prg::OneToTwoPRG,
-    generating_message_and_com_prg::GeneratingMessageAndComPRG
+    hasher::hasher::Hasher
 };
-use crate::comm_types_and_constants::{
-    SeedU8x16,
-    Message,
-    VOLEitHMACTag
-};
-use crate::all_in_one_vc::hasher::hasher::Hasher;
-use galois_2p8::{
-    Field,
-    GeneralField
+use crate::value_type::{GFAdd, U8ForGF, Zero};
+use crate::value_type::seed_u8x16::SeedU8x16;
+use crate::vec_type::{
+    bit_vec::BitVec,
+    ZeroVec,
+    gf_vec::GFVec
 };
 
-pub struct AllInOneVCForProver {
+pub struct AllInOneVCForProver<GF: Clone + Zero> {
     tau: u8, // public
     tree_len: usize, // public
     pub first_leaf_index: usize, // public
@@ -23,13 +21,12 @@ pub struct AllInOneVCForProver {
     tree: Option<Vec<SeedU8x16>>,
     com_vec: Option<Vec<SeedU8x16>>, // private, can be public but better need verifier to reconstruct
     com_hash: Option<Hash>, // public
-    galois_field: GeneralField,
-    message: Option<Message>, // unified message after computing from the leaves of the tree
-    voleith_mac: Option<VOLEitHMACTag>, // unified mac tag after computing from the leaves of the tree
+    message: Option<BitVec>, // unified message after computing from the leaves of the tree
+    voleith_mac: Option<GFVec<GF>>, // unified mac tag after computing from the leaves of the tree
 }
 
-impl AllInOneVCForProver {
-    pub fn new(tau: u8, master_key: &SeedU8x16, message_len: usize) -> AllInOneVCForProver {
+impl<GF: Clone + Zero + GFAdd + U8ForGF> AllInOneVCForProver<GF> {
+    pub fn new(tau: u8, master_key: &SeedU8x16, message_len: usize) -> AllInOneVCForProver<GF> {
         let big_n: usize = 1 << tau;
         let tree_len: usize = (big_n << 1) - 1;
         AllInOneVCForProver {
@@ -41,9 +38,6 @@ impl AllInOneVCForProver {
             tree: None,
             com_vec: None,
             com_hash: None,
-            galois_field: GeneralField::new(
-                galois_2p8::IrreducablePolynomial::Poly84310
-            ),
             message: None,
             voleith_mac: None,       
         }
@@ -56,7 +50,7 @@ impl AllInOneVCForProver {
 
         // now generating messages and commitments
         let generating_message_and_com_prg = GeneratingMessageAndComPRG::new(&self.one_to_two_prg);
-        let mut message_vec: Vec<Vec<u8>> = Vec::new();
+        let mut message_vec: Vec<BitVec> = Vec::new();
         let mut com_vec: Vec<SeedU8x16> = Vec::new();
         for i in self.first_leaf_index..self.tree_len {
             let (message, com) = generating_message_and_com_prg.generate(
@@ -71,15 +65,15 @@ impl AllInOneVCForProver {
         self.com_hash = Some(Hasher::hash_all_coms(&self.com_vec.as_ref().unwrap()));
         
         // compute message and mac tag
-        let mut message: Message = vec![0; self.message_len];
-        let mut voleith_mac: VOLEitHMACTag = vec![0; self.message_len];
+        let mut message = BitVec::zero_vec(self.message_len);
+        let mut voleith_mac = GFVec::<GF>::zero_vec(self.message_len);
         for i in 0..1 << self.tau {
-            let iu8 = i as u8;
+            let i_gf = GF::from_u8(i as u8);
             let message_i = &message_vec[i];
             for j in 0..self.message_len {
                 message[j] ^= message_i[j];
                 if message_i[j] == 1 {
-                    voleith_mac[j] = self.galois_field.add(voleith_mac[j], iu8);
+                    voleith_mac[j] = voleith_mac[j].add(&i_gf);
                 }        
             }
         }
@@ -87,9 +81,10 @@ impl AllInOneVCForProver {
         self.voleith_mac = Some(voleith_mac);       
     }
 
-    pub fn open(&self, excluded_index: usize) -> (SeedU8x16, Vec<SeedU8x16>) {
+    pub fn open(&self, nabla: &GF) -> (SeedU8x16, Vec<SeedU8x16>) {
         // the excluded index must be in [0, 2^8]
         // this can be understood the index among the leaves, i.e., the excluded_index-th leaf
+        let excluded_index = nabla.get_u8() as usize;
         assert!(excluded_index < 1 << 8);
         let mut index_in_tree = self.first_leaf_index + excluded_index;
         let com_at_excluded_index = self.com_vec.as_ref().unwrap()[excluded_index];
@@ -109,14 +104,14 @@ impl AllInOneVCForProver {
         self.com_hash.as_ref().unwrap()
     }
     
-    pub fn get_message_for_testing(&self) -> &Message {
+    pub fn get_message_for_testing(&self) -> &BitVec {
         if !cfg!(test) {
             panic!("This is not called during testing!");
         }
         self.message.as_ref().unwrap()
     }
     
-    pub fn get_voleith_mac_for_testing(&self) -> &VOLEitHMACTag {
+    pub fn get_voleith_mac_for_testing(&self) -> &GFVec<GF> {
         if !cfg!(test) {
             panic!("This is not called during testing!");
         }

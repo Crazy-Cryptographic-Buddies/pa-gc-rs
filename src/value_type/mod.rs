@@ -1,0 +1,24 @@
+pub(crate) mod gf2p256;
+pub mod gf2p8;
+pub mod seed_u8x16;
+
+pub trait InsecureRandom {
+    fn insecurely_random() -> Self;
+}
+
+pub trait Zero {
+    fn zero() -> Self;
+}
+
+pub trait U8ForGF {
+    fn from_u8(u8_value: u8) -> Self;
+    fn get_u8(&self) -> u8;
+}
+
+pub trait GFMultiplyingBit {
+    fn multiply_bit(&self, bit: &u8) -> Self;
+}
+
+pub trait GFAdd {
+    fn add(&self, rhs: &Self) -> Self;
+}

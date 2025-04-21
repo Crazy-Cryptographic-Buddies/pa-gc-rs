@@ -1,5 +1,5 @@
 use blake3::Hash;
-use crate::comm_types_and_constants::SeedU8x16;
+use crate::value_type::seed_u8x16::SeedU8x16;
 
 pub struct Hasher {
 }

@@ -1,7 +1,7 @@
 use std::ops::BitXor;
 use rand::Rng;
 use crate::gf::{Random, GFAdd, GFMultiplyingBit};
-use crate::gf::gf2p256::GF256;
+use crate::gf::gf2p256::GF2p256;
 use itertools::izip;
 
 struct FunctionalityPre<GF: Random + GFAdd + GFMultiplyingBit> {
@@ -91,7 +91,7 @@ impl<GF: Random + GFAdd + GFMultiplyingBit> FunctionalityPre<GF> {
 
 #[test]
 fn test_functionality_pre_generation() {
-    let mut f_pre = FunctionalityPre::<GF256>::new();
+    let mut f_pre = FunctionalityPre::<GF2p256>::new();
     println!("delta_a: {:?}", f_pre.delta_a);
     println!("delta_b: {:?}", f_pre.delta_b);
 

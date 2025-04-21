@@ -1,19 +1,18 @@
-use std::ops::BitXor;
 use rand::Rng;
-use crate::gf::{GFAdd, GFMultiplyingBit, Random};
+use crate::value_type::{GFAdd, GFMultiplyingBit, InsecureRandom};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct GF256 {
+pub struct GF2p256 {
     val: (u64, u64, u64, u64)
 }
 
-impl GF256 {
-    pub fn new(val: &(u64, u64, u64, u64)) -> Self {
-        Self { val: *val }
-    }
+impl GF2p256 {
+    // pub fn new(val: &(u64, u64, u64, u64)) -> Self {
+    //     Self { val: *val }
+    // }
 }
 
-impl GFAdd for GF256 {
+impl GFAdd for GF2p256 {
     fn add(&self, rhs: &Self) -> Self {
         Self {
             val: (
@@ -26,7 +25,7 @@ impl GFAdd for GF256 {
     }
 }
 
-impl GFMultiplyingBit for GF256 {
+impl GFMultiplyingBit for GF2p256 {
     fn multiply_bit(&self, bit: &u8) -> Self {
         if *bit == 0 {
             Self {
@@ -40,8 +39,8 @@ impl GFMultiplyingBit for GF256 {
     }
 }
 
-impl Random for GF256 {
-    fn random() -> Self {
+impl InsecureRandom for GF2p256 {
+    fn insecurely_random() -> Self {
         let mut rng = rand::rng();
         let v0 = rng.random::<u64>();
         let v1 = rng.random::<u64>();
