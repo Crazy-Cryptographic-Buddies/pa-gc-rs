@@ -52,7 +52,7 @@ fn main() {
     );
     let message = all_in_one_vc_for_prover.get_message_for_testing();
     let voleith_mac = all_in_one_vc_for_prover.get_voleith_mac_for_testing();
-    let voleith_key = all_in_one_vc_for_verifier.get_voleith_key_to_be_deleted();
+    let voleith_key = all_in_one_vc_for_verifier.get_voleith_key_for_testing();
     for j in 0..message_len {
         let mut shifted_nabla = 0;
         if message[j] == 1 {

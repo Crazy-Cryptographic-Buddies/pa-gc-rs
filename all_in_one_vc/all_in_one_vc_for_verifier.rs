@@ -77,7 +77,10 @@ impl AllInOneVCForVerifier {
         &self.reconstructed_com_hash.as_ref().unwrap()
     }
     
-    pub fn get_voleith_key_to_be_deleted(&self) -> &VOLEitHMACKey {
+    pub fn get_voleith_key_for_testing(&self) -> &VOLEitHMACKey {
+        if !cfg!(test) {
+            panic!("This is not called during testing!");
+        }
         &self.voleith_key.as_ref().unwrap()
     }
 }

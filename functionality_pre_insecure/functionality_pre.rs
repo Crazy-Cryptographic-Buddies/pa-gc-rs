@@ -1,7 +1,7 @@
 use std::ops::BitXor;
 use rand::Rng;
 use crate::gf::{Random, GFAdd, GFMultiplyingBit};
-use crate::gf::gf256::GF256;
+use crate::gf::gf2p256::GF256;
 use itertools::izip;
 
 struct FunctionalityPre<GF: Random + GFAdd + GFMultiplyingBit> {

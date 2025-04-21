@@ -1,4 +1,4 @@
-pub mod gf256;
+pub mod gf2p256;
 
 pub trait Random {
     fn random() -> Self;
