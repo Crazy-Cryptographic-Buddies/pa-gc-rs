@@ -2,6 +2,7 @@ use std::ops::{Index, IndexMut};
 use crate::value_type::{GFAdd, Zero};
 use crate::vec_type::{VecAdd, ZeroVec};
 
+#[derive(Clone)]
 pub struct GFVec<GF: Clone + Zero> {
     val: Vec<GF>
 }

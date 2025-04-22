@@ -3,29 +3,22 @@ use crate::functionalities_and_protocols::all_in_one_vc::verifier_in_all_in_one_
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::value_type::{GFAdd, HashDigestToGF, U8ForGF, Zero};
 
-pub(crate) struct VerifierInProtocolSVOLE<'a, GF: Clone + Zero> {
-    verifier_in_all_in_one_vc: &'a mut VerifierInAllInOneVC<'a, GF>
+pub(crate) struct VerifierInProtocolSVOLE {
 }
 
-impl<'a, GF: Clone + Zero + GFAdd + U8ForGF + HashDigestToGF> VerifierInProtocolSVOLE<'a, GF> {
+impl VerifierInProtocolSVOLE {
 
-    pub fn new(verifier_in_all_in_one_vc: &'a mut VerifierInAllInOneVC<'a, GF>) -> Self {
-        Self {
-            verifier_in_all_in_one_vc
-        }
-    }
-
-    pub fn generate_challenge(&self, pub_aux: &Vec<u8>, com_hash_from_prover: &Hash) -> GF {
+    pub fn generate_challenge<GF: HashDigestToGF>(pub_aux: &Vec<u8>, com_hash_from_prover: &Hash) -> GF {
         let mut hasher = blake3::Hasher::new();
         hasher.update(pub_aux);
         hasher.update(com_hash_from_prover.as_bytes());
         GF::from_hash_digest(&hasher.finalize())
     }
 
-    pub fn reconstruct(
-        &mut self, nabla: &GF, com_at_excluded_index: &SeedU8x16, seed_trace: &Vec<SeedU8x16>
+    pub fn reconstruct<GF: Clone + GFAdd + U8ForGF + Zero>(
+        verifier_in_all_in_one_vc: &mut VerifierInAllInOneVC<GF>, nabla: &GF, decom: &(SeedU8x16, Vec<SeedU8x16>)
     ) {
-        self.verifier_in_all_in_one_vc.reconstruct(nabla, com_at_excluded_index, seed_trace);
+        verifier_in_all_in_one_vc.reconstruct(nabla, decom);
     }
 
 }

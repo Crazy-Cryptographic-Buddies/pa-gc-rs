@@ -16,10 +16,10 @@ impl<'a> GeneratingMessageAndComPRG<'a> {
     }
 
     pub fn generate(&self, seed: &SeedU8x16, message_len: usize) -> (BitVec, SeedU8x16) {
-        assert_eq!(message_len % SEED_BYTE_LEN, 0,
-                   "Message length must be a multiple of {}", SEED_BYTE_LEN
-        );
-        let message_aes_byte_len = message_len / SEED_BYTE_LEN;
+        // assert_eq!(message_len % SEED_BYTE_LEN, 0,
+        //            "Message length must be a multiple of {}", SEED_BYTE_LEN
+        // );
+        let message_aes_byte_len =  (message_len - 1) / SEED_BYTE_LEN + 1;
 
         let (mut seed_message, com) = self.one_to_two_prg.generate_double(seed);
         let mut message: BitVec = BitVec::new();
@@ -28,8 +28,12 @@ impl<'a> GeneratingMessageAndComPRG<'a> {
             (byte_message, seed_message) = self.one_to_two_prg.generate_double(&seed_message);
             for byte in byte_message.iter() {
                 message.push(byte & 1);
+                if message.len() == message_len {
+                    break;
+                }
             }
         }
+        assert_eq!(message.len(), message_len);
         (message, com)
     }
 }

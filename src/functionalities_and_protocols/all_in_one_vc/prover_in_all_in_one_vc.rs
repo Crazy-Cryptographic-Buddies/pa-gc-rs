@@ -19,7 +19,6 @@ pub struct ProverInAllInOneVC<'a, GF: Clone + Zero> {
     tree_len: usize, // public
     first_leaf_index: usize, // public
     one_to_two_prg: OneToTwoPRG, // public
-    message_len: usize, // public
     tree: Option<Vec<SeedU8x16>>,
     com_vec: Option<Vec<SeedU8x16>>, // private, can be public but better need verifier to reconstruct
     com_hash: Option<Hash>, // public
@@ -29,7 +28,7 @@ pub struct ProverInAllInOneVC<'a, GF: Clone + Zero> {
 
 impl<'a, GF: Clone + Zero + GFAdd + U8ForGF> ProverInAllInOneVC<'a, GF> {
     pub fn new(
-        public_parameter: &'a PublicParameter, prover_secret_input: &'a ProverSecretInput, message_len: usize
+        public_parameter: &'a PublicParameter, prover_secret_input: &'a ProverSecretInput
     ) -> Self {
         let big_n: usize = 1 << public_parameter.tau;
         let tree_len: usize = (big_n << 1) - 1;
@@ -39,7 +38,6 @@ impl<'a, GF: Clone + Zero + GFAdd + U8ForGF> ProverInAllInOneVC<'a, GF> {
             tree_len,
             first_leaf_index: (1 << public_parameter.tau) - 1,
             one_to_two_prg: OneToTwoPRG::new(&public_parameter.master_key_for_one_to_two_prg),
-            message_len,
             tree: None,
             com_vec: None,
             com_hash: None,
@@ -48,7 +46,7 @@ impl<'a, GF: Clone + Zero + GFAdd + U8ForGF> ProverInAllInOneVC<'a, GF> {
         }
     }
 
-    pub fn commit(&mut self) {
+    pub fn commit(&mut self) -> Hash {
         let tree: Vec<SeedU8x16> = self.one_to_two_prg.generate_ggm_tree(&self.prover_secret_input.seed_for_generating_ggm_tree, self.public_parameter.tau);
         self.tree = Some(tree);
         assert_eq!(self.tree.as_ref().unwrap().len(), self.tree_len);
@@ -60,7 +58,7 @@ impl<'a, GF: Clone + Zero + GFAdd + U8ForGF> ProverInAllInOneVC<'a, GF> {
         for i in self.first_leaf_index..self.tree_len {
             let (message, com) = generating_message_and_com_prg.generate(
                 &self.tree.as_ref().unwrap()[i],
-                self.message_len
+                self.public_parameter.big_n
             );
             message_vec.push(message);
             com_vec.push(com);
@@ -70,12 +68,12 @@ impl<'a, GF: Clone + Zero + GFAdd + U8ForGF> ProverInAllInOneVC<'a, GF> {
         self.com_hash = Some(Hasher::hash_all_coms(&self.com_vec.as_ref().unwrap()));
         
         // compute message and mac tag
-        let mut message = BitVec::zero_vec(self.message_len);
-        let mut voleith_mac = GFVec::<GF>::zero_vec(self.message_len);
+        let mut message = BitVec::zero_vec(self.public_parameter.big_n);
+        let mut voleith_mac = GFVec::<GF>::zero_vec(self.public_parameter.big_n);
         for i in 0..1 << self.public_parameter.tau {
             let i_gf = GF::from_u8(i as u8);
             let message_i = &message_vec[i];
-            for j in 0..self.message_len {
+            for j in 0..self.public_parameter.big_n {
                 message[j] ^= message_i[j];
                 if message_i[j] == 1 {
                     voleith_mac[j] = voleith_mac[j].gf_add(&i_gf);
@@ -83,7 +81,8 @@ impl<'a, GF: Clone + Zero + GFAdd + U8ForGF> ProverInAllInOneVC<'a, GF> {
             }
         }
         self.message = Some(message);
-        self.voleith_mac = Some(voleith_mac);       
+        self.voleith_mac = Some(voleith_mac);  
+        self.com_hash.as_ref().unwrap().clone()   
     }
 
     pub fn open(&self, nabla: &GF) -> (SeedU8x16, Vec<SeedU8x16>) {
@@ -109,13 +108,13 @@ impl<'a, GF: Clone + Zero + GFAdd + U8ForGF> ProverInAllInOneVC<'a, GF> {
         self.com_hash.as_ref().unwrap()
     }
     
-    pub fn get_message_for_testing(&self) -> &BitVec {
+    pub fn get_message_for_testing(&self) -> BitVec {
         enforce_testing();
-        self.message.as_ref().unwrap()
+        self.message.as_ref().unwrap().clone()
     }
     
-    pub fn get_voleith_mac_for_testing(&self) -> &GFVec<GF> {
+    pub fn get_voleith_mac_for_testing(&self) -> GFVec<GF> {
         enforce_testing();
-        self.voleith_mac.as_ref().unwrap()
+        self.voleith_mac.as_ref().unwrap().clone()   
     }
 }
