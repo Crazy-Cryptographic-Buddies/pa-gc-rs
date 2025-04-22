@@ -2,6 +2,7 @@ use blake3::Hash;
 use crate::cryptography::all_in_one_vc::generating_message_and_com_prg::GeneratingMessageAndComPRG;
 use crate::cryptography::all_in_one_vc::hasher::hasher::Hasher;
 use crate::cryptography::all_in_one_vc::one_to_two_prg::OneToTwoPRG;
+use crate::enforce_testing;
 use crate::value_type::{GFAdd, U8ForGF, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::{
@@ -13,7 +14,7 @@ use crate::vec_type::{
 pub struct AllInOneVCForProver<GF: Clone + Zero> {
     tau: u8, // public
     tree_len: usize, // public
-    pub first_leaf_index: usize, // public
+    first_leaf_index: usize, // public
     one_to_two_prg: OneToTwoPRG, // public
     message_len: usize, // public
     tree: Option<Vec<SeedU8x16>>,
@@ -103,16 +104,12 @@ impl<GF: Clone + Zero + GFAdd + U8ForGF> AllInOneVCForProver<GF> {
     }
     
     pub fn get_message_for_testing(&self) -> &BitVec {
-        if !cfg!(test) {
-            panic!("This is not called during testing!");
-        }
+        enforce_testing();
         self.message.as_ref().unwrap()
     }
     
     pub fn get_voleith_mac_for_testing(&self) -> &GFVec<GF> {
-        if !cfg!(test) {
-            panic!("This is not called during testing!");
-        }
+        enforce_testing();
         self.voleith_mac.as_ref().unwrap()
     }
 }

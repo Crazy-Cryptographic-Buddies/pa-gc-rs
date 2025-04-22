@@ -80,10 +80,7 @@ impl<GF: Clone + Zero + U8ForGF + GFAdd> AllInOneVCForVerifier<GF> {
         &self.reconstructed_com_hash.as_ref().unwrap()
     }
     
-    pub fn get_voleith_key_for_testing(&self) -> &GFVec<GF> {
-        if !cfg!(test) {
-            panic!("This is not called during testing!");
-        }
+    pub fn get_voleith_key(&self) -> &GFVec<GF> {
         &self.voleith_key.as_ref().unwrap()
     }
 }

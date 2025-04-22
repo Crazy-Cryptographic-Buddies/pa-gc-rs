@@ -1,5 +1,6 @@
+use blake3::Hash;
 use rand::Rng;
-use crate::value_type::{GFAdd, GFMultiplyingBit, InsecureRandom, U8ForGF, Zero};
+use crate::value_type::{GFAdd, GFMultiplyingBit, HashDigestToGF, InsecureRandom, U8ForGF, Zero};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GF2p8 {
@@ -56,3 +57,10 @@ impl Zero for GF2p8 {
     }
 }
 
+impl HashDigestToGF for GF2p8 {
+    fn from_hash_digest(hash_digest: &Hash) -> Self {
+        Self {
+            val: hash_digest.as_bytes()[0]
+        }
+    }
+}

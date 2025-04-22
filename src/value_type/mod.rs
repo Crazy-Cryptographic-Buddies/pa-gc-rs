@@ -1,3 +1,5 @@
+use blake3::Hash;
+
 pub(crate) mod gf2p256;
 pub mod gf2p8;
 pub mod seed_u8x16;
@@ -21,4 +23,8 @@ pub trait GFMultiplyingBit {
 
 pub trait GFAdd {
     fn gf_add(&self, rhs: &Self) -> Self;
+}
+
+pub trait HashDigestToGF {
+    fn from_hash_digest(hash_digest: &Hash) -> Self;
 }

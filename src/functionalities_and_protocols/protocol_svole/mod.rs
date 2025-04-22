@@ -1,2 +1,3 @@
 mod protocol_svole;
 mod prover_in_protocol_svole;
+mod verifier_in_protocol_svole;
