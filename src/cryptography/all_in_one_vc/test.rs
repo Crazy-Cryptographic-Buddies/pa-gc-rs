@@ -6,20 +6,11 @@ use crate::value_type::gf2p8::GF2p8;
 use crate::value_type::{InsecureRandom, GFAdd, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
 
-fn generate_random_seed() -> SeedU8x16 {
-    let mut rng = rand::rng();
-    let mut seed: SeedU8x16 = SeedU8x16::default();
-    for i in 0..SEED_BYTE_LEN {
-        seed[i] = rng.random::<u8>();
-    }
-    seed
-}
-
 #[test]
 fn test_committing_and_reconstructing() {
     println!("testing committing and reconstructing...");
-    let master_key: SeedU8x16 = generate_random_seed();
-    let master_seed: SeedU8x16 = generate_random_seed();
+    let master_key = SeedU8x16::insecurely_random();
+    let master_seed = SeedU8x16::insecurely_random();
     let tau = 8;
     let message_len = 160;
     let nabla = GF2p8::insecurely_random();

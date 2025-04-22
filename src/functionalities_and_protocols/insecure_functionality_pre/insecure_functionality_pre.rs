@@ -7,7 +7,7 @@ use crate::vec_type::{
     gf_vec::GFVec,
 };
 
-struct InsecureFunctionalityPre<GF: GFAdd + GFMultiplyingBit + Clone + Zero> {
+pub struct InsecureFunctionalityPre<GF: GFAdd + GFMultiplyingBit + Clone + Zero> {
     delta_a: GF,
     delta_b: GF,
 

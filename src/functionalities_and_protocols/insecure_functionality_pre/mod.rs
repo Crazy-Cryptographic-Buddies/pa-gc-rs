@@ -1,1 +1,1 @@
-mod functionality_pre;
+pub(crate) mod insecure_functionality_pre;
