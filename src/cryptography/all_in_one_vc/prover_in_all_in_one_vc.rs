@@ -11,7 +11,7 @@ use crate::vec_type::{
     gf_vec::GFVec
 };
 
-pub struct AllInOneVCForProver<GF: Clone + Zero> {
+pub struct ProverInAllInOneVC<GF: Clone + Zero> {
     tau: u8, // public
     tree_len: usize, // public
     first_leaf_index: usize, // public
@@ -24,11 +24,11 @@ pub struct AllInOneVCForProver<GF: Clone + Zero> {
     voleith_mac: Option<GFVec<GF>>, // unified mac tag after computing from the leaves of the tree
 }
 
-impl<GF: Clone + Zero + GFAdd + U8ForGF> AllInOneVCForProver<GF> {
-    pub fn new(tau: u8, master_key: &SeedU8x16, message_len: usize) -> AllInOneVCForProver<GF> {
+impl<GF: Clone + Zero + GFAdd + U8ForGF> ProverInAllInOneVC<GF> {
+    pub fn new(tau: u8, master_key: &SeedU8x16, message_len: usize) -> ProverInAllInOneVC<GF> {
         let big_n: usize = 1 << tau;
         let tree_len: usize = (big_n << 1) - 1;
-        AllInOneVCForProver {
+        ProverInAllInOneVC {
             tau,
             tree_len,
             first_leaf_index: (1 << tau) - 1,

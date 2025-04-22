@@ -1,7 +1,7 @@
 use rand::prelude::*;
 use crate::comm_types_and_constants::{SEED_BYTE_LEN};
-use crate::cryptography::all_in_one_vc::all_in_one_vc_for_prover::AllInOneVCForProver;
-use crate::cryptography::all_in_one_vc::all_in_one_vc_for_verifier::AllInOneVCForVerifier;
+use crate::cryptography::all_in_one_vc::prover_in_all_in_one_vc::ProverInAllInOneVC;
+use crate::cryptography::all_in_one_vc::verifier_in_all_in_one_vc::VerifierInAllInOneVC;
 use crate::value_type::gf2p8::GF2p8;
 use crate::value_type::{InsecureRandom, GFAdd, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
@@ -15,7 +15,7 @@ fn test_committing_and_reconstructing() {
     let message_len = 160;
     let nabla = GF2p8::insecurely_random();
     // first generate in the prover side
-    let mut all_in_one_vc_for_prover = AllInOneVCForProver::new(
+    let mut all_in_one_vc_for_prover = ProverInAllInOneVC::new(
         tau, &master_key, message_len
     );
     all_in_one_vc_for_prover.commit(&master_seed);
@@ -23,7 +23,7 @@ fn test_committing_and_reconstructing() {
         = all_in_one_vc_for_prover.open(&nabla);
     
     // then generate in the verifier side
-    let mut all_in_one_vc_for_verifier = AllInOneVCForVerifier::new(tau, &master_key, message_len);
+    let mut all_in_one_vc_for_verifier = VerifierInAllInOneVC::new(tau, &master_key, message_len);
     all_in_one_vc_for_verifier.reconstruct(
         &nabla, &com_at_excluded_index_by_prover, &seed_trace_by_prover
     );

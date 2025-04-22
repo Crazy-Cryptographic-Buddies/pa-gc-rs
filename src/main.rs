@@ -1,8 +1,8 @@
 use galois_2p8::{GeneralField};
 use rand::Rng;
 use pa_gc_rs::comm_types_and_constants::SEED_BYTE_LEN;
-use pa_gc_rs::cryptography::all_in_one_vc::all_in_one_vc_for_prover::AllInOneVCForProver;
-use pa_gc_rs::cryptography::all_in_one_vc::all_in_one_vc_for_verifier::AllInOneVCForVerifier;
+use pa_gc_rs::cryptography::all_in_one_vc::prover_in_all_in_one_vc::ProverInAllInOneVC;
+use pa_gc_rs::cryptography::all_in_one_vc::verifier_in_all_in_one_vc::VerifierInAllInOneVC;
 use pa_gc_rs::value_type::seed_u8x16::SeedU8x16;
 use pa_gc_rs::value_type::{
     Zero, InsecureRandom, GFAdd
@@ -26,7 +26,7 @@ fn main() {
     let message_len = 160;
     let nabla = GF2p8::insecurely_random();
     // first generate in the prover side
-    let mut all_in_one_vc_for_prover = AllInOneVCForProver::new(
+    let mut all_in_one_vc_for_prover = ProverInAllInOneVC::new(
         tau, &master_key, message_len
     );
     all_in_one_vc_for_prover.commit(&master_seed);
@@ -34,7 +34,7 @@ fn main() {
         = all_in_one_vc_for_prover.open(&nabla);
 
     // then generate in the verifier side
-    let mut all_in_one_vc_for_verifier = AllInOneVCForVerifier::new(tau, &master_key, message_len);
+    let mut all_in_one_vc_for_verifier = VerifierInAllInOneVC::new(tau, &master_key, message_len);
     all_in_one_vc_for_verifier.reconstruct(
         &nabla, &com_at_excluded_index_by_prover, &seed_trace_by_prover
     );

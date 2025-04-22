@@ -10,7 +10,7 @@ use crate::vec_type::{
 };
 use crate::vec_type::gf_vec::GFVec;
 
-pub struct AllInOneVCForVerifier<GF: Clone + Zero> {
+pub struct VerifierInAllInOneVC<GF: Clone + Zero> {
     tau: u8,
     one_to_two_prg: OneToTwoPRG,
     message_len: usize,
@@ -19,7 +19,7 @@ pub struct AllInOneVCForVerifier<GF: Clone + Zero> {
     voleith_key: Option<GFVec<GF>>,
 }
 
-impl<GF: Clone + Zero + U8ForGF + GFAdd> AllInOneVCForVerifier<GF> {
+impl<GF: Clone + Zero + U8ForGF + GFAdd> VerifierInAllInOneVC<GF> {
     pub fn new(tau: u8, master_key: &SeedU8x16, message_len: usize) -> Self {
         Self {
             tau,
