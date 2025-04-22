@@ -1,9 +1,7 @@
 use rand::prelude::*;
 use crate::comm_types_and_constants::{SEED_BYTE_LEN};
-use crate::all_in_one_vc::{
-    all_in_one_vc_for_prover::AllInOneVCForProver,
-    all_in_one_vc_for_verifier::AllInOneVCForVerifier,
-};
+use crate::cryptography::all_in_one_vc::all_in_one_vc_for_prover::AllInOneVCForProver;
+use crate::cryptography::all_in_one_vc::all_in_one_vc_for_verifier::AllInOneVCForVerifier;
 use crate::value_type::gf2p8::GF2p8;
 use crate::value_type::{InsecureRandom, GFAdd, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;

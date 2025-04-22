@@ -198,7 +198,7 @@ fn test_functionality_pre_generating_random_tuples() {
         println!("rand_s, vole_mac_rand_s, vole_key_rand_s: {:?} {:?} {:?}", rand_s, vole_mac_rand_s, vole_key_rand_s);
         assert_eq!(vole_key_rand_s, &vole_mac_rand_s.gf_add(&f_pre.delta_a.multiply_bit(rand_s)));
     }
-    println!("test_functionality_pre_generation passed");
+    println!("test_functionality_pre_generating_random_tuples passed");
 }
 
 #[test]
@@ -217,4 +217,5 @@ fn test_functionality_pre_generating_random_and_tuples () {
         println!("rand_aa, rand_ba, rand_ca, rand_ab, rand_bb, rand_cb: {:?} {:?} {:?} {:?} {:?} {:?}", rand_aa, rand_ba, rand_ca, rand_ab, rand_bb, rand_cb);
         assert_eq!(rand_ca ^ rand_cb, (rand_aa ^ rand_ab) & (rand_ba ^ rand_bb));
     }
+    println!("test_functionality_pre_generating_random_and_tuples passed!");
 }

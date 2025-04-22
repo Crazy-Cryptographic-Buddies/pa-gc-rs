@@ -1,6 +1,7 @@
-use crate::all_in_one_vc::{one_to_two_prg::OneToTwoPRG, hasher::hasher::Hasher};
 use blake3::Hash;
-use crate::all_in_one_vc::generating_message_and_com_prg::GeneratingMessageAndComPRG;
+use crate::cryptography::all_in_one_vc::generating_message_and_com_prg::GeneratingMessageAndComPRG;
+use crate::cryptography::all_in_one_vc::hasher::hasher::Hasher;
+use crate::cryptography::all_in_one_vc::one_to_two_prg::OneToTwoPRG;
 use crate::value_type::{GFAdd, U8ForGF, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::{

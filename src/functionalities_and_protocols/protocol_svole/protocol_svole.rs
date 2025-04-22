@@ -1,0 +1,5 @@
+struct ProtocolSvole;
+
+impl ProtocolSvole {
+    
+}

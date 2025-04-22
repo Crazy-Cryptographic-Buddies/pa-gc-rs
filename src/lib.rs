@@ -1,10 +1,8 @@
-pub mod all_in_one_vc;
-
 pub mod comm_types_and_constants;
 pub(crate) mod vec_type;
 pub mod value_type;
 pub(crate) mod bristol_fashion_adaptor;
 pub(crate) mod utils;
 mod test;
-mod insecure_functionality_pre;
-mod protocol_check_and;
+mod functionalities_and_protocols;
+pub mod cryptography;

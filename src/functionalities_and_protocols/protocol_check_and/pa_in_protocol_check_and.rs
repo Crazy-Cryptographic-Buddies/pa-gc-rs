@@ -62,22 +62,23 @@ impl<'a, GF: Clone + Zero + GFAdd> PAInCheckAND<'a, GF> {
         }
     }
 
-    pub fn send_da_vec_and_ea_vec_with_voleith_mac(&self)
-        -> (Vec<BitVec>, Vec<BitVec>, Vec<GFVec<GF>>, Vec<GFVec<GF>>) {
-        let mut da_vec: Vec<BitVec> = Vec::new();
-        let mut ea_vec: Vec<BitVec> = Vec::new();
-        let mut voleith_mac_da_vec: Vec<GFVec<GF>> = Vec::new();
-        let mut voleith_mac_ea_vec: Vec<GFVec<GF>> = Vec::new();
+    pub fn send_da_vec_and_ea_vec_with_voleith_mac(&self) -> (
+        Vec<BitVec>, Vec<BitVec>, Vec<GFVec<GF>>, Vec<GFVec<GF>>
+    ) {
+        let mut da_bit_vec_rep: Vec<BitVec> = Vec::new();
+        let mut ea_bit_vec_rep: Vec<BitVec> = Vec::new();
+        let mut voleith_mac_da_vec_rep: Vec<GFVec<GF>> = Vec::new();
+        let mut voleith_mac_ea_vec_rep: Vec<GFVec<GF>> = Vec::new();
         for j in 0..self.kappa {
-            da_vec.push(self.xa_bit_vec.vec_add(&self.aa_bit_vec_rep[j]));
-            ea_vec.push(self.ya_bit_vec.vec_add(&self.ba_bit_vec_rep[j]));
-            voleith_mac_da_vec.push(
+            da_bit_vec_rep.push(self.xa_bit_vec.vec_add(&self.aa_bit_vec_rep[j]));
+            ea_bit_vec_rep.push(self.ya_bit_vec.vec_add(&self.ba_bit_vec_rep[j]));
+            voleith_mac_da_vec_rep.push(
                 self.voleith_mac_xa_vec_rep[j].vec_add(&self.voleith_mac_aa_vec_rep[j])
             );
-            voleith_mac_ea_vec.push(
+            voleith_mac_ea_vec_rep.push(
                 self.voleith_mac_ya_vec_rep[j].vec_add(&self.voleith_mac_ba_vec_rep[j])
             );
         }
-        (da_vec, ea_vec, voleith_mac_da_vec, voleith_mac_ea_vec)
+        (da_bit_vec_rep, ea_bit_vec_rep, voleith_mac_da_vec_rep, voleith_mac_ea_vec_rep)
     }
 }
