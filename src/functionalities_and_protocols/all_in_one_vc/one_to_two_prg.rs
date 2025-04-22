@@ -39,7 +39,7 @@ impl OneToTwoPRG {
         )
     }
 
-    pub fn generate_tree(&self, seed: &SeedU8x16, depth: u8) -> Vec<SeedU8x16> {
+    pub fn generate_ggm_tree(&self, seed: &SeedU8x16, depth: u8) -> Vec<SeedU8x16> {
         // Here we define depth to be the distance from the root to the leaf
         // If depth is 0, the tree is a single node
         // If depth is 1, the tree is a root and a leaf

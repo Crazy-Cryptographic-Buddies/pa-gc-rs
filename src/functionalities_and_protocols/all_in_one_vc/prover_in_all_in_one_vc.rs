@@ -1,8 +1,10 @@
 use blake3::Hash;
-use crate::cryptography::all_in_one_vc::generating_message_and_com_prg::GeneratingMessageAndComPRG;
-use crate::cryptography::all_in_one_vc::hasher::hasher::Hasher;
-use crate::cryptography::all_in_one_vc::one_to_two_prg::OneToTwoPRG;
+use crate::functionalities_and_protocols::all_in_one_vc::generating_message_and_com_prg::GeneratingMessageAndComPRG;
+use crate::functionalities_and_protocols::all_in_one_vc::hasher::hasher::Hasher;
+use crate::functionalities_and_protocols::all_in_one_vc::one_to_two_prg::OneToTwoPRG;
 use crate::enforce_testing;
+use crate::functionalities_and_protocols::inputs_and_parameters::prover_secret_input::ProverSecretInput;
+use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
 use crate::value_type::{GFAdd, U8ForGF, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::{
@@ -11,8 +13,9 @@ use crate::vec_type::{
     gf_vec::GFVec
 };
 
-pub struct ProverInAllInOneVC<GF: Clone + Zero> {
-    tau: u8, // public
+pub struct ProverInAllInOneVC<'a, GF: Clone + Zero> {
+    public_parameter: &'a PublicParameter,
+    prover_secret_input: &'a ProverSecretInput,
     tree_len: usize, // public
     first_leaf_index: usize, // public
     one_to_two_prg: OneToTwoPRG, // public
@@ -24,15 +27,18 @@ pub struct ProverInAllInOneVC<GF: Clone + Zero> {
     voleith_mac: Option<GFVec<GF>>, // unified mac tag after computing from the leaves of the tree
 }
 
-impl<GF: Clone + Zero + GFAdd + U8ForGF> ProverInAllInOneVC<GF> {
-    pub fn new(tau: u8, master_key: &SeedU8x16, message_len: usize) -> ProverInAllInOneVC<GF> {
-        let big_n: usize = 1 << tau;
+impl<'a, GF: Clone + Zero + GFAdd + U8ForGF> ProverInAllInOneVC<'a, GF> {
+    pub fn new(
+        public_parameter: &'a PublicParameter, prover_secret_input: &'a ProverSecretInput, message_len: usize
+    ) -> Self {
+        let big_n: usize = 1 << public_parameter.tau;
         let tree_len: usize = (big_n << 1) - 1;
-        ProverInAllInOneVC {
-            tau,
+        Self {
+            public_parameter,
+            prover_secret_input,
             tree_len,
-            first_leaf_index: (1 << tau) - 1,
-            one_to_two_prg: OneToTwoPRG::new(master_key),
+            first_leaf_index: (1 << public_parameter.tau) - 1,
+            one_to_two_prg: OneToTwoPRG::new(&public_parameter.master_key_for_one_to_two_prg),
             message_len,
             tree: None,
             com_vec: None,
@@ -42,8 +48,8 @@ impl<GF: Clone + Zero + GFAdd + U8ForGF> ProverInAllInOneVC<GF> {
         }
     }
 
-    pub fn commit(&mut self, seed: &SeedU8x16) {
-        let tree: Vec<SeedU8x16> = self.one_to_two_prg.generate_tree(seed, self.tau);
+    pub fn commit(&mut self) {
+        let tree: Vec<SeedU8x16> = self.one_to_two_prg.generate_ggm_tree(&self.prover_secret_input.seed_for_generating_ggm_tree, self.public_parameter.tau);
         self.tree = Some(tree);
         assert_eq!(self.tree.as_ref().unwrap().len(), self.tree_len);
 
@@ -59,14 +65,14 @@ impl<GF: Clone + Zero + GFAdd + U8ForGF> ProverInAllInOneVC<GF> {
             message_vec.push(message);
             com_vec.push(com);
         }
-        assert_eq!(message_vec.len(), 1 << self.tau);
+        assert_eq!(message_vec.len(), 1 << self.public_parameter.tau);
         self.com_vec = Some(com_vec);
         self.com_hash = Some(Hasher::hash_all_coms(&self.com_vec.as_ref().unwrap()));
         
         // compute message and mac tag
         let mut message = BitVec::zero_vec(self.message_len);
         let mut voleith_mac = GFVec::<GF>::zero_vec(self.message_len);
-        for i in 0..1 << self.tau {
+        for i in 0..1 << self.public_parameter.tau {
             let i_gf = GF::from_u8(i as u8);
             let message_i = &message_vec[i];
             for j in 0..self.message_len {
@@ -88,7 +94,7 @@ impl<GF: Clone + Zero + GFAdd + U8ForGF> ProverInAllInOneVC<GF> {
         let mut index_in_tree = self.first_leaf_index + excluded_index;
         let com_at_excluded_index = self.com_vec.as_ref().unwrap()[excluded_index];
         let mut seed_trace: Vec<SeedU8x16> = Vec::new();
-        for i in 0..self.tau {
+        for i in 0..self.public_parameter.tau {
             if (excluded_index >> i) & 1 == 1 {
                 seed_trace.push(self.tree.as_ref().unwrap()[index_in_tree - 1]);
             } else {

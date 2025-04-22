@@ -1,8 +1,8 @@
 use galois_2p8::{GeneralField};
 use rand::Rng;
 use pa_gc_rs::comm_types_and_constants::SEED_BYTE_LEN;
-use pa_gc_rs::cryptography::all_in_one_vc::prover_in_all_in_one_vc::ProverInAllInOneVC;
-use pa_gc_rs::cryptography::all_in_one_vc::verifier_in_all_in_one_vc::VerifierInAllInOneVC;
+use pa_gc_rs::functionalities_and_protocols::::prover_in_all_in_one_vc::ProverInAllInOneVC;
+use pa_gc_rs::functionalities_and_protocols::::verifier_in_all_in_one_vc::VerifierInAllInOneVC;
 use pa_gc_rs::value_type::seed_u8x16::SeedU8x16;
 use pa_gc_rs::value_type::{
     Zero, InsecureRandom, GFAdd

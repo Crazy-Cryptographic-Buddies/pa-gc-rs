@@ -5,7 +5,6 @@ pub(crate) mod bristol_fashion_adaptor;
 pub(crate) mod utils;
 mod test;
 mod functionalities_and_protocols;
-pub mod cryptography;
 
 fn enforce_testing() {
     if !cfg!(test) {

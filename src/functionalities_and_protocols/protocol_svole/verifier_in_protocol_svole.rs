@@ -1,15 +1,15 @@
 use blake3::Hash;
-use crate::cryptography::all_in_one_vc::verifier_in_all_in_one_vc::VerifierInAllInOneVC;
+use crate::functionalities_and_protocols::all_in_one_vc::verifier_in_all_in_one_vc::VerifierInAllInOneVC;
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::value_type::{GFAdd, HashDigestToGF, U8ForGF, Zero};
 
 pub(crate) struct VerifierInProtocolSVOLE<'a, GF: Clone + Zero> {
-    verifier_in_all_in_one_vc: &'a mut VerifierInAllInOneVC<GF>
+    verifier_in_all_in_one_vc: &'a mut VerifierInAllInOneVC<'a, GF>
 }
 
 impl<'a, GF: Clone + Zero + GFAdd + U8ForGF + HashDigestToGF> VerifierInProtocolSVOLE<'a, GF> {
 
-    pub fn new(verifier_in_all_in_one_vc: &'a mut VerifierInAllInOneVC<GF>) -> Self {
+    pub fn new(verifier_in_all_in_one_vc: &'a mut VerifierInAllInOneVC<'a, GF>) -> Self {
         Self {
             verifier_in_all_in_one_vc
         }

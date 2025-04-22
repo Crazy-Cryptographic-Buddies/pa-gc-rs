@@ -1,5 +1,5 @@
 use crate::comm_types_and_constants::{SEED_BYTE_LEN};
-use crate::cryptography::all_in_one_vc::one_to_two_prg::OneToTwoPRG;
+use crate::functionalities_and_protocols::all_in_one_vc::one_to_two_prg::OneToTwoPRG;
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::bit_vec::BitVec;
 
