@@ -1,5 +1,5 @@
 use std::ops::{Index, IndexMut};
-use crate::vec_type::{ZeroVec};
+use crate::vec_type::{VecAdd, ZeroVec};
 
 #[derive(Clone)]
 pub struct BitVec {
@@ -46,5 +46,15 @@ impl Index<usize> for BitVec {
 impl IndexMut<usize> for BitVec {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.val[index]
+    }
+}
+
+impl VecAdd for BitVec {
+    fn vec_add(&self, other: &Self) -> Self {
+        let mut res = Self::new();
+        for (lhs, rhs) in self.iter().zip(other.iter()) {
+            res.push(*lhs ^ *rhs);
+        }
+        res
     }
 }

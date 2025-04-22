@@ -73,7 +73,7 @@ impl<GF: Clone + Zero + GFAdd + U8ForGF> AllInOneVCForProver<GF> {
             for j in 0..self.message_len {
                 message[j] ^= message_i[j];
                 if message_i[j] == 1 {
-                    voleith_mac[j] = voleith_mac[j].add(&i_gf);
+                    voleith_mac[j] = voleith_mac[j].gf_add(&i_gf);
                 }        
             }
         }

@@ -19,7 +19,7 @@ impl U8ForGF for GF2p8 {
 }
 
 impl GFAdd for GF2p8 {
-    fn add(&self, rhs: &Self) -> Self {
+    fn gf_add(&self, rhs: &Self) -> Self {
         Self {
             val: self.val ^ rhs.val
         }

@@ -4,3 +4,7 @@ pub mod bit_vec;
 pub trait ZeroVec {
     fn zero_vec(len: usize) -> Self;
 }
+
+pub trait VecAdd {
+    fn vec_add(&self, other: &Self) -> Self;
+}

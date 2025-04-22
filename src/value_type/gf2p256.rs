@@ -19,7 +19,7 @@ impl Zero for GF2p256 {
 }
 
 impl GFAdd for GF2p256 {
-    fn add(&self, rhs: &Self) -> Self {
+    fn gf_add(&self, rhs: &Self) -> Self {
         Self {
             val: (
                 self.val.0 ^ rhs.val.0,

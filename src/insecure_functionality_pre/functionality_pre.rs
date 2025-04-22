@@ -1,4 +1,3 @@
-use std::ops::BitXor;
 use rand::Rng;
 use itertools::izip;
 use crate::value_type::{GFAdd, GFMultiplyingBit, InsecureRandom, Zero};
@@ -63,7 +62,7 @@ impl<GF: InsecureRandom + GFAdd + GFMultiplyingBit + Clone + Zero> InsecureFunct
         let mut vole_key_vec = GFVec::<GF>::new();
         for bit in rand_bit_vec.iter() {
             let mac = GF::insecurely_random();
-            let key = mac.add(&delta.multiply_bit(&bit));
+            let key = mac.gf_add(&delta.multiply_bit(&bit));
             vole_mac_vec.push(mac);
             vole_key_vec.push(key);
         }
@@ -190,14 +189,14 @@ fn test_functionality_pre_generating_random_tuples() {
         rand_r_vec.iter(), vole_mac_rand_r_vec.into_iter(), vole_key_rand_r_vec.into_iter()
     ) {
         println!("rand_r, vole_mac_rand_r, vole_key_rand_r: {:?} {:?} {:?}", rand_r, vole_mac_rand_r, vole_key_rand_r);
-        assert_eq!(vole_key_rand_r, &vole_mac_rand_r.add(&f_pre.delta_b.multiply_bit(rand_r)));
+        assert_eq!(vole_key_rand_r, &vole_mac_rand_r.gf_add(&f_pre.delta_b.multiply_bit(rand_r)));
     }
 
     for (rand_s, vole_mac_rand_s, vole_key_rand_s) in izip!(
         rand_s_vec.iter(), vole_mac_rand_s_vec.into_iter(), vole_key_rand_s_vec.into_iter()
     ) {
         println!("rand_s, vole_mac_rand_s, vole_key_rand_s: {:?} {:?} {:?}", rand_s, vole_mac_rand_s, vole_key_rand_s);
-        assert_eq!(vole_key_rand_s, &vole_mac_rand_s.add(&f_pre.delta_a.multiply_bit(rand_s)));
+        assert_eq!(vole_key_rand_s, &vole_mac_rand_s.gf_add(&f_pre.delta_a.multiply_bit(rand_s)));
     }
     println!("test_functionality_pre_generation passed");
 }

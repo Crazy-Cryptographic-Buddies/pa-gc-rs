@@ -1,0 +1,7 @@
+struct ProtocolCheckAND {
+    
+}
+
+impl ProtocolCheckAND {
+    
+}

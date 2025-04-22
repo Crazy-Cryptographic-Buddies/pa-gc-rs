@@ -1,6 +1,6 @@
 use std::ops::{Index, IndexMut};
-use crate::value_type::Zero;
-use crate::vec_type::{ZeroVec};
+use crate::value_type::{GFAdd, Zero};
+use crate::vec_type::{VecAdd, ZeroVec};
 
 pub struct GFVec<GF: Clone + Zero> {
     val: Vec<GF>
@@ -50,5 +50,15 @@ impl<'a, GF: Clone + Zero> IntoIterator for &'a GFVec<GF> {
 
     fn into_iter(self) -> Self::IntoIter {
         self.val.iter()
+    }
+}
+
+impl<GF: Clone + Zero + GFAdd> VecAdd for GFVec<GF> {
+    fn vec_add(&self, other: &Self) -> Self {
+        let mut res = Self::new();
+        for (lhs, rhs) in self.into_iter().zip(other.into_iter()) {
+            res.push(lhs.gf_add(rhs));
+        }
+        res
     }
 }

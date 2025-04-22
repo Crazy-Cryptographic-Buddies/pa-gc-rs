@@ -63,11 +63,11 @@ impl<GF: Clone + Zero + U8ForGF + GFAdd> AllInOneVCForVerifier<GF> {
         let mut voleith_key = GFVec::<GF>::zero_vec(self.message_len);
         for i in 0..1 << self.tau {
             if i != excluded_index {
-                let i_shifted = self.nabla.as_ref().unwrap().add(&GF::from_u8(i as u8));
+                let i_shifted = self.nabla.as_ref().unwrap().gf_add(&GF::from_u8(i as u8));
                 let message_i = &reconstructed_message_vec[i];
                 for j in 0..self.message_len {
                     if message_i[j] == 1 {
-                        voleith_key[j] = voleith_key[j].add(&i_shifted);
+                        voleith_key[j] = voleith_key[j].gf_add(&i_shifted);
                     }
                 }
             }

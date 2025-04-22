@@ -58,12 +58,12 @@ fn test_committing_and_reconstructing() {
             shifted_nabla = nabla.clone();
         }
         println!("mac + message * nabla, key, mac, msg: {:?}, {:?}, {:?}, {:?}",
-                 voleith_mac[j].add(&shifted_nabla),
+                 voleith_mac[j].gf_add(&shifted_nabla),
                  voleith_key[j],
                  voleith_mac[j], 
                  message[j]
         );
-        assert_eq!(voleith_key[j], voleith_mac[j].add(&shifted_nabla));
+        assert_eq!(voleith_key[j], voleith_mac[j].gf_add(&shifted_nabla));
     }
     println!("voleith correlation checking passed!");
 }
