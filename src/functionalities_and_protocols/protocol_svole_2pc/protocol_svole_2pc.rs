@@ -54,7 +54,7 @@ impl ProtocolSVOLE {
         assert_eq!(secret_voleith_mac_vec.len(), 0);
     }
     
-    pub fn commit_and_fix<GF: Clone + Zero + GFAdd + U8ForGF>(
+    pub fn commit_and_fix_bit_vec_and_mac_vec<GF: Clone + Zero + GFAdd + U8ForGF>(
         public_parameter: &PublicParameter,
         pa_secret_state: &mut ProverSecretState<GF>, pb_secret_state: &mut ProverSecretState<GF>
     ) -> (Vec<Hash>, Vec<Hash>) {
@@ -126,6 +126,6 @@ mod tests {
             &public_parameter,
             SeedU8x16::insecurely_random()
         );
-        ProtocolSVOLE::commit_and_fix(&public_parameter, &mut pa_secret_state, &mut pb_secret_state);
+        ProtocolSVOLE::commit_and_fix_bit_vec_and_mac_vec(&public_parameter, &mut pa_secret_state, &mut pb_secret_state);
     }
 }
