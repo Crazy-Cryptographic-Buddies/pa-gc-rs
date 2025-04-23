@@ -29,8 +29,8 @@ impl VerifierInProtocolSVOLE {
             public_parameter, nabla, decom
         );
         assert_eq!(reconstructed_com_hash, *prover_com_hash);
-        println!("reconstructed_com_hash: {:?}", reconstructed_com_hash);
-        println!("prover_com_hash:        {:?}", prover_com_hash);
+        println!("- prover_com_hash:        {:?}", prover_com_hash);
+        println!("- reconstructed_com_hash: {:?}", reconstructed_com_hash);
         voleith_key_vec
     }
 

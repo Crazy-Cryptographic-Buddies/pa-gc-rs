@@ -48,13 +48,14 @@
 
 #[cfg(test)]
 mod tests {
+    use itertools::izip;
     use rand::Rng;
     use crate::functionalities_and_protocols::inputs_and_parameters::prover_secret_state::ProverSecretState;
     use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_svole_2pc::prover_in_protocol_svole_2pc::ProverInProtocolSVOLE2PC;
     use crate::functionalities_and_protocols::protocol_svole_2pc::verifier_in_protocol_svole_2pc::VerifierInProtocolSvole2PC;
     use crate::value_type::gf2p8::GF2p8;
-    use crate::value_type::InsecureRandom;
+    use crate::value_type::{GFAdd, GFMultiplyingBit, InsecureRandom};
     use crate::value_type::seed_u8x16::SeedU8x16;
     use crate::vec_type::bit_vec::BitVec;
 
@@ -146,5 +147,145 @@ mod tests {
         let pb_voleith_key_tuple_rep = VerifierInProtocolSvole2PC::reconstruct_and_fix_voleith_key_vec(
             &public_parameter, &pb_com_hash_rep, &pb_masked_bit_tuple_rep, &nabla_a_rep, &pb_decom_rep
         );
+        
+        // test voleith correlations in the pa side
+        for repetition_id in 0..public_parameter.kappa {
+            let (
+                voleith_key_r_vec,
+                voleith_key_r_prime_vec,
+                voleith_key_tilde_a_vec,
+                voleith_key_tilde_b_vec,
+                voleith_key_tilde_c_vec
+            ) = &pa_voleith_key_tuple_rep[repetition_id];
+            
+            // test length of bit vectors
+            assert_eq!(pa_secret_state.r_bit_vec.as_ref().unwrap().len(), public_parameter.sum_big_ia_ib_iw);
+            assert_eq!(pa_secret_state.r_prime_bit_vec.as_ref().unwrap().len(), public_parameter.big_w);
+            assert_eq!(pa_secret_state.tilde_a_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
+            assert_eq!(pa_secret_state.tilde_b_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
+            assert_eq!(pa_secret_state.tilde_c_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
+            // test length of voleith mac vectors
+            assert_eq!(pa_secret_state.voleith_mac_r_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.sum_big_ia_ib_iw);
+            assert_eq!(pa_secret_state.voleith_mac_r_prime_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_w);
+            assert_eq!(pa_secret_state.voleith_mac_tilde_a_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_l);
+            assert_eq!(pa_secret_state.voleith_mac_tilde_b_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_l);
+            assert_eq!(pa_secret_state.voleith_mac_tilde_c_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_l);
+            // test length of voleith key vectors
+            assert_eq!(voleith_key_r_vec.len(), public_parameter.sum_big_ia_ib_iw);
+            assert_eq!(voleith_key_r_prime_vec.len(), public_parameter.big_w);
+            assert_eq!(voleith_key_tilde_a_vec.len(), public_parameter.big_l);
+            assert_eq!(voleith_key_tilde_b_vec.len(), public_parameter.big_l);
+            assert_eq!(voleith_key_tilde_c_vec.len(), public_parameter.big_l);
+            for (bit, mac, key) in izip!(
+                pa_secret_state.r_bit_vec.as_ref().unwrap().iter(), 
+                pa_secret_state.voleith_mac_r_vec_rep[repetition_id].as_ref().unwrap(), 
+                voleith_key_r_vec
+            ) {
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+            }
+            for (bit, mac, key) in izip!(
+                pa_secret_state.r_prime_bit_vec.as_ref().unwrap().iter(), 
+                pa_secret_state.voleith_mac_r_prime_vec_rep[repetition_id].as_ref().unwrap(), 
+                voleith_key_r_prime_vec
+            ) {
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+            }
+            for (bit, mac, key) in izip!(
+                pa_secret_state.tilde_a_bit_vec_rep.as_ref().unwrap()[repetition_id].iter(), 
+                pa_secret_state.voleith_mac_tilde_a_vec_rep[repetition_id].as_ref().unwrap(), 
+                voleith_key_tilde_a_vec
+            ) {
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+            }
+            for (bit, mac, key) in izip!(
+                pa_secret_state.tilde_b_bit_vec_rep.as_ref().unwrap()[repetition_id].iter(), 
+                pa_secret_state.voleith_mac_tilde_b_vec_rep[repetition_id].as_ref().unwrap(), 
+                voleith_key_tilde_b_vec
+            ) {
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+            }
+            for (bit, mac, key) in izip!(
+                pa_secret_state.tilde_c_bit_vec_rep.as_ref().unwrap()[repetition_id].iter(), 
+                pa_secret_state.voleith_mac_tilde_c_vec_rep[repetition_id].as_ref().unwrap(), 
+                voleith_key_tilde_c_vec
+            ) {
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+            }
+        }
+
+        // test voleith correlations in the pb side
+        for repetition_id in 0..public_parameter.kappa {
+            let (
+                voleith_key_r_vec,
+                voleith_key_r_prime_vec,
+                voleith_key_tilde_a_vec,
+                voleith_key_tilde_b_vec,
+                voleith_key_tilde_c_vec
+            ) = &pb_voleith_key_tuple_rep[repetition_id];
+
+            // test length of bit vectors
+            assert_eq!(pa_secret_state.r_bit_vec.as_ref().unwrap().len(), public_parameter.sum_big_ia_ib_iw);
+            assert_eq!(pa_secret_state.r_prime_bit_vec.as_ref().unwrap().len(), public_parameter.big_w);
+            assert_eq!(pa_secret_state.tilde_a_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
+            assert_eq!(pa_secret_state.tilde_b_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
+            assert_eq!(pa_secret_state.tilde_c_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
+            // test length of voleith mac vectors
+            assert_eq!(pa_secret_state.voleith_mac_r_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.sum_big_ia_ib_iw);
+            assert_eq!(pa_secret_state.voleith_mac_r_prime_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_w);
+            assert_eq!(pa_secret_state.voleith_mac_tilde_a_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_l);
+            assert_eq!(pa_secret_state.voleith_mac_tilde_b_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_l);
+            assert_eq!(pa_secret_state.voleith_mac_tilde_c_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_l);
+            // test length of voleith key vectors
+            assert_eq!(voleith_key_r_vec.len(), public_parameter.sum_big_ia_ib_iw);
+            assert_eq!(voleith_key_r_prime_vec.len(), public_parameter.big_w);
+            assert_eq!(voleith_key_tilde_a_vec.len(), public_parameter.big_l);
+            assert_eq!(voleith_key_tilde_b_vec.len(), public_parameter.big_l);
+            assert_eq!(voleith_key_tilde_c_vec.len(), public_parameter.big_l);
+            for (bit, mac, key) in izip!(
+                pb_secret_state.r_bit_vec.as_ref().unwrap().iter(), 
+                pb_secret_state.voleith_mac_r_vec_rep[repetition_id].as_ref().unwrap(), 
+                voleith_key_r_vec
+            ) {
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+            }
+            for (bit, mac, key) in izip!(
+                pb_secret_state.r_prime_bit_vec.as_ref().unwrap().iter(), 
+                pb_secret_state.voleith_mac_r_prime_vec_rep[repetition_id].as_ref().unwrap(), 
+                voleith_key_r_prime_vec
+            ) {
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+            }
+            for (bit, mac, key) in izip!(
+                pb_secret_state.tilde_a_bit_vec_rep.as_ref().unwrap()[repetition_id].iter(), 
+                pb_secret_state.voleith_mac_tilde_a_vec_rep[repetition_id].as_ref().unwrap(), 
+                voleith_key_tilde_a_vec
+            ) {
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+            }
+            for (bit, mac, key) in izip!(
+                pb_secret_state.tilde_b_bit_vec_rep.as_ref().unwrap()[repetition_id].iter(), 
+                pb_secret_state.voleith_mac_tilde_b_vec_rep[repetition_id].as_ref().unwrap(), 
+                voleith_key_tilde_b_vec
+            ) {
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+            }
+            for (bit, mac, key) in izip!(
+                pb_secret_state.tilde_c_bit_vec_rep.as_ref().unwrap()[repetition_id].iter(), 
+                pb_secret_state.voleith_mac_tilde_c_vec_rep[repetition_id].as_ref().unwrap(), 
+                voleith_key_tilde_c_vec
+            ) {
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+            }
+        }
     }
 }

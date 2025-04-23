@@ -48,7 +48,7 @@ impl VerifierInProtocolSvole2PC {
             ).vec_add(&hat_r_prime_bit_multiplying_nabla)
         };
 
-        let voleith_key_a_vec: GFVec<GF> = {
+        let voleith_key_tilde_a_vec: GFVec<GF> = {
             let mut hat_a_bit_multiplying_nabla: GFVec<GF> = GFVec::new();
             for i in 0..public_parameter.big_l {
                 hat_a_bit_multiplying_nabla.push(nabla_rep[repetition_id].multiply_bit(hat_a_bit_vec[i]));
@@ -58,7 +58,7 @@ impl VerifierInProtocolSvole2PC {
             ).vec_add(&hat_a_bit_multiplying_nabla)
         };
 
-        let voleith_key_b_vec: GFVec<GF> = {
+        let voleith_key_tilde_b_vec: GFVec<GF> = {
             let mut hat_b_bit_multiplying_nabla: GFVec<GF> = GFVec::new();
             for i in 0..public_parameter.big_l {
                 hat_b_bit_multiplying_nabla.push(nabla_rep[repetition_id].multiply_bit(hat_b_bit_vec[i]));
@@ -68,7 +68,7 @@ impl VerifierInProtocolSvole2PC {
             ).vec_add(&hat_b_bit_multiplying_nabla)
         };
 
-        let voleith_key_c_vec: GFVec<GF> = {
+        let voleith_key_tilde_c_vec: GFVec<GF> = {
             let mut hat_c_bit_multiplying_nabla: GFVec<GF> = GFVec::new();
             for i in 0..public_parameter.big_l {
                 hat_c_bit_multiplying_nabla.push(nabla_rep[repetition_id].multiply_bit(hat_c_bit_vec[i]));
@@ -80,7 +80,7 @@ impl VerifierInProtocolSvole2PC {
         
         assert_eq!(public_voleith_key_vec.len(), 0);
 
-        (voleith_key_r_vec, voleith_key_r_prime_vec, voleith_key_a_vec, voleith_key_b_vec, voleith_key_c_vec)
+        (voleith_key_r_vec, voleith_key_r_prime_vec, voleith_key_tilde_a_vec, voleith_key_tilde_b_vec, voleith_key_tilde_c_vec)
     }
     pub fn reconstruct_and_fix_voleith_key_vec<GF: Clone + Zero + GFAdd + U8ForGF + GFMultiplyingBit>(
         public_parameter: &PublicParameter, 
