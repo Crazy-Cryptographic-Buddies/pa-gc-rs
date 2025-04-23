@@ -1,5 +1,4 @@
 use bincode::{config, decode_from_slice, encode_to_vec, Decode, Encode};
-use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Encode, Decode, Eq, PartialEq)]
 struct MyStruct {

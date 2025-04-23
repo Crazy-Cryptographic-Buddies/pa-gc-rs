@@ -8,3 +8,7 @@ pub trait ZeroVec {
 pub trait VecAdd {
     fn vec_add(&self, other: &Self) -> Self;
 }
+
+pub trait Split {
+    fn split_off(&mut self, at: usize) -> Self;
+}

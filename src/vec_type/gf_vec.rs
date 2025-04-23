@@ -1,9 +1,9 @@
 use std::ops::{Index, IndexMut};
 use crate::value_type::{GFAdd, Zero};
-use crate::vec_type::{VecAdd, ZeroVec};
+use crate::vec_type::{Split, VecAdd, ZeroVec};
 
 #[derive(Clone)]
-pub struct GFVec<GF: Clone + Zero> {
+pub struct GFVec<GF> {
     val: Vec<GF>
 }
 
@@ -31,7 +31,7 @@ impl<GF: Clone + Zero> Index<usize> for GFVec<GF> {
     }
 }
 
-impl<GF: Clone + Zero> ZeroVec for GFVec<GF> {
+impl<GF: Zero + Clone> ZeroVec for GFVec<GF> {
     fn zero_vec(len: usize) -> GFVec<GF> {
         GFVec::<GF>{
             val: vec![GF::zero(); len]
@@ -39,13 +39,13 @@ impl<GF: Clone + Zero> ZeroVec for GFVec<GF> {
     }
 }
 
-impl<GF: Clone + Zero> IndexMut<usize> for GFVec<GF> {
+impl<GF: Zero + Clone> IndexMut<usize> for GFVec<GF> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.val[index]
     }
 }
 
-impl<'a, GF: Clone + Zero> IntoIterator for &'a GFVec<GF> {
+impl<'a, GF> IntoIterator for &'a GFVec<GF> {
     type Item = &'a GF;
     type IntoIter = std::slice::Iter<'a, GF>;
 
@@ -61,5 +61,13 @@ impl<GF: Clone + Zero + GFAdd> VecAdd for GFVec<GF> {
             res.push(lhs.gf_add(rhs));
         }
         res
+    }
+}
+
+impl<GF> Split for GFVec<GF> {
+    fn split_off(&mut self, at: usize) -> Self {
+        Self {
+            val: self.val.split_off(at)
+        }
     }
 }

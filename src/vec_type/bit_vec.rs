@@ -1,5 +1,5 @@
 use std::ops::{Index, IndexMut};
-use crate::vec_type::{VecAdd, ZeroVec};
+use crate::vec_type::{Split, VecAdd, ZeroVec};
 
 #[derive(Clone)]
 pub struct BitVec {
@@ -56,5 +56,13 @@ impl VecAdd for BitVec {
             res.push(*lhs ^ *rhs);
         }
         res
+    }
+}
+
+impl Split for BitVec {
+    fn split_off(&mut self, at: usize) -> Self {
+        Self {
+            val: self.val.split_off(at)
+        }
     }
 }
