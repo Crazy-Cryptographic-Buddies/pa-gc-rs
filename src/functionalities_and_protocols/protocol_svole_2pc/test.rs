@@ -133,6 +133,11 @@ mod tests {
             nabla_a_rep.push(GF2p8::insecurely_random());
             nabla_b_rep.push(GF2p8::insecurely_random());
         }
-        // ProtocolSVOLE2PC::commit_and_fix_bit_vec_and_mac_vec(&public_parameter, &mut pa_secret_state, &mut pb_secret_state);
+        
+        // open
+        let pa_decom_rep = ProverInProtocolSVOLE2PC::open(&public_parameter, &mut pa_secret_state, &nabla_b_rep);
+        let pb_decom_rep = ProverInProtocolSVOLE2PC::open(&public_parameter, &mut pb_secret_state, &nabla_a_rep);
+        
+        // reconstruct
     }
 }

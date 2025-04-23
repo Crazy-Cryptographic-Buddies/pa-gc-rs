@@ -3,6 +3,7 @@ use crate::functionalities_and_protocols::inputs_and_parameters::prover_secret_s
 use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::protocol_svole::prover_in_protocol_svole::ProverInProtocolSVOLE;
 use crate::value_type::{GFAdd, U8ForGF, Zero};
+use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 use crate::vec_type::Split;
@@ -78,5 +79,19 @@ impl ProverInProtocolSVOLE2PC {
             masked_bit_tuple_rep.push(masked_bit_tuple);
         }
         (com_hash_rep, masked_bit_tuple_rep)
+    }
+    
+    pub fn open<GF: Clone + GFAdd + U8ForGF + Zero>(public_parameter: &PublicParameter, 
+                                                    prover_secret_state: &mut ProverSecretState<GF>, 
+                                                    nabla_rep: &Vec<GF>
+    ) -> Vec<(SeedU8x16, Vec<SeedU8x16>)> {
+        let mut decom_rep: Vec<(SeedU8x16, Vec<SeedU8x16>)> = Vec::new();
+        for repetition_id in 0..public_parameter.kappa {
+            let decom = ProverInProtocolSVOLE::open(
+                public_parameter, repetition_id, prover_secret_state, &nabla_rep[repetition_id]
+            );
+            decom_rep.push(decom);       
+        }
+        decom_rep       
     }
 }
