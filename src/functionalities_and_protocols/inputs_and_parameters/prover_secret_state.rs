@@ -13,11 +13,11 @@ pub struct ProverSecretState<GF> {
     pub tilde_c_bit_vec_rep: Option<Vec<BitVec>>,
 
     // voleith macs
-    pub voleith_mac_r_bit_vec_rep: Vec<Option<GFVec<GF>>>,
-    pub voleith_mac_r_prime_bit_vec_rep: Vec<Option<GFVec<GF>>>,
-    pub voleith_mac_tilde_a_bit_vec_rep: Vec<Option<GFVec<GF>>>,
-    pub voleith_mac_tilde_b_bit_vec_rep: Vec<Option<GFVec<GF>>>,
-    pub voleith_mac_tilde_c_bit_vec_rep: Vec<Option<GFVec<GF>>>,
+    pub voleith_mac_r_vec_rep: Vec<Option<GFVec<GF>>>,
+    pub voleith_mac_r_prime_vec_rep: Vec<Option<GFVec<GF>>>,
+    pub voleith_mac_tilde_a_vec_rep: Vec<Option<GFVec<GF>>>,
+    pub voleith_mac_tilde_b_vec_rep: Vec<Option<GFVec<GF>>>,
+    pub voleith_mac_tilde_c_vec_rep: Vec<Option<GFVec<GF>>>,
 
     // random bits from PisVOLE
     pub prover_in_all_in_one_vc_rep: Vec<ProverInAllInOneVC>,
@@ -47,11 +47,11 @@ impl<GF: Clone> ProverSecretState<GF> {
             tilde_b_bit_vec_rep: None,
             tilde_c_bit_vec_rep: None,
 
-            voleith_mac_r_bit_vec_rep: vec![None; public_parameter.kappa],
-            voleith_mac_r_prime_bit_vec_rep: vec![None; public_parameter.kappa],
-            voleith_mac_tilde_a_bit_vec_rep: vec![None; public_parameter.kappa],
-            voleith_mac_tilde_b_bit_vec_rep: vec![None; public_parameter.kappa],
-            voleith_mac_tilde_c_bit_vec_rep: vec![None; public_parameter.kappa],
+            voleith_mac_r_vec_rep: vec![None; public_parameter.kappa],
+            voleith_mac_r_prime_vec_rep: vec![None; public_parameter.kappa],
+            voleith_mac_tilde_a_vec_rep: vec![None; public_parameter.kappa],
+            voleith_mac_tilde_b_vec_rep: vec![None; public_parameter.kappa],
+            voleith_mac_tilde_c_vec_rep: vec![None; public_parameter.kappa],
 
             prover_in_all_in_one_vc_rep,
             // bar_r_bit_vec_rep: vec![None; public_parameter.kappa],

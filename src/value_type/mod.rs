@@ -18,7 +18,7 @@ pub trait U8ForGF {
 }
 
 pub trait GFMultiplyingBit {
-    fn multiply_bit(&self, bit: &u8) -> Self;
+    fn multiply_bit(&self, bit: u8) -> Self;
 }
 
 pub trait GFAdd {

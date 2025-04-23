@@ -28,12 +28,12 @@ impl GFAdd for GF2p8 {
 }
 
 impl GFMultiplyingBit for GF2p8 {
-    fn multiply_bit(&self, bit: &u8) -> Self {
-        if *bit == 0 {
+    fn multiply_bit(&self, bit: u8) -> Self {
+        if bit == 0 {
             Self {
                 val: 0
             }
-        } else if *bit == 1 {
+        } else if bit == 1 {
             self.clone()
         } else {
             panic!("{:?} is not binary!", bit);

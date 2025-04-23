@@ -5,7 +5,7 @@ use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::value_type::{GFAdd, U8ForGF, Zero};
 use crate::vec_type::gf_vec::GFVec;
 
-pub(crate) struct VerifierInProtocolSVOLE {
+pub struct VerifierInProtocolSVOLE {
 }
 
 impl VerifierInProtocolSVOLE {
