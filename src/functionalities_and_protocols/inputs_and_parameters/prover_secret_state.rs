@@ -6,24 +6,26 @@ use crate::vec_type::gf_vec::GFVec;
 
 pub struct ProverSecretState<GF> {
     pub seed_for_generating_ggm_tree_rep: Vec<SeedU8x16>,
-    r_bit_vec: Option<BitVec>,
-    r_prime_bit_vec: Option<BitVec>,
-    tilde_a_bit_vec_rep: Option<Vec<BitVec>>,
-    tilde_b_bit_vec_rep: Option<Vec<BitVec>>,
-    tilde_c_bit_vec_rep: Option<Vec<BitVec>>,
+    pub r_bit_vec: Option<BitVec>,
+    pub r_prime_bit_vec: Option<BitVec>,
+    pub tilde_a_bit_vec_rep: Option<Vec<BitVec>>,
+    pub tilde_b_bit_vec_rep: Option<Vec<BitVec>>,
+    pub tilde_c_bit_vec_rep: Option<Vec<BitVec>>,
 
-    // random voleith from PisVOLE
+    // voleith macs
+    pub voleith_mac_r_bit_vec_rep: Vec<Option<GFVec<GF>>>,
+    pub voleith_mac_r_prime_bit_vec_rep: Vec<Option<GFVec<GF>>>,
+    pub voleith_mac_tilde_a_bit_vec_rep: Vec<Option<GFVec<GF>>>,
+    pub voleith_mac_tilde_b_bit_vec_rep: Vec<Option<GFVec<GF>>>,
+    pub voleith_mac_tilde_c_bit_vec_rep: Vec<Option<GFVec<GF>>>,
+
+    // random bits from PisVOLE
     pub prover_in_all_in_one_vc_rep: Vec<ProverInAllInOneVC>,
-    pub bar_r_bit_vec_rep: Vec<Option<BitVec>>,
-    pub bar_r_prime_bit_vec_rep: Vec<Option<BitVec>>,
-    pub bar_a_bit_vec_rep: Vec<Option<BitVec>>,
-    pub bar_b_bit_vec_rep: Vec<Option<BitVec>>,
-    pub bar_c_bit_vec_rep: Vec<Option<BitVec>>,
-    pub voleith_mac_bar_r_vec_rep: Vec<Option<GFVec<GF>>>,
-    pub voleith_mac_bar_r_prime_vec_rep: Vec<Option<GFVec<GF>>>,
-    pub voleith_mac_bar_a_vec_rep: Vec<Option<GFVec<GF>>>,
-    pub voleith_mac_bar_b_vec_rep: Vec<Option<GFVec<GF>>>,
-    pub voleith_mac_bar_c_vec_rep: Vec<Option<GFVec<GF>>>,
+    // pub bar_r_bit_vec_rep: Vec<Option<BitVec>>,
+    // pub bar_r_prime_bit_vec_rep: Vec<Option<BitVec>>,
+    // pub bar_a_bit_vec_rep: Vec<Option<BitVec>>,
+    // pub bar_b_bit_vec_rep: Vec<Option<BitVec>>,
+    // pub bar_c_bit_vec_rep: Vec<Option<BitVec>>,
 }
 
 impl<GF: Clone> ProverSecretState<GF> {
@@ -44,17 +46,19 @@ impl<GF: Clone> ProverSecretState<GF> {
             tilde_a_bit_vec_rep: None,
             tilde_b_bit_vec_rep: None,
             tilde_c_bit_vec_rep: None,
+
+            voleith_mac_r_bit_vec_rep: vec![None; public_parameter.kappa],
+            voleith_mac_r_prime_bit_vec_rep: vec![None; public_parameter.kappa],
+            voleith_mac_tilde_a_bit_vec_rep: vec![None; public_parameter.kappa],
+            voleith_mac_tilde_b_bit_vec_rep: vec![None; public_parameter.kappa],
+            voleith_mac_tilde_c_bit_vec_rep: vec![None; public_parameter.kappa],
+
             prover_in_all_in_one_vc_rep,
-            bar_r_bit_vec_rep: vec![None; public_parameter.kappa],
-            bar_r_prime_bit_vec_rep: vec![None; public_parameter.kappa],
-            bar_a_bit_vec_rep: vec![None; public_parameter.kappa],
-            bar_b_bit_vec_rep: vec![None; public_parameter.kappa],
-            bar_c_bit_vec_rep: vec![None; public_parameter.kappa],
-            voleith_mac_bar_r_vec_rep: vec![None; public_parameter.kappa],
-            voleith_mac_bar_r_prime_vec_rep: vec![None; public_parameter.kappa],
-            voleith_mac_bar_a_vec_rep: vec![None; public_parameter.kappa],
-            voleith_mac_bar_b_vec_rep: vec![None; public_parameter.kappa],
-            voleith_mac_bar_c_vec_rep: vec![None; public_parameter.kappa],       
+            // bar_r_bit_vec_rep: vec![None; public_parameter.kappa],
+            // bar_r_prime_bit_vec_rep: vec![None; public_parameter.kappa],
+            // bar_a_bit_vec_rep: vec![None; public_parameter.kappa],
+            // bar_b_bit_vec_rep: vec![None; public_parameter.kappa],
+            // bar_c_bit_vec_rep: vec![None; public_parameter.kappa],
         }
     }
 }

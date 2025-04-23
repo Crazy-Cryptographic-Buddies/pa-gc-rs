@@ -4,4 +4,3 @@ mod protocol_check_and;
 mod protocol_svole;
 mod inputs_and_parameters;
 pub mod all_in_one_vc;
-mod protocol_fix;

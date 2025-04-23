@@ -25,6 +25,14 @@ impl BitVec {
     pub fn iter(&self) -> std::slice::Iter<'_, u8> {
         self.val.iter()
     }
+    
+    pub fn xor_vec(&self, other: &Self) -> Self {
+        let mut res = Self::new();
+        for (lhs, rhs) in self.iter().zip(other.iter()) {
+            res.push(*lhs ^ *rhs);
+        }
+        res   
+    }
 }
 
 impl ZeroVec for BitVec {
