@@ -15,12 +15,12 @@ impl ProverInProtocolSVOLE {
         public_parameter: &PublicParameter,
         prover_in_all_in_one_vc: &mut ProverInAllInOneVC,
         prover_secret_seed_for_generating_ggm_tree: &SeedU8x16,
-        output_secret_message: &mut Option<BitVec>,
-        output_secret_voleith_mac: &mut Option<GFVec<GF>>
+        output_secret_bit_vec: &mut Option<BitVec>,
+        output_secret_voleith_mac_vec: &mut Option<GFVec<GF>>
     ) -> Hash {
         prover_in_all_in_one_vc.commit(
             public_parameter, prover_secret_seed_for_generating_ggm_tree, 
-            output_secret_message, output_secret_voleith_mac
+            output_secret_bit_vec, output_secret_voleith_mac_vec
         )
     }
 

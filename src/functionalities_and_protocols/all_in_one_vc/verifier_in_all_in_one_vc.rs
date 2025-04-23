@@ -1,7 +1,6 @@
 use blake3::Hash;
-use crate::functionalities_and_protocols::all_in_one_vc::generating_message_and_com_prg::GeneratingMessageAndComPRG;
+use crate::functionalities_and_protocols::all_in_one_vc::generating_bit_and_com_prg::GeneratingBitAndComPRG;
 use crate::functionalities_and_protocols::all_in_one_vc::hasher::hasher::Hasher;
-use crate::functionalities_and_protocols::all_in_one_vc::one_to_two_prg::OneToTwoPRG;
 use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
 use crate::value_type::{GFAdd, U8ForGF, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
@@ -22,9 +21,9 @@ impl VerifierInAllInOneVC {
     ) -> (Hash, GFVec<GF>) {
         let com_at_excluded_index = &decom.0;
         let seed_trace = &decom.1;
-        let generating_message_and_com_prg = GeneratingMessageAndComPRG::new(&public_parameter.one_to_two_prg);
+        let generating_bit_and_com_prg = GeneratingBitAndComPRG::new(&public_parameter.one_to_two_prg);
         let mut coms_at_leaves: Vec<SeedU8x16> = vec![SeedU8x16::zero(); 1 << public_parameter.tau];
-        let mut reconstructed_message_vec: Vec<BitVec> = vec![BitVec::zero_vec(public_parameter.big_n); 1 << public_parameter.tau];
+        let mut reconstructed_bit_vec_vec: Vec<BitVec> = vec![BitVec::zero_vec(public_parameter.big_n); 1 << public_parameter.tau];
         let excluded_index = nabla.get_u8() as usize;
         coms_at_leaves[excluded_index] = com_at_excluded_index.clone();
         for i in 0..public_parameter.tau {
@@ -39,11 +38,11 @@ impl VerifierInAllInOneVC {
             let subtree = public_parameter.one_to_two_prg.generate_ggm_tree(&seed_trace[i as usize], i);
             let mut index_in_subtree_leaves = (1 << i) - 1;
             for j in from_index..from_index + (1 << i) {
-                let (message, com) = generating_message_and_com_prg.generate(
+                let (bit_vec, com) = generating_bit_and_com_prg.generate(
                     &subtree[index_in_subtree_leaves], 
                     public_parameter.big_n
                 );
-                reconstructed_message_vec[j] = message;
+                reconstructed_bit_vec_vec[j] = bit_vec;
                 coms_at_leaves[j] = com;
                 index_in_subtree_leaves += 1;
             }
@@ -51,18 +50,18 @@ impl VerifierInAllInOneVC {
         let reconstructed_com_hash = Hasher::hash_all_coms(&coms_at_leaves);
 
         // now recover the key
-        let mut voleith_key = GFVec::<GF>::zero_vec(public_parameter.big_n);
+        let mut voleith_key_vec = GFVec::<GF>::zero_vec(public_parameter.big_n);
         for i in 0..1 << public_parameter.tau {
             if i != excluded_index {
                 let i_shifted = nabla.gf_add(&GF::from_u8(i as u8));
-                let message_i = &reconstructed_message_vec[i];
+                let bit_vec_i = &reconstructed_bit_vec_vec[i];
                 for j in 0..public_parameter.big_n {
-                    if message_i[j] == 1 {
-                        voleith_key[j] = voleith_key[j].gf_add(&i_shifted);
+                    if bit_vec_i[j] == 1 {
+                        voleith_key_vec[j] = voleith_key_vec[j].gf_add(&i_shifted);
                     }
                 }
             }
         }
-        (reconstructed_com_hash, voleith_key)
+        (reconstructed_com_hash, voleith_key_vec)
     }
 }

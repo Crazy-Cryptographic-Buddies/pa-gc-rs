@@ -29,16 +29,16 @@ fn test_committing_and_reconstructing() {
     // first generate in the prover side
     let mut prover_in_all_in_one_vc = ProverInAllInOneVC::new(&public_parameter);
     let prover_secret_seed_for_generating_ggm_tree = SeedU8x16::insecurely_random();
-    let mut prover_secret_message: Option<BitVec> = None;
-    let mut prover_secret_voleith_mac: Option<GFVec<GF2p8>> = None;
+    let mut prover_secret_bit_vec: Option<BitVec> = None;
+    let mut prover_secret_voleith_mac_vec: Option<GFVec<GF2p8>> = None;
     let com_hash = prover_in_all_in_one_vc.commit(
         &public_parameter, &prover_secret_seed_for_generating_ggm_tree, 
-        &mut prover_secret_message, &mut prover_secret_voleith_mac
+        &mut prover_secret_bit_vec, &mut prover_secret_voleith_mac_vec
     );
     let decom = prover_in_all_in_one_vc.open(&public_parameter, &nabla);
     
     // then generate in the verifier side
-    let (reconstructed_com_hash, voleith_key) = VerifierInAllInOneVC::reconstruct(
+    let (reconstructed_com_hash, voleith_key_vec) = VerifierInAllInOneVC::reconstruct(
         &public_parameter, &nabla, &decom
     );
     println!("com_hash_from_prover: {:?}", com_hash);
@@ -54,20 +54,20 @@ fn test_committing_and_reconstructing() {
     // );
     for j in 0..public_parameter.big_n {
         let mut shifted_nabla = GF2p8::zero();
-        if prover_secret_message.as_ref().unwrap()[j] == 1 {
+        if prover_secret_bit_vec.as_ref().unwrap()[j] == 1 {
             shifted_nabla = nabla.clone();
         }
-        println!("mac + message * nabla, key, mac, msg: {:?}, {:?}, {:?}, {:?}",
-                 prover_secret_voleith_mac.as_ref().unwrap()[j].gf_add(&shifted_nabla),
-                 voleith_key[j],
-                 prover_secret_voleith_mac.as_ref().unwrap()[j], 
-                 prover_secret_message.as_ref().unwrap()[j]
+        println!("mac + bit * nabla, key, mac, msg: {:?}, {:?}, {:?}, {:?}",
+                 prover_secret_voleith_mac_vec.as_ref().unwrap()[j].gf_add(&shifted_nabla),
+                 voleith_key_vec[j],
+                 prover_secret_voleith_mac_vec.as_ref().unwrap()[j], 
+                 prover_secret_bit_vec.as_ref().unwrap()[j]
         );
-        assert_eq!(voleith_key[j], prover_secret_voleith_mac.as_ref().unwrap()[j].gf_add(&shifted_nabla));
+        assert_eq!(voleith_key_vec[j], prover_secret_voleith_mac_vec.as_ref().unwrap()[j].gf_add(&shifted_nabla));
     }
-    println!("message_len, voleith_mac_len, voleith_key_len: {:?}, {:?}, {:?}", 
-             prover_secret_message.as_ref().unwrap().len(), 
-             prover_secret_voleith_mac.as_ref().unwrap().len(), voleith_key.len()
+    println!("bit_vec_len, voleith_mac_vec_len, voleith_key_vec_len: {:?}, {:?}, {:?}", 
+             prover_secret_bit_vec.as_ref().unwrap().len(), 
+             prover_secret_voleith_mac_vec.as_ref().unwrap().len(), voleith_key_vec.len()
     );
     println!("voleith correlation checking passed!");
 }
