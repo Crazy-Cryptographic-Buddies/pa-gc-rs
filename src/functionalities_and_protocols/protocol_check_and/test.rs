@@ -1,7 +1,6 @@
 #[cfg(test)]
 mod tests {
     use itertools::izip;
-    use rand::Rng;
     use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_check_and::prover_in_protocol_check_and::ProverInProtocolCheckAND;
     use crate::functionalities_and_protocols::protocol_check_and::verifier_in_protocol_check_and::VerifierInProtocolCheckAND;
@@ -11,7 +10,6 @@ mod tests {
     use crate::value_type::seed_u8x16::SeedU8x16;
     use crate::vec_type::bit_vec::BitVec;
     use crate::vec_type::gf_vec::GFVec;
-    use crate::value_type::Zero;
     use crate::vec_type::VecAddition;
 
     fn generate_random_bit_vec(len: usize) -> BitVec {
