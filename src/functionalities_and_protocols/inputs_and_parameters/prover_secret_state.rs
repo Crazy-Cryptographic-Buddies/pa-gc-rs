@@ -4,20 +4,24 @@ use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 
-pub struct ProverSecretState<GF> {
+pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
     pub seed_for_generating_ggm_tree_rep: Vec<SeedU8x16>,
     pub r_bit_vec: Option<BitVec>,
     pub r_prime_bit_vec: Option<BitVec>,
     pub tilde_a_bit_vec_rep: Option<Vec<BitVec>>,
     pub tilde_b_bit_vec_rep: Option<Vec<BitVec>>,
     pub tilde_c_bit_vec_rep: Option<Vec<BitVec>>,
+    
+    // vole macs
+    pub vole_mac_r_vec_rep: Option<GFVec<GFVOLE>>,
+    pub vole_mac_r_prime_vec_rep: Option<GFVec<GFVOLE>>,
 
     // voleith macs
-    pub voleith_mac_r_vec_rep: Vec<Option<GFVec<GF>>>,
-    pub voleith_mac_r_prime_vec_rep: Vec<Option<GFVec<GF>>>,
-    pub voleith_mac_tilde_a_vec_rep: Vec<Option<GFVec<GF>>>,
-    pub voleith_mac_tilde_b_vec_rep: Vec<Option<GFVec<GF>>>,
-    pub voleith_mac_tilde_c_vec_rep: Vec<Option<GFVec<GF>>>,
+    pub voleith_mac_r_vec_rep: Vec<Option<GFVec<GFVOLEitH>>>,
+    pub voleith_mac_r_prime_vec_rep: Vec<Option<GFVec<GFVOLEitH>>>,
+    pub voleith_mac_tilde_a_vec_rep: Vec<Option<GFVec<GFVOLEitH>>>,
+    pub voleith_mac_tilde_b_vec_rep: Vec<Option<GFVec<GFVOLEitH>>>,
+    pub voleith_mac_tilde_c_vec_rep: Vec<Option<GFVec<GFVOLEitH>>>,
 
     // random bits from PisVOLE
     pub prover_in_all_in_one_vc_rep: Vec<ProverInAllInOneVC>,
@@ -28,7 +32,7 @@ pub struct ProverSecretState<GF> {
     // pub bar_c_bit_vec_rep: Vec<Option<BitVec>>,
 }
 
-impl<GF: Clone> ProverSecretState<GF> {
+impl<GFVOLE, GFVOLEitH: Clone> ProverSecretState<GFVOLE, GFVOLEitH> {
     pub fn new(public_parameter: &PublicParameter, master_seed_for_generating_ggm_tree: SeedU8x16) -> Self {
         let mut seed_for_generating_ggm_tree_rep: Vec<SeedU8x16> = Vec::new();
         let mut prover_in_all_in_one_vc_rep: Vec<ProverInAllInOneVC> = Vec::new();
@@ -46,6 +50,9 @@ impl<GF: Clone> ProverSecretState<GF> {
             tilde_a_bit_vec_rep: None,
             tilde_b_bit_vec_rep: None,
             tilde_c_bit_vec_rep: None,
+            
+            vole_mac_r_vec_rep: None,
+            vole_mac_r_prime_vec_rep: None,
 
             voleith_mac_r_vec_rep: vec![None; public_parameter.kappa],
             voleith_mac_r_prime_vec_rep: vec![None; public_parameter.kappa],

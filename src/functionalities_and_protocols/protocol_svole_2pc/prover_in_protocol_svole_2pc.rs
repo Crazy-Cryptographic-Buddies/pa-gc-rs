@@ -13,12 +13,12 @@ pub struct ProverInProtocolSVOLE2PC {
 }
 
 impl ProverInProtocolSVOLE2PC {
-    fn distribute_bits_and_voleith_macs_to_state<GF: Clone + Zero>(
+    fn distribute_bits_and_voleith_macs_to_state<GFVOLE, GFVOLEitH: Clone + Zero>(
         public_parameter: &PublicParameter,
         repetition_id: usize,
         secret_bit_vec: &mut BitVec,
-        secret_voleith_mac_vec: &mut GFVec<GF>,
-        prover_secret_state: &mut ProverSecretState<GF>
+        secret_voleith_mac_vec: &mut GFVec<GFVOLEitH>,
+        prover_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>
     ) -> (BitVec, BitVec, BitVec, BitVec, BitVec) {
         // first mask the bits
         let hat_r_bit_vec = prover_secret_state.r_bit_vec.as_ref().unwrap().xor_vec(
@@ -59,14 +59,16 @@ impl ProverInProtocolSVOLE2PC {
         (hat_r_bit_vec, hat_r_prime_bit_vec, hat_a_bit_vec, hat_b_bit_vec, hat_c_bit_vec)
     }
 
-    pub fn commit_and_fix_bit_vec_and_mac_vec<GF: Clone + GFAdd + U8ForGF + Zero>(
-        public_parameter: &PublicParameter, prover_secret_state: &mut ProverSecretState<GF>
-    ) -> (Vec<Hash>, Vec<(BitVec, BitVec, BitVec, BitVec, BitVec)>) {
+    pub fn commit_and_fix_bit_vec_and_mac_vec<GFVOLE, GFVOLEitH>(
+        public_parameter: &PublicParameter, 
+        prover_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>
+    ) -> (Vec<Hash>, Vec<(BitVec, BitVec, BitVec, BitVec, BitVec)>) 
+    where GFVOLE: Clone + GFAdd + Zero, GFVOLEitH: Clone + Zero + GFAdd + U8ForGF {
         let mut com_hash_rep: Vec<Hash> = Vec::new();
         let mut masked_bit_tuple_rep: Vec<(BitVec, BitVec, BitVec, BitVec, BitVec)> = Vec::new();
         for repetition_id in 0..public_parameter.kappa {
             let mut secret_bit_vec: Option<BitVec> = None;
-            let mut secret_voleith_mac_vec: Option<GFVec<GF>> = None;
+            let mut secret_voleith_mac_vec: Option<GFVec<GFVOLEitH>> = None;
             let com_hash = ProverInProtocolSVOLE::commit(
                 public_parameter, repetition_id,
                 prover_secret_state, &mut secret_bit_vec, &mut secret_voleith_mac_vec
@@ -81,10 +83,12 @@ impl ProverInProtocolSVOLE2PC {
         (com_hash_rep, masked_bit_tuple_rep)
     }
     
-    pub fn open<GF: Clone + GFAdd + U8ForGF + Zero>(public_parameter: &PublicParameter, 
-                                                    prover_secret_state: &mut ProverSecretState<GF>, 
-                                                    nabla_rep: &Vec<GF>
-    ) -> Vec<(SeedU8x16, Vec<SeedU8x16>)> {
+    pub fn open<GFVOLE, GFVOLEitH>(
+        public_parameter: &PublicParameter, 
+        prover_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>, 
+        nabla_rep: &Vec<GFVOLEitH>
+    ) -> Vec<(SeedU8x16, Vec<SeedU8x16>)>
+    where GFVOLEitH: U8ForGF {
         let mut decom_rep: Vec<(SeedU8x16, Vec<SeedU8x16>)> = Vec::new();
         for repetition_id in 0..public_parameter.kappa {
             let decom = ProverInProtocolSVOLE::open(

@@ -1,3 +1,2 @@
-mod protocol_check_and;
-mod pa_in_protocol_check_and;
-mod pb_in_protocol_check_and;
+mod test;
+mod prover_in_protocol_check_and;

@@ -1,51 +1,3 @@
-// struct ProtocolSVOLE2PC;
-// 
-// impl ProtocolSVOLE2PC {
-//     
-//     // pub fn commit_and_fix_bit_vec_and_voleith_mac_vec<GF: Clone + Zero + GFAdd + U8ForGF>(
-//     //     public_parameter: &PublicParameter,
-//     //     pa_secret_state: &mut ProverSecretState<GF>, pb_secret_state: &mut ProverSecretState<GF>
-//     // ) -> (
-//     //     (Vec<Hash>, Vec<(BitVec, BitVec, BitVec, BitVec, BitVec)>),
-//     //     (Vec<Hash>, Vec<(BitVec, BitVec, BitVec, BitVec, BitVec)>)
-//     // ) {
-//     //     // pa call svole kappa times
-//     //     let (pa_com_hash_rep, pa_masked_bit_tuple_rep) = Self::prover_commit_and_fix_bit_vec_and_mac_vec(
-//     //         public_parameter, pa_secret_state
-//     //     );
-//     //     let (pb_com_hash_rep, pb_masked_bit_tuple_rep) = Self::prover_commit_and_fix_bit_vec_and_mac_vec(
-//     //         public_parameter, pb_secret_state
-//     //     );
-//     //     
-//     //     (
-//     //         (pa_com_hash_rep, pa_masked_bit_tuple_rep),
-//     //         (pb_com_hash_rep, pb_masked_bit_tuple_rep)
-//     //     )
-//     // }
-// 
-//     fn verifier_open_and_reconstruct_voleith_key_vec<GF>() {
-//         
-//     }
-//     
-//     fn prover_open_decom() {
-//         
-//     }
-// 
-//     pub fn open_and_reconstruct_voleith_key_vec<GF>(
-//         public_parameter: &PublicParameter,
-//         nabla_a_rep: &Vec<GF>, nabla_b_rep: &Vec<GF>,
-//         public_message_from_commitment_and_bit_fixing: &(
-//             (Vec<Hash>, Vec<(BitVec, BitVec, BitVec, BitVec, BitVec)>),
-//             (Vec<Hash>, Vec<(BitVec, BitVec, BitVec, BitVec, BitVec)>)
-//         )
-//     ) {
-//         let (
-//             (pa_com_hash_rep, pa_masked_bit_tuple_rep),
-//             (pb_com_hash_rep, pb_masked_bit_tuple_rep)
-//         ) = public_message_from_commitment_and_bit_fixing;
-//     }
-// }
-
 #[cfg(test)]
 mod tests {
     use itertools::izip;
@@ -54,12 +6,13 @@ mod tests {
     use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_svole_2pc::prover_in_protocol_svole_2pc::ProverInProtocolSVOLE2PC;
     use crate::functionalities_and_protocols::protocol_svole_2pc::verifier_in_protocol_svole_2pc::VerifierInProtocolSvole2PC;
-    use crate::value_type::gf2p8::GF2p8;
+    use crate::value_type::{gf2p8::GF2p8};
     use crate::value_type::{GFAdd, GFMultiplyingBit, InsecureRandom};
+    use crate::value_type::gf2p256::GF2p256;
     use crate::value_type::seed_u8x16::SeedU8x16;
     use crate::vec_type::bit_vec::BitVec;
 
-    fn sample_secret_bit_vecs(public_parameter: &PublicParameter, prover_secret_state: &mut ProverSecretState<GF2p8>) {
+    fn sample_secret_bit_vecs(public_parameter: &PublicParameter, prover_secret_state: &mut ProverSecretState<GF2p256, GF2p8>) {
         let mut rng = rand::rng();
         prover_secret_state.r_bit_vec = Some(BitVec::new());
         for _ in 0..public_parameter.sum_big_ia_ib_iw {
@@ -103,11 +56,11 @@ mod tests {
             40,
             41
         );
-        let mut pa_secret_state = ProverSecretState::<GF2p8>::new(
+        let mut pa_secret_state = ProverSecretState::<GF2p256, GF2p8>::new(
             &public_parameter,
             SeedU8x16::insecurely_random()
         );
-        let mut pb_secret_state = ProverSecretState::<GF2p8>::new(
+        let mut pb_secret_state = ProverSecretState::<GF2p256, GF2p8>::new(
             &public_parameter,
             SeedU8x16::insecurely_random()
         );

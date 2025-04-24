@@ -1,14 +1,3 @@
-use blake3::Hash;
-use crate::functionalities_and_protocols::all_in_one_vc::prover_in_all_in_one_vc::ProverInAllInOneVC;
-use crate::functionalities_and_protocols::all_in_one_vc::verifier_in_all_in_one_vc::VerifierInAllInOneVC;
-use crate::functionalities_and_protocols::inputs_and_parameters::prover_secret_state::ProverSecretState;
-use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
-use crate::functionalities_and_protocols::protocol_svole::prover_in_protocol_svole::ProverInProtocolSVOLE;
-use crate::value_type::{GFAdd, U8ForGF, Zero};
-use crate::value_type::seed_u8x16::SeedU8x16;
-use crate::vec_type::bit_vec::BitVec;
-use crate::vec_type::gf_vec::GFVec;
-
 // pub struct ProtocolSVOLE {
 // }
 
@@ -57,11 +46,11 @@ use crate::vec_type::gf_vec::GFVec;
 
 #[cfg(test)]
 mod tests {
-    use crate::functionalities_and_protocols::all_in_one_vc::verifier_in_all_in_one_vc::VerifierInAllInOneVC;
     use crate::functionalities_and_protocols::inputs_and_parameters::prover_secret_state::ProverSecretState;
     use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_svole::prover_in_protocol_svole::ProverInProtocolSVOLE;
     use crate::functionalities_and_protocols::protocol_svole::verifier_in_protocol_svole::VerifierInProtocolSVOLE;
+    use crate::value_type::gf2p256::GF2p256;
     use crate::value_type::gf2p8::GF2p8;
     use crate::value_type::GFAdd;
     use crate::value_type::seed_u8x16::SeedU8x16;
@@ -82,7 +71,7 @@ mod tests {
             20,
             30,
         );
-        let mut prover_secret_state = ProverSecretState::<GF2p8>::new(
+        let mut prover_secret_state = ProverSecretState::<GF2p256, GF2p8>::new(
             &public_parameter,
             SeedU8x16::insecurely_random(),
         );
