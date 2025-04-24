@@ -41,6 +41,10 @@ impl<GF: Clone + Zero> GFVec<GF> {
             ).collect()
         }
     }
+    
+    pub fn iter(&self) -> std::slice::Iter<GF> {
+        self.val.iter()
+    }
 }
 
 impl<GF: Clone + Zero> Index<usize> for GFVec<GF> {
@@ -62,15 +66,6 @@ impl<GF: Zero + Clone> ZeroVec for GFVec<GF> {
 impl<GF: Zero + Clone> IndexMut<usize> for GFVec<GF> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.val[index]
-    }
-}
-
-impl<'a, GF> IntoIterator for &'a GFVec<GF> {
-    type Item = &'a GF;
-    type IntoIter = std::slice::Iter<'a, GF>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.val.iter()
     }
 }
 

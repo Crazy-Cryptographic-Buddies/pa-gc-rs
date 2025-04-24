@@ -14,6 +14,12 @@ impl BitVec {
         }
     }
     
+    pub fn from_vec(val: Vec<u8>) -> Self {
+        Self {
+            val
+        }
+    }
+    
     pub fn push(&mut self, value: u8) {
         self.val.push(value);
     }
@@ -22,7 +28,7 @@ impl BitVec {
         self.val.len()
     }
 
-    pub fn iter(&self) -> std::slice::Iter<'_, u8> {
+    pub fn iter(&self) -> std::slice::Iter<u8> {
         self.val.iter()
     }
     

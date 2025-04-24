@@ -5,7 +5,7 @@ use std::io::{BufRead, BufReader};
 use std::path::Path;
 use rand::Rng;
 use crate::comm_types_and_constants::{GateType};
-use crate::utils::conversion::Conversion;
+use crate::util::conversion::Conversion;
 
 struct BristolFashionAdaptor {
     num_wires: usize,
