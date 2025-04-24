@@ -1,6 +1,6 @@
 use blake3::Hash;
 use rand::Rng;
-use crate::value_type::{GFAdd, GFMultiplyingBit, HashDigestToGF, InsecureRandom, U8ForGF, Zero};
+use crate::value_type::{GFAddition, GFMultiplyingBit, HashDigestToGF, InsecureRandom, U8ForGF, Zero};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GF2p8 {
@@ -19,7 +19,7 @@ impl U8ForGF for GF2p8 {
     }
 }
 
-impl GFAdd for GF2p8 {
+impl GFAddition for GF2p8 {
     fn gf_add(&self, rhs: &Self) -> Self {
         Self {
             val: self.val ^ rhs.val

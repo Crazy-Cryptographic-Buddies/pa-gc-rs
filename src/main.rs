@@ -3,7 +3,7 @@ use rand::Rng;
 use pa_gc_rs::comm_types_and_constants::SEED_BYTE_LEN;
 use pa_gc_rs::value_type::seed_u8x16::SeedU8x16;
 use pa_gc_rs::value_type::{
-    Zero, InsecureRandom, GFAdd
+    Zero, InsecureRandom, GFAddition
 };
 use pa_gc_rs::value_type::gf2p8::GF2p8;
 

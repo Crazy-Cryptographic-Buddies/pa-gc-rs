@@ -1,5 +1,5 @@
 use std::ops::{Index, IndexMut};
-use crate::vec_type::{Split, VecAdd, ZeroVec};
+use crate::vec_type::{Split, VecAddition, ZeroVec};
 
 #[derive(Clone)]
 pub struct BitVec {
@@ -58,7 +58,7 @@ impl IndexMut<usize> for BitVec {
     }
 }
 
-impl VecAdd for BitVec {
+impl VecAddition for BitVec {
     fn vec_add(&self, other: &Self) -> Self {
         assert_eq!(self.len(), other.len());
         Self {

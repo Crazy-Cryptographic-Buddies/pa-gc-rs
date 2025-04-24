@@ -1,9 +1,9 @@
 use std::ops::{Index, IndexMut};
-use crate::value_type::{GFAdd, Zero};
-use crate::vec_type::{Split, VecAdd, ZeroVec};
+use crate::value_type::{GFAddition, Zero};
+use crate::vec_type::{Split, VecAddition, ZeroVec};
 use crate::vec_type::bit_vec::BitVec;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct GFVec<GF> {
     val: Vec<GF>
 }
@@ -12,6 +12,12 @@ impl<GF: Clone + Zero> GFVec<GF> {
     pub fn new() -> Self {
         Self {
            val: Vec::<GF>::new()
+        }
+    }
+    
+    pub fn from_vec(val: Vec<GF>) -> Self {
+        Self {
+            val
         }
     }
     
@@ -68,7 +74,7 @@ impl<'a, GF> IntoIterator for &'a GFVec<GF> {
     }
 }
 
-impl<GF: Clone + Zero + GFAdd> VecAdd for GFVec<GF> {
+impl<GF: Clone + Zero + GFAddition> VecAddition for GFVec<GF> {
     fn vec_add(&self, other: &Self) -> Self {
         assert_eq!(self.len(), other.len());
         Self {

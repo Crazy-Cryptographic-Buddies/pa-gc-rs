@@ -5,7 +5,7 @@ pub trait ZeroVec {
     fn zero_vec(len: usize) -> Self;
 }
 
-pub trait VecAdd {
+pub trait VecAddition {
     fn vec_add(&self, other: &Self) -> Self;
 }
 

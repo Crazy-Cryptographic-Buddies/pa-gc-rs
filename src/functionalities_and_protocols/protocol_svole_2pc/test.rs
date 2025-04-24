@@ -7,7 +7,7 @@ mod tests {
     use crate::functionalities_and_protocols::protocol_svole_2pc::prover_in_protocol_svole_2pc::ProverInProtocolSVOLE2PC;
     use crate::functionalities_and_protocols::protocol_svole_2pc::verifier_in_protocol_svole_2pc::VerifierInProtocolSvole2PC;
     use crate::value_type::{gf2p8::GF2p8};
-    use crate::value_type::{GFAdd, GFMultiplyingBit, InsecureRandom};
+    use crate::value_type::{GFAddition, GFMultiplyingBit, InsecureRandom};
     use crate::value_type::gf2p256::GF2p256;
     use crate::value_type::seed_u8x16::SeedU8x16;
     use crate::vec_type::bit_vec::BitVec;

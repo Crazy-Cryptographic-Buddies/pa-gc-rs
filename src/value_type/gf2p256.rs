@@ -1,5 +1,5 @@
 use rand::Rng;
-use crate::value_type::{GFAdd, GFMultiplyingBit, InsecureRandom, Zero};
+use crate::value_type::{GFAddition, GFMultiplyingBit, InsecureRandom, Zero};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GF2p256 {
@@ -18,7 +18,7 @@ impl Zero for GF2p256 {
     }
 }
 
-impl GFAdd for GF2p256 {
+impl GFAddition for GF2p256 {
     fn gf_add(&self, rhs: &Self) -> Self {
         Self {
             val: (

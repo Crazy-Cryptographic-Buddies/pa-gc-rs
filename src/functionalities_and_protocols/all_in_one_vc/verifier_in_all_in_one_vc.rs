@@ -2,7 +2,7 @@ use blake3::Hash;
 use crate::functionalities_and_protocols::all_in_one_vc::generating_bit_and_com_prg::GeneratingBitAndComPRG;
 use crate::functionalities_and_protocols::all_in_one_vc::hasher::hasher::Hasher;
 use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
-use crate::value_type::{GFAdd, U8ForGF, Zero};
+use crate::value_type::{GFAddition, U8ForGF, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::{
     bit_vec::BitVec,
@@ -15,7 +15,7 @@ pub struct VerifierInAllInOneVC {
 
 impl VerifierInAllInOneVC {
     
-    pub fn reconstruct<GFVOLEitH: U8ForGF + Clone + Zero + GFAdd>(
+    pub fn reconstruct<GFVOLEitH: U8ForGF + Clone + Zero + GFAddition>(
         public_parameter: &PublicParameter, 
         nabla: &GFVOLEitH, decom: &(SeedU8x16, Vec<SeedU8x16>)
     ) -> (Hash, GFVec<GFVOLEitH>) {

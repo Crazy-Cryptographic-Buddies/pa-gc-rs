@@ -21,7 +21,7 @@ pub trait GFMultiplyingBit {
     fn multiply_bit(&self, bit: u8) -> Self;
 }
 
-pub trait GFAdd {
+pub trait GFAddition {
     fn gf_add(&self, rhs: &Self) -> Self;
 }
 

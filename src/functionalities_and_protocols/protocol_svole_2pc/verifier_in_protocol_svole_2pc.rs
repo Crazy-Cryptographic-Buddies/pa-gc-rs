@@ -2,17 +2,17 @@ use blake3::Hash;
 use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::protocol_svole::verifier_in_protocol_svole::VerifierInProtocolSVOLE;
 use crate::value_type::seed_u8x16::SeedU8x16;
-use crate::value_type::{GFAdd, GFMultiplyingBit, U8ForGF, Zero};
+use crate::value_type::{GFAddition, GFMultiplyingBit, U8ForGF, Zero};
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 use crate::vec_type::Split;
-use crate::vec_type::VecAdd;
+use crate::vec_type::VecAddition;
 
 pub struct VerifierInProtocolSvole2PC;
 
 impl VerifierInProtocolSvole2PC {
     
-    fn distribute_bits_and_voleith_macs_to_state<GFVOLEitH: Clone + Zero + GFMultiplyingBit + GFAdd>(
+    fn distribute_bits_and_voleith_macs_to_state<GFVOLEitH: Clone + Zero + GFMultiplyingBit + GFAddition>(
         public_parameter: &PublicParameter,
         repetition_id: usize,
         nabla_rep: &Vec<GFVOLEitH>,
@@ -82,7 +82,7 @@ impl VerifierInProtocolSvole2PC {
 
         (voleith_key_r_vec, voleith_key_r_prime_vec, voleith_key_tilde_a_vec, voleith_key_tilde_b_vec, voleith_key_tilde_c_vec)
     }
-    pub fn reconstruct_and_fix_voleith_key_vec<GFVOLEitH: Clone + Zero + GFAdd + U8ForGF + GFMultiplyingBit>(
+    pub fn reconstruct_and_fix_voleith_key_vec<GFVOLEitH: Clone + Zero + GFAddition + U8ForGF + GFMultiplyingBit>(
         public_parameter: &PublicParameter, 
         prover_com_hash_rep: &Vec<Hash>,
         prover_masked_bit_tuple_rep: &Vec<(BitVec, BitVec, BitVec, BitVec, BitVec)>,

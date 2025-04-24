@@ -7,7 +7,7 @@ mod tests {
     use crate::value_type::seed_u8x16::SeedU8x16;
     use crate::vec_type::bit_vec::BitVec;
     use crate::vec_type::gf_vec::GFVec;
-    use crate::value_type::{GFAdd, InsecureRandom};
+    use crate::value_type::{GFAddition, InsecureRandom};
     use crate::value_type::Zero;
 
     #[test]
