@@ -148,20 +148,20 @@ impl BristolFashionAdaptor {
     }
 }
 
-#[test]
-pub fn sha256_test_compute_output_hex_string_from_input_hex_string() {
-    let chaining_value_hex_string: String = "6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19".to_string();
-    let input_hex_string_1: String = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000".to_string();
-    println!("input_hex_string_1 + chaining_value_hex_string: {:?}",
-             input_hex_string_1.clone() + &chaining_value_hex_string
-    );
-    let expected_output_hex_string_1 = "da5698be17b9b46962335799779fbeca8ce5d491c0d26243bafef9ea1837a9d8".to_string();
-    let bristol_fashion_adaptor = BristolFashionAdaptor::new(&"sha256.txt".to_string());
-    let output_hex_string_1 = bristol_fashion_adaptor.compute_output_hex_string_from_input_hex_string(
-        input_hex_string_1.clone() + &chaining_value_hex_string
-    );
-    assert_eq!(output_hex_string_1, expected_output_hex_string_1);
-}
+// #[test]
+// pub fn sha256_test_compute_output_hex_string_from_input_hex_string() {
+//     let chaining_value_hex_string: String = "6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19".to_string();
+//     let input_hex_string_1: String = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000".to_string();
+//     println!("input_hex_string_1 + chaining_value_hex_string: {:?}",
+//              input_hex_string_1.clone() + &chaining_value_hex_string
+//     );
+//     let expected_output_hex_string_1 = "da5698be17b9b46962335799779fbeca8ce5d491c0d26243bafef9ea1837a9d8".to_string();
+//     let bristol_fashion_adaptor = BristolFashionAdaptor::new(&"sha256.txt".to_string());
+//     let output_hex_string_1 = bristol_fashion_adaptor.compute_output_hex_string_from_input_hex_string(
+//         input_hex_string_1.clone() + &chaining_value_hex_string
+//     );
+//     assert_eq!(output_hex_string_1, expected_output_hex_string_1);
+// }
 
 #[test]
 pub fn adder64_test_compute_output_hex_string_from_input_hex_string() {

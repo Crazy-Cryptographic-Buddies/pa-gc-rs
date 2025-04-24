@@ -7,7 +7,7 @@ use std::path::Path;
 #[test]
 fn test_string_read_write() {
     println!("Hello, world!");
-    let input_file_name = "test/test_string_read.txt";
+    let input_file_name = "src/test/test_string_read.txt";
     let input_file = File::open(input_file_name).unwrap();
     let mut reader = io::BufReader::new(&input_file);
     let mut line = String::new();

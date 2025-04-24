@@ -1,0 +1,5 @@
+struct VerifierInProtocolCheckAND;
+
+impl VerifierInProtocolCheckAND {
+    
+}

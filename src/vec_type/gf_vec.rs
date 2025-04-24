@@ -1,6 +1,7 @@
 use std::ops::{Index, IndexMut};
 use crate::value_type::{GFAdd, Zero};
 use crate::vec_type::{Split, VecAdd, ZeroVec};
+use crate::vec_type::bit_vec::BitVec;
 
 #[derive(Clone)]
 pub struct GFVec<GF> {
@@ -20,6 +21,19 @@ impl<GF: Clone + Zero> GFVec<GF> {
     
     pub fn len(&self) -> usize {
         self.val.len()
+    }
+
+    pub fn entry_wise_multiply_bit_vec(&self, other: &BitVec) -> Self {
+        assert_eq!(self.len(), other.len());
+        Self {
+            val: self.val.iter().zip(other.iter()).map(
+                |(lhs, rhs)| if *rhs == 1u8 {
+                    lhs.clone()
+                } else {
+                    GF::zero()
+                }
+            ).collect()
+        }
     }
 }
 
@@ -56,6 +70,7 @@ impl<'a, GF> IntoIterator for &'a GFVec<GF> {
 
 impl<GF: Clone + Zero + GFAdd> VecAdd for GFVec<GF> {
     fn vec_add(&self, other: &Self) -> Self {
+        assert_eq!(self.len(), other.len());
         Self {
             val: self.val.iter().zip(other.val.iter()).map(
                 |(lhs, rhs)| lhs.gf_add(rhs)

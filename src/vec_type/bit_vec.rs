@@ -26,7 +26,8 @@ impl BitVec {
         self.val.iter()
     }
     
-    pub fn entry_wise_mult(&self, other: &Self) -> Self {
+    pub fn entry_wise_multiply(&self, other: &Self) -> Self {
+        assert_eq!(self.len(), other.len());
         Self {
             val: self.iter().zip(other.iter()).map(
                 |(lhs, rhs)| *lhs & *rhs
@@ -59,6 +60,7 @@ impl IndexMut<usize> for BitVec {
 
 impl VecAdd for BitVec {
     fn vec_add(&self, other: &Self) -> Self {
+        assert_eq!(self.len(), other.len());
         Self {
             val: self.iter().zip(other.iter()).map(
                 |(lhs, rhs)| *lhs ^ *rhs
