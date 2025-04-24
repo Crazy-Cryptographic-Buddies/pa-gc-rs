@@ -15,10 +15,10 @@ pub struct VerifierInAllInOneVC {
 
 impl VerifierInAllInOneVC {
     
-    pub fn reconstruct<GF: U8ForGF + Clone + Zero + GFAdd>(
+    pub fn reconstruct<GFVOLEitH: U8ForGF + Clone + Zero + GFAdd>(
         public_parameter: &PublicParameter, 
-        nabla: &GF, decom: &(SeedU8x16, Vec<SeedU8x16>)
-    ) -> (Hash, GFVec<GF>) {
+        nabla: &GFVOLEitH, decom: &(SeedU8x16, Vec<SeedU8x16>)
+    ) -> (Hash, GFVec<GFVOLEitH>) {
         let com_at_excluded_index = &decom.0;
         let seed_trace = &decom.1;
         let generating_bit_and_com_prg = GeneratingBitAndComPRG::new(&public_parameter.one_to_two_prg);
@@ -50,10 +50,10 @@ impl VerifierInAllInOneVC {
         let reconstructed_com_hash = Hasher::hash_all_coms(&coms_at_leaves);
 
         // now recover the key
-        let mut voleith_key_vec = GFVec::<GF>::zero_vec(public_parameter.big_n);
+        let mut voleith_key_vec = GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_n);
         for i in 0..1 << public_parameter.tau {
             if i != excluded_index {
-                let i_shifted = nabla.gf_add(&GF::from_u8(i as u8));
+                let i_shifted = nabla.gf_add(&GFVOLEitH::from_u8(i as u8));
                 let bit_vec_i = &reconstructed_bit_vec_vec[i];
                 for j in 0..public_parameter.big_n {
                     if bit_vec_i[j] == 1 {

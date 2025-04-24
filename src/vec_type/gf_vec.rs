@@ -56,11 +56,11 @@ impl<'a, GF> IntoIterator for &'a GFVec<GF> {
 
 impl<GF: Clone + Zero + GFAdd> VecAdd for GFVec<GF> {
     fn vec_add(&self, other: &Self) -> Self {
-        let mut res = Self::new();
-        for (lhs, rhs) in self.into_iter().zip(other.into_iter()) {
-            res.push(lhs.gf_add(rhs));
+        Self {
+            val: self.val.iter().zip(other.val.iter()).map(
+                |(lhs, rhs)| lhs.gf_add(rhs)
+            ).collect()
         }
-        res
     }
 }
 

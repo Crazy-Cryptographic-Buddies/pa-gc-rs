@@ -19,12 +19,12 @@ impl VerifierInProtocolSVOLE {
     //     GF::from_hash_digest(&hasher.finalize())
     // }
 
-    pub fn reconstruct<GF: Clone + GFAdd + U8ForGF + Zero>(
+    pub fn reconstruct<GFVOLEitH: Clone + GFAdd + U8ForGF + Zero>(
         public_parameter: &PublicParameter,
         prover_com_hash: &Hash,
-        nabla: &GF,
+        nabla: &GFVOLEitH,
         decom: &(SeedU8x16, Vec<SeedU8x16>)
-    ) -> GFVec<GF> {
+    ) -> GFVec<GFVOLEitH> {
         let (reconstructed_com_hash, voleith_key_vec) = VerifierInAllInOneVC::reconstruct(
             public_parameter, nabla, decom
         );

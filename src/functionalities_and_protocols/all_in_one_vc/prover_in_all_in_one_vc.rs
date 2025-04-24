@@ -31,10 +31,10 @@ impl ProverInAllInOneVC {
         }
     }
 
-    pub fn commit<GF: Clone + Zero + U8ForGF + GFAdd>(
+    pub fn commit<GFVOLEitH: Clone + Zero + U8ForGF + GFAdd>(
         &mut self, public_parameter: &PublicParameter, 
         prover_secret_seed_for_generating_ggm_tree: &SeedU8x16,
-        output_secret_bit_vec: &mut Option<BitVec>, output_secret_voleith_mac_vec: &mut Option<GFVec<GF>>
+        output_secret_bit_vec: &mut Option<BitVec>, output_secret_voleith_mac_vec: &mut Option<GFVec<GFVOLEitH>>
     ) -> Hash {
         let tree: Vec<SeedU8x16> = public_parameter.one_to_two_prg.generate_ggm_tree(
             prover_secret_seed_for_generating_ggm_tree, public_parameter.tau
@@ -63,9 +63,9 @@ impl ProverInAllInOneVC {
         
         // compute bit_vec and mac tag
         let mut bit_vec = BitVec::zero_vec(public_parameter.big_n);
-        let mut voleith_mac_vec = GFVec::<GF>::zero_vec(public_parameter.big_n);
+        let mut voleith_mac_vec = GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_n);
         for i in 0..1 << public_parameter.tau {
-            let i_gf = GF::from_u8(i as u8);
+            let i_gf = GFVOLEitH::from_u8(i as u8);
             let bit_vec_i = &bit_vec_vec[i];
             for j in 0..public_parameter.big_n {
                 bit_vec[j] ^= bit_vec_i[j];
@@ -79,7 +79,7 @@ impl ProverInAllInOneVC {
         com_hash.unwrap()
     }
 
-    pub fn open<GF: U8ForGF>(&self, public_parameter: &PublicParameter, nabla: &GF) -> (SeedU8x16, Vec<SeedU8x16>) {
+    pub fn open<GFVOLEitH: U8ForGF>(&self, public_parameter: &PublicParameter, nabla: &GFVOLEitH) -> (SeedU8x16, Vec<SeedU8x16>) {
         // the excluded index must be in [0, 2^8]
         // this can be understood the index among the leaves, i.e., the excluded_index-th leaf
         let excluded_index = nabla.get_u8() as usize;

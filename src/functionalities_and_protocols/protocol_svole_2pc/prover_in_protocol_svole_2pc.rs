@@ -6,7 +6,7 @@ use crate::value_type::{GFAdd, U8ForGF, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
-use crate::vec_type::Split;
+use crate::vec_type::{Split, VecAdd};
 
 pub struct ProverInProtocolSVOLE2PC {
 
@@ -21,19 +21,19 @@ impl ProverInProtocolSVOLE2PC {
         prover_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>
     ) -> (BitVec, BitVec, BitVec, BitVec, BitVec) {
         // first mask the bits
-        let hat_r_bit_vec = prover_secret_state.r_bit_vec.as_ref().unwrap().xor_vec(
+        let hat_r_bit_vec = prover_secret_state.r_bit_vec.as_ref().unwrap().vec_add(
             &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.sum_big_ia_ib_iw)
         );
-        let hat_r_prime_bit_vec = prover_secret_state.r_prime_bit_vec.as_ref().unwrap().xor_vec(
+        let hat_r_prime_bit_vec = prover_secret_state.r_prime_bit_vec.as_ref().unwrap().vec_add(
             &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.big_w)
         );
-        let hat_a_bit_vec = prover_secret_state.tilde_a_bit_vec_rep.as_ref().unwrap()[repetition_id].xor_vec(
+        let hat_a_bit_vec = prover_secret_state.tilde_a_bit_vec_rep.as_ref().unwrap()[repetition_id].vec_add(
             &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.big_l)
         );
-        let hat_b_bit_vec = prover_secret_state.tilde_b_bit_vec_rep.as_ref().unwrap()[repetition_id].xor_vec(
+        let hat_b_bit_vec = prover_secret_state.tilde_b_bit_vec_rep.as_ref().unwrap()[repetition_id].vec_add(
             &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.big_l)
         );
-        let hat_c_bit_vec = prover_secret_state.tilde_c_bit_vec_rep.as_ref().unwrap()[repetition_id].xor_vec(
+        let hat_c_bit_vec = prover_secret_state.tilde_c_bit_vec_rep.as_ref().unwrap()[repetition_id].vec_add(
             &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.big_l)
         );
         assert_eq!(secret_bit_vec.len(), 0);

@@ -26,12 +26,12 @@ impl BitVec {
         self.val.iter()
     }
     
-    pub fn xor_vec(&self, other: &Self) -> Self {
-        let mut res = Self::new();
-        for (lhs, rhs) in self.iter().zip(other.iter()) {
-            res.push(*lhs ^ *rhs);
+    pub fn entry_wise_mult(&self, other: &Self) -> Self {
+        Self {
+            val: self.iter().zip(other.iter()).map(
+                |(lhs, rhs)| *lhs & *rhs
+            ).collect()
         }
-        res   
     }
 }
 
@@ -59,11 +59,11 @@ impl IndexMut<usize> for BitVec {
 
 impl VecAdd for BitVec {
     fn vec_add(&self, other: &Self) -> Self {
-        let mut res = Self::new();
-        for (lhs, rhs) in self.iter().zip(other.iter()) {
-            res.push(*lhs ^ *rhs);
+        Self {
+            val: self.iter().zip(other.iter()).map(
+                |(lhs, rhs)| *lhs ^ *rhs
+            ).collect()
         }
-        res
     }
 }
 
