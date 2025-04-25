@@ -8,6 +8,10 @@ use crate::vec_type::{
 pub struct InsecureFunctionalityPre;
 
 impl InsecureFunctionalityPre {
+    
+    pub fn generate_delta<GFVOLE: InsecureRandom>(delta: &mut Option<GFVOLE>) {
+        *delta = Some(GFVOLE::insecurely_random());
+    }
 
     fn generate_random_vole_macs_and_keys<GFVOLE: InsecureRandom + GFAddition + GFMultiplyingBit+ Clone + Zero>(
         delta: &GFVOLE,
@@ -35,7 +39,7 @@ impl InsecureFunctionalityPre {
         let mut rng = rand::rng();
         *rand_bit_vec = Some(
             BitVec::from_vec(
-                (0..len).into_iter().map(
+                (0..len).map(
                     |_| rng.random::<u8>() & 1u8
                 ).collect()
             )
@@ -66,7 +70,7 @@ impl InsecureFunctionalityPre {
         *pb_rand_b_bit_vec_rep = Some(Vec::new());
         *pb_rand_c_bit_vec_rep = Some(Vec::new());
         let mut rng = rand::rng();
-        (0..kappa).into_iter().for_each(|_| {
+        (0..kappa).for_each(|_| {
             let mut pa_rand_a_bit_vec= BitVec::new();
             let mut pa_rand_b_bit_vec = BitVec::new();
             let mut pa_rand_c_bit_vec = BitVec::new();
@@ -135,7 +139,6 @@ mod tests {
         println!("delta_b: {:?}", delta_b);
 
         let num_random_tuples = 100;
-        let kappa = 10;
 
         let mut rand_bit_vec: Option<BitVec> = None;
         let mut vole_mac_rand_vec: Option<GFVec<GF2p256>> = None;

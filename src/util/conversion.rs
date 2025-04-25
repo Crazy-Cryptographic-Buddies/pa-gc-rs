@@ -24,7 +24,7 @@ impl Conversion {
             'f' => 15,
             _ => panic!("Invalid hex character: {}", c),
         };
-        for i in (0..NUM_BITS_PER_HEX).into_iter().rev() {
+        for i in (0..NUM_BITS_PER_HEX).rev() {
             bit_vec.push((c_value >> i) & 1);
         }
         bit_vec

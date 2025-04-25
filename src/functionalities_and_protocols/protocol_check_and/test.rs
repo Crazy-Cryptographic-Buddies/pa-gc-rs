@@ -67,19 +67,11 @@ mod tests {
             Vec::new(),
             Vec::new()
         );
-        // let pa_secret_state = ProverSecretState::<GF2p256, GF2p8>::new(
-        //     &public_parameter,
-        //     SeedU8x16::insecurely_random()
-        // );
-        // let pb_secret_state = ProverSecretState::<GF2p256, GF2p8>::new(
-        //     &public_parameter,
-        //     SeedU8x16::insecurely_random()
-        // );
         let rng = rand::rng();
-        let nabla_a_rep = (0..public_parameter.kappa).into_iter().map(
-            |_|GF2p8::insecurely_random()
+        let nabla_a_rep = (0..public_parameter.kappa).map(
+            |_| GF2p8::insecurely_random()
         ).collect::<Vec<GF2p8>>();
-        let nabla_b_rep = (0..public_parameter.kappa).into_iter().map(
+        let nabla_b_rep = (0..public_parameter.kappa).map(
             |_|GF2p8::insecurely_random()
         ).collect::<Vec<GF2p8>>();
 

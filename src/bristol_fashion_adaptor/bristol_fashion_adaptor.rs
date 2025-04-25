@@ -1,6 +1,4 @@
 // This source code follows Bristol Fashion's specification https://nigelsmart.github.io/MPC-Circuits/
-
-use std::cmp::PartialEq;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;

@@ -5,6 +5,8 @@ use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 
 pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
+    pub delta: Option<GFVOLE>,
+    
     pub seed_for_generating_ggm_tree_rep: Vec<SeedU8x16>,
     pub r_bit_vec: Option<BitVec>,
     pub r_prime_bit_vec: Option<BitVec>,
@@ -44,6 +46,8 @@ impl<GFVOLE, GFVOLEitH: Clone> ProverSecretState<GFVOLE, GFVOLEitH> {
             prover_in_all_in_one_vc_rep.push(ProverInAllInOneVC::new(&public_parameter));
         }
         Self {
+            delta: None,
+            
             seed_for_generating_ggm_tree_rep,
             r_bit_vec: None,
             r_prime_bit_vec: None,
