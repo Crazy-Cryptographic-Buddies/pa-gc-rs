@@ -134,40 +134,40 @@ mod tests {
                 pa_secret_state.voleith_mac_r_vec_rep[repetition_id].as_ref().unwrap().iter(), 
                 voleith_key_r_vec.iter()
             ) {
-                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
-                assert_eq!(nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_b_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac), *key);
             }
             for (bit, mac, key) in izip!(
                 pa_secret_state.r_prime_bit_vec.as_ref().unwrap().iter(), 
                 pa_secret_state.voleith_mac_r_prime_vec_rep[repetition_id].as_ref().unwrap().iter(), 
                 voleith_key_r_prime_vec.iter()
             ) {
-                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
-                assert_eq!(nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_b_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac), *key);
             }
             for (bit, mac, key) in izip!(
                 pa_secret_state.tilde_a_bit_vec_rep.as_ref().unwrap()[repetition_id].iter(), 
                 pa_secret_state.voleith_mac_tilde_a_vec_rep[repetition_id].as_ref().unwrap().iter(), 
                 voleith_key_tilde_a_vec.iter()
             ) {
-                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
-                assert_eq!(nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_b_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac), *key);
             }
             for (bit, mac, key) in izip!(
                 pa_secret_state.tilde_b_bit_vec_rep.as_ref().unwrap()[repetition_id].iter(), 
                 pa_secret_state.voleith_mac_tilde_b_vec_rep[repetition_id].as_ref().unwrap().iter(), 
                 voleith_key_tilde_b_vec.iter()
             ) {
-                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
-                assert_eq!(nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_b_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac), *key);
             }
             for (bit, mac, key) in izip!(
                 pa_secret_state.tilde_c_bit_vec_rep.as_ref().unwrap()[repetition_id].iter(), 
                 pa_secret_state.voleith_mac_tilde_c_vec_rep[repetition_id].as_ref().unwrap().iter(), 
                 voleith_key_tilde_c_vec.iter()
             ) {
-                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
-                assert_eq!(nabla_b_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_b_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_b_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac), *key);
             }
         }
 
@@ -204,40 +204,40 @@ mod tests {
                 pb_secret_state.voleith_mac_r_vec_rep[repetition_id].as_ref().unwrap().iter(), 
                 voleith_key_r_vec.iter()
             ) {
-                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
-                assert_eq!(nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_a_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac), *key);
             }
             for (bit, mac, key) in izip!(
                 pb_secret_state.r_prime_bit_vec.as_ref().unwrap().iter(), 
                 pb_secret_state.voleith_mac_r_prime_vec_rep[repetition_id].as_ref().unwrap().iter(), 
                 voleith_key_r_prime_vec.iter()
             ) {
-                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
-                assert_eq!(nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_a_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac), *key);
             }
             for (bit, mac, key) in izip!(
                 pb_secret_state.tilde_a_bit_vec_rep.as_ref().unwrap()[repetition_id].iter(), 
                 pb_secret_state.voleith_mac_tilde_a_vec_rep[repetition_id].as_ref().unwrap().iter(), 
                 voleith_key_tilde_a_vec.iter()
             ) {
-                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
-                assert_eq!(nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_a_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac), *key);
             }
             for (bit, mac, key) in izip!(
                 pb_secret_state.tilde_b_bit_vec_rep.as_ref().unwrap()[repetition_id].iter(), 
                 pb_secret_state.voleith_mac_tilde_b_vec_rep[repetition_id].as_ref().unwrap().iter(), 
                 voleith_key_tilde_b_vec.iter()
             ) {
-                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
-                assert_eq!(nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_a_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac), *key);
             }
             for (bit, mac, key) in izip!(
                 pb_secret_state.tilde_c_bit_vec_rep.as_ref().unwrap()[repetition_id].iter(), 
                 pb_secret_state.voleith_mac_tilde_c_vec_rep[repetition_id].as_ref().unwrap().iter(), 
                 voleith_key_tilde_c_vec.iter()
             ) {
-                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac));
-                assert_eq!(nabla_a_rep[repetition_id].multiply_bit(*bit).gf_add(mac), *key);
+                println!("(bit, mac, key, nabla * bit + mac) = ({:?}, {:?}, {:?}, {:?})", bit, mac, key, nabla_a_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac));
+                assert_eq!(nabla_a_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac), *key);
             }
         }
     }

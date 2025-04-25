@@ -1,7 +1,7 @@
 use std::ops::{Index, IndexMut};
 use crate::vec_type::{Split, VecAddition, ZeroVec};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct BitVec {
     val: Vec<u8>
 }

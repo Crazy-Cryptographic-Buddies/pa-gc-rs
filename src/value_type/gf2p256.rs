@@ -32,7 +32,7 @@ impl GFAddition for GF2p256 {
 }
 
 impl GFMultiplyingBit for GF2p256 {
-    fn multiply_bit(&self, bit: u8) -> Self {
+    fn gf_multiply_bit(&self, bit: u8) -> Self {
         if bit == 0 {
             Self {
                 val: (0, 0, 0, 0)

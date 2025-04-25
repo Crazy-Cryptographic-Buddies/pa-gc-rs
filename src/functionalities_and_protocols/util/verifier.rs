@@ -20,7 +20,7 @@ impl Verifier {
         println!("bit * nabla + key: {:?}", voleith_key_vec.vec_add(
             &GFVec::<GFVOLEitH>::from_vec(
                 bit_vec.iter().map(
-                    |bit| nabla.multiply_bit(*bit)
+                    |bit| nabla.gf_multiply_bit(*bit)
                 ).collect::<Vec<GFVOLEitH>>()
             )
         ).iter());
@@ -29,7 +29,7 @@ impl Verifier {
             voleith_key_vec.vec_add(
                 &GFVec::<GFVOLEitH>::from_vec(
                     bit_vec.iter().map(
-                        |bit| nabla.multiply_bit(*bit)
+                        |bit| nabla.gf_multiply_bit(*bit)
                     ).collect::<Vec<GFVOLEitH>>()
                 )
             )

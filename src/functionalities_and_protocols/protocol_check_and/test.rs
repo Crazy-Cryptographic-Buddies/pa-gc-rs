@@ -73,13 +73,13 @@ mod tests {
         //     &public_parameter,
         //     SeedU8x16::insecurely_random()
         // );
-        let mut rng = rand::rng();
+        let rng = rand::rng();
         let nabla_a_rep = (0..public_parameter.kappa).into_iter().map(
             |_|GF2p8::insecurely_random()
         ).collect::<Vec<GF2p8>>();
         let nabla_b_rep = (0..public_parameter.kappa).into_iter().map(
             |_|GF2p8::insecurely_random()
-        ).collect::<Vec<GF2p8>>();;
+        ).collect::<Vec<GF2p8>>();
 
         // prepare random vectors for pa
         let pa_x_bit_vec = generate_random_bit_vec(public_parameter.big_w);
