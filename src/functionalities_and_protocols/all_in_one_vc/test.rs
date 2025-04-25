@@ -22,6 +22,8 @@ mod tests {
             10,
             20,
             30,
+            Vec::new(),
+            Vec::new(),
         );
         // let prover_secret_input = ProverSecretInput::new(
         //     SeedU8x16::insecurely_random(),

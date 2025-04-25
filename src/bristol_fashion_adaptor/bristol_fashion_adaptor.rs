@@ -1,17 +1,18 @@
 // This source code follows Bristol Fashion's specification https://nigelsmart.github.io/MPC-Circuits/
 
+use std::cmp::PartialEq;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 use rand::Rng;
-use crate::comm_types_and_constants::{GateType};
+use crate::bristol_fashion_adaptor::{GateInfo, GateType};
 use crate::util::conversion::Conversion;
 
-struct BristolFashionAdaptor {
+pub struct BristolFashionAdaptor {
     num_wires: usize,
     num_input_bits: usize,
     num_output_bits: usize,
-    gate_vec: Vec<(usize, usize, usize, GateType)>,
+    gate_vec: Vec<GateInfo>,
 }
 
 impl BristolFashionAdaptor {
@@ -61,7 +62,7 @@ impl BristolFashionAdaptor {
         input_file.read_line(&mut line).unwrap();
 
         // start reading the gates
-        let mut gate_vec: Vec<(usize, usize, usize, GateType)> = Vec::new();
+        let mut gate_vec: Vec<GateInfo> = Vec::new();
         for _ in 0..num_gates {
             line.clear();
             input_file.read_line(&mut line).unwrap();
@@ -84,7 +85,12 @@ impl BristolFashionAdaptor {
                 _ => panic!("Unknown gate vec_type: {}", gate_name),
             };
             gate_vec.push(
-                (left_gate_input_wire, right_gate_input_wire, gate_output_wire, gate_type)
+                GateInfo::new(
+                    left_gate_input_wire, 
+                    right_gate_input_wire, 
+                    gate_output_wire, 
+                    gate_type
+                )
             );
         }
 
@@ -107,33 +113,28 @@ impl BristolFashionAdaptor {
         for i in 0..self.num_input_bits {
             wire_values[i] = input_bit_vec[i];
         }
-        for (
-            left_gate_input_wire,
-            right_gate_input_wire,
-            gate_output_wire,
-            gate_type
-        ) in &self.gate_vec {
-            let gate_output_bit = match gate_type {
+        for gate in &self.gate_vec {
+            let gate_output_bit = match gate.gate_type {
                 GateType::AND => {
-                    if wire_values[*left_gate_input_wire] == 255 || wire_values[*right_gate_input_wire] == 255 {
+                    if wire_values[gate.left_input_wire] == 255 || wire_values[gate.right_input_wire] == 255 {
                         panic!("Value not assigned");   
                     }
-                    wire_values[*left_gate_input_wire] & wire_values[*right_gate_input_wire]
+                    wire_values[gate.left_input_wire] & wire_values[gate.right_input_wire]
                 },
                 GateType::XOR => {
-                    if wire_values[*left_gate_input_wire] == 255 || wire_values[*right_gate_input_wire] == 255 {
+                    if wire_values[gate.left_input_wire] == 255 || wire_values[gate.right_input_wire] == 255 {
                         panic!("Value not assigned");
                     }
-                    wire_values[*left_gate_input_wire] ^ wire_values[*right_gate_input_wire]
+                    wire_values[gate.left_input_wire] ^ wire_values[gate.right_input_wire]
                 },
                 GateType::NOT => {
-                    if wire_values[*left_gate_input_wire] == 255 {
+                    if wire_values[gate.left_input_wire] == 255 {
                         panic!("Value not assigned");
                     }
-                    1u8 ^ wire_values[*left_gate_input_wire]
+                    1u8 ^ wire_values[gate.left_input_wire]
                 },
             };
-            wire_values[*gate_output_wire] = gate_output_bit;
+            wire_values[gate.output_wire] = gate_output_bit;
         }
         wire_values[wire_values.len().saturating_sub(self.num_output_bits)..].to_vec()
     }
@@ -145,6 +146,24 @@ impl BristolFashionAdaptor {
         let output_bit_vec = self.compute_output_bits(&input_bit_vec);
         let output_hex_string = Conversion::bit_vec_to_hex_string(&output_bit_vec);
         output_hex_string
+    }
+    
+    pub fn compute_num_and_gates(&self) -> usize {
+        let mut num_and_gates: usize = 0;
+        for gate in &self.gate_vec {
+            if gate.gate_type == GateType::AND {
+                num_and_gates += 1;
+            }
+        }
+        num_and_gates   
+    }
+    
+    pub fn get_num_input_bits(&self) -> usize {
+        self.num_input_bits
+    }
+    
+    pub fn get_num_output_bits(&self) -> usize {
+        self.num_output_bits
     }
 }
 

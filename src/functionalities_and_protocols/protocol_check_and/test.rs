@@ -63,7 +63,9 @@ mod tests {
             20,
             30,
             40,
-            41
+            41,
+            Vec::new(),
+            Vec::new()
         );
         // let pa_secret_state = ProverSecretState::<GF2p256, GF2p8>::new(
         //     &public_parameter,

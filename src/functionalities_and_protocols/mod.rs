@@ -5,3 +5,4 @@ mod protocol_svole;
 mod inputs_and_parameters;
 pub mod all_in_one_vc;
 mod util;
+mod protocol_pa_2pc;

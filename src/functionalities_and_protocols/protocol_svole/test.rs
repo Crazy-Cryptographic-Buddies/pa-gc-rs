@@ -1,49 +1,3 @@
-// pub struct ProtocolSVOLE {
-// }
-
-// impl ProtocolSVOLE {
-//     
-//     // pub fn commit<GF: Clone + GFAdd + U8ForGF + Zero>(
-//     //     public_parameter: &PublicParameter,
-//     //     repetition_id: usize,
-//     //     prover_secret_state: &mut ProverSecretState<GF>,
-//     //     output_secret_bit_vec: &mut Option<BitVec>,
-//     //     output_secret_voleith_mac_vec: &mut Option<GFVec<GF>>,
-//     // ) -> Hash {
-//     //     ProverInProtocolSVOLE::commit(
-//     //         public_parameter,
-//     //         &mut prover_secret_state.prover_in_all_in_one_vc_rep[repetition_id],
-//     //         &prover_secret_state.seed_for_generating_ggm_tree_rep[repetition_id],
-//     //         output_secret_bit_vec, output_secret_voleith_mac_vec
-//     //     )
-//     // }
-// 
-//     pub fn open<GF: Clone + GFAdd + U8ForGF + Zero>(
-//         public_parameter: &PublicParameter,
-//         repetition_id: usize,
-//         prover_secret_state: &mut ProverSecretState<GF>,
-//         prover_com_hash: &Hash,
-//         nabla: &GF,
-//     ) -> (SeedU8x16, Vec<SeedU8x16>){
-//         // prover releases decom based on nable
-//         let decom = ProverInProtocolSVOLE::open(
-//             public_parameter,
-//             &mut prover_secret_state.prover_in_all_in_one_vc_rep[repetition_id],
-//             nabla
-//         );
-//         let (reconstructed_com_hash, voleith_key_vec) = VerifierInAllInOneVC::reconstruct(public_parameter, nabla, &decom);
-//         println!("Repetition id: {:?}", repetition_id);
-//         println!("- reconstructed_com_hash: {:?}", reconstructed_com_hash);
-//         println!("- prover_com_hash:        {:?}", prover_com_hash);
-//         assert_eq!(prover_com_hash, &reconstructed_com_hash);
-//         (decom, voleith_key_vec)
-//     }
-//     
-//     pub fn reconstruct() -> GFVec<GF> {
-//         
-//     }
-// }
-
 #[cfg(test)]
 mod tests {
     use crate::functionalities_and_protocols::inputs_and_parameters::prover_secret_state::ProverSecretState;
@@ -70,6 +24,8 @@ mod tests {
             10,
             20,
             30,
+            Vec::new(),
+            Vec::new()
         );
         let mut prover_secret_state = ProverSecretState::<GF2p256, GF2p8>::new(
             &public_parameter,

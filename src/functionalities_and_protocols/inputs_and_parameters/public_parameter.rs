@@ -11,12 +11,15 @@ pub struct PublicParameter {
     pub big_l: usize,
     pub big_n: usize,
     pub sum_big_ia_ib_iw: usize,
+    pub big_ia: Vec<usize>,
+    pub big_ib: Vec<usize>,
 }
 
 impl PublicParameter {
     pub fn new(
         tau: u8, kappa: usize, master_key_for_one_to_two_prg: SeedU8x16, 
-        big_ia_size: usize, big_ib_size: usize, big_w: usize, big_l: usize
+        big_ia_size: usize, big_ib_size: usize, big_w: usize, big_l: usize,
+        big_ia: Vec<usize>, big_ib: Vec<usize>,
     ) -> Self {
         Self {
             tau,
@@ -28,6 +31,8 @@ impl PublicParameter {
             big_l,
             big_n: big_ia_size + big_ib_size + 2 * big_w + 3 * big_l,
             sum_big_ia_ib_iw: big_ia_size + big_ib_size + big_w,
+            big_ia,
+            big_ib,       
         }
     }
 }
