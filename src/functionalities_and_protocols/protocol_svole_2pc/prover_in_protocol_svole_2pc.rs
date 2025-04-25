@@ -16,9 +16,9 @@ impl ProverInProtocolSVOLE2PC {
     fn distribute_bits_and_voleith_macs_to_state<GFVOLE, GFVOLEitH: Clone + Zero>(
         public_parameter: &PublicParameter,
         repetition_id: usize,
+        prover_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>,
         secret_bit_vec: &mut BitVec,
-        secret_voleith_mac_vec: &mut GFVec<GFVOLEitH>,
-        prover_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>
+        secret_voleith_mac_vec: &mut GFVec<GFVOLEitH>
     ) -> (BitVec, BitVec, BitVec, BitVec, BitVec) {
         // first mask the bits
         let hat_r_bit_vec = prover_secret_state.r_bit_vec.as_ref().unwrap().vec_add(
