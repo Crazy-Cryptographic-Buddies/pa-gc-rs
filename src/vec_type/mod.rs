@@ -12,3 +12,7 @@ pub trait VecAddition {
 pub trait Split {
     fn split_off(&mut self, at: usize) -> Self;
 }
+
+pub trait VecAppending {
+    fn append(&mut self, other: &mut Self);
+}

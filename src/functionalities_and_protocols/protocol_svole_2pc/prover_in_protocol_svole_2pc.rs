@@ -25,10 +25,10 @@ impl ProverInProtocolSVOLE2PC {
             &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.num_input_bits)
         );
         let hat_r_output_and_bit_vec = prover_secret_state.r_output_and_bit_vec.as_ref().unwrap().vec_add(
-            &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.big_w)
+            &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.big_iw_size)
         );
         let hat_r_prime_bit_vec = prover_secret_state.r_prime_bit_vec.as_ref().unwrap().vec_add(
-            &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.big_w)
+            &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.big_iw_size)
         );
         let hat_a_bit_vec = prover_secret_state.tilde_a_bit_vec_rep.as_ref().unwrap()[repetition_id].vec_add(
             &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.big_l)
@@ -46,10 +46,10 @@ impl ProverInProtocolSVOLE2PC {
             secret_voleith_mac_vec.split_off(secret_voleith_mac_vec.len() - public_parameter.num_input_bits)
         );
         prover_secret_state.voleith_mac_r_output_and_vec_rep[repetition_id] = Some(
-            secret_voleith_mac_vec.split_off(secret_voleith_mac_vec.len() - public_parameter.big_w)       
+            secret_voleith_mac_vec.split_off(secret_voleith_mac_vec.len() - public_parameter.big_iw_size)       
         );
         prover_secret_state.voleith_mac_r_prime_vec_rep[repetition_id] = Some(
-            secret_voleith_mac_vec.split_off(secret_voleith_mac_vec.len() - public_parameter.big_w)
+            secret_voleith_mac_vec.split_off(secret_voleith_mac_vec.len() - public_parameter.big_iw_size)
         );
         prover_secret_state.voleith_mac_tilde_a_vec_rep[repetition_id] = Some(
             secret_voleith_mac_vec.split_off(secret_voleith_mac_vec.len() - public_parameter.big_l)

@@ -10,19 +10,20 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
     pub seed_for_generating_ggm_tree_rep: Vec<SeedU8x16>,
     pub r_input_bit_vec: Option<BitVec>,
     pub r_output_and_bit_vec: Option<BitVec>,
-    pub r_prime_bit_vec: Option<BitVec>,
+    // pub r_prime_bit_vec: Option<BitVec>,
     pub tilde_a_bit_vec_rep: Option<Vec<BitVec>>,
     pub tilde_b_bit_vec_rep: Option<Vec<BitVec>>,
     pub tilde_c_bit_vec_rep: Option<Vec<BitVec>>,
     
     // vole macs
-    pub vole_mac_r_input_vec_rep: Option<GFVec<GFVOLE>>,
-    pub vole_mac_r_output_and_vec_rep: Option<GFVec<GFVOLE>>,
-    pub vole_mac_r_prime_vec_rep: Option<GFVec<GFVOLE>>,
+    pub vole_mac_r_input_vec: Option<GFVec<GFVOLE>>,
+    pub vole_mac_r_output_and_vec: Option<GFVec<GFVOLE>>,
+    // pub vole_mac_r_prime_vec: Option<GFVec<GFVOLE>>,
     
     // vole keys
-    pub other_vole_key_r_input_vec_rep: Option<GFVec<GFVOLE>>,
-    pub other_vole_key_r_output_and_vec_rep: Option<GFVec<GFVOLE>>,
+    pub other_vole_key_r_input_vec: Option<GFVec<GFVOLE>>,
+    pub other_vole_key_r_output_and_vec: Option<GFVec<GFVOLE>>,
+    // pub other_vole_key_r_prime_vec: Option<GFVec<GFVOLE>>,
 
     // voleith macs
     pub voleith_mac_r_input_vec_rep: Vec<Option<GFVec<GFVOLEitH>>>,
@@ -58,17 +59,17 @@ impl<GFVOLE, GFVOLEitH: Clone> ProverSecretState<GFVOLE, GFVOLEitH> {
             seed_for_generating_ggm_tree_rep,
             r_input_bit_vec: None,
             r_output_and_bit_vec: None,
-            r_prime_bit_vec: None,
+            // r_prime_bit_vec: None,
             tilde_a_bit_vec_rep: None,
             tilde_b_bit_vec_rep: None,
             tilde_c_bit_vec_rep: None,
             
-            vole_mac_r_input_vec_rep: None,
-            vole_mac_r_output_and_vec_rep: None,
-            vole_mac_r_prime_vec_rep: None,
+            vole_mac_r_input_vec: None,
+            vole_mac_r_output_and_vec: None,
+            // vole_mac_r_prime_vec: None,
             
-            other_vole_key_r_input_vec_rep: None,
-            other_vole_key_r_output_and_vec_rep: None,
+            other_vole_key_r_input_vec: None,
+            other_vole_key_r_output_and_vec: None,
 
             voleith_mac_r_input_vec_rep: vec![None; public_parameter.kappa],
             voleith_mac_r_output_and_vec_rep: vec![None; public_parameter.kappa],           

@@ -1,6 +1,6 @@
 use std::ops::{Index, IndexMut};
 use crate::value_type::{GFAddition, Zero};
-use crate::vec_type::{Split, VecAddition, ZeroVec};
+use crate::vec_type::{Split, VecAddition, VecAppending, ZeroVec};
 use crate::vec_type::bit_vec::BitVec;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -84,6 +84,20 @@ impl<GF> Split for GFVec<GF> {
     fn split_off(&mut self, at: usize) -> Self {
         Self {
             val: self.val.split_off(at)
+        }
+    }
+}
+
+impl<GF> VecAppending for GFVec<GF> {
+    fn append(&mut self, other: &mut Self) {
+        self.val.append(&mut other.val);
+    }
+}
+
+impl<GF> FromIterator<GF> for GFVec<GF> {
+    fn from_iter<T: IntoIterator<Item = GF>>(iter: T) -> Self {
+        Self {
+            val: iter.into_iter().collect()
         }
     }
 }

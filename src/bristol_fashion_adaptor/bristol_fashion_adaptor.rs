@@ -156,6 +156,16 @@ impl BristolFashionAdaptor {
         num_and_gates   
     }
     
+    pub fn determine_and_gate_output_wires(&self) -> Vec<usize> {
+        self.gate_vec.iter().filter_map(|gate| {
+            if gate.gate_type == GateType::AND {
+                Some(gate.output_wire)
+            } else {
+                None
+            }
+        }).collect()
+    }
+    
     pub fn get_num_input_bits(&self) -> usize {
         self.num_input_bits
     }

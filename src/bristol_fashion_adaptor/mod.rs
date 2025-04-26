@@ -1,6 +1,6 @@
 pub(crate) mod bristol_fashion_adaptor;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum GateType {
     AND,
     XOR,

@@ -98,24 +98,24 @@ impl InsecureFunctionalityPre {
         });
     }
     
-    pub fn generate_random_authenticated_and_tuples<GFVOLE, GFVOLEitH>(
+    pub fn generate_random_authenticated_and_tuples<GFVOLE>(
         delta_a: &GFVOLE, 
-        pa_a_bit: u8, 
-        pa_b_bit: u8, 
-        pa_c_bit: &mut u8, pa_vole_mac_c: &mut GFVOLE, pa_vole_key_c: &mut GFVOLE,
+        pa_left_input_bit: u8,
+        pa_right_input_bit: u8,
+        pa_output_bit: &mut u8, pa_vole_mac_output: &mut GFVOLE, pa_vole_key_output: &mut GFVOLE,
         delta_b: &GFVOLE,
-        pb_a_bit: u8, 
-        pb_b_bit: u8, 
-        pb_c_bit: &mut u8, pb_vole_mac_c: &mut GFVOLE, pb_vole_key_c: &mut GFVOLE,
+        pb_left_input_bit: u8,
+        pb_right_input_bit: u8,
+        pb_output_bit: &mut u8, pb_vole_mac_output: &mut GFVOLE, pb_vole_key_output: &mut GFVOLE,
     )
     where GFVOLE: InsecureRandom + GFAddition + GFMultiplyingBit {
         let mut rng = rand::rng();
-        *pa_c_bit = rng.random::<u8>() & 1;
-        *pb_c_bit = (pa_a_bit ^ pb_a_bit) & (pa_b_bit ^ pb_b_bit) ^ *pa_c_bit;
-        *pa_vole_mac_c = GFVOLE::insecurely_random();
-        *pa_vole_key_c = pa_vole_mac_c.gf_add(&delta_b.gf_multiply_bit(*pa_c_bit));
-        *pb_vole_mac_c = GFVOLE::insecurely_random();
-        *pb_vole_key_c = pb_vole_mac_c.gf_add(&delta_a.gf_multiply_bit(*pb_c_bit));
+        *pa_output_bit = rng.random::<u8>() & 1;
+        *pb_output_bit = (pa_left_input_bit ^ pb_left_input_bit) & (pa_right_input_bit ^ pb_right_input_bit) ^ *pa_output_bit;
+        *pa_vole_mac_output = GFVOLE::insecurely_random();
+        *pa_vole_key_output = pa_vole_mac_output.gf_add(&delta_b.gf_multiply_bit(*pa_output_bit));
+        *pb_vole_mac_output = GFVOLE::insecurely_random();
+        *pb_vole_key_output = pb_vole_mac_output.gf_add(&delta_a.gf_multiply_bit(*pb_output_bit));
     }
 }
 
@@ -226,7 +226,7 @@ mod tests {
         let mut pa_vole_key_c = GF2p256::zero();
         let mut pb_vole_mac_c = GF2p256::zero();
         let mut pb_vole_key_c = GF2p256::zero();
-        InsecureFunctionalityPre::generate_random_authenticated_and_tuples::<GF2p256, GF2p8>(
+        InsecureFunctionalityPre::generate_random_authenticated_and_tuples::<GF2p256>(
             &delta_a, pa_a_bit, pa_b_bit, &mut pa_c_bit, &mut pa_vole_mac_c, &mut pa_vole_key_c,
             &delta_b, pb_a_bit, pb_b_bit, &mut pb_c_bit, &mut pb_vole_mac_c, &mut pb_vole_key_c
         );

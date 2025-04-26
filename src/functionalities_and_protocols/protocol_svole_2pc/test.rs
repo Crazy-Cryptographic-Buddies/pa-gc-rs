@@ -19,11 +19,11 @@ mod tests {
             prover_secret_state.r_input_bit_vec.as_mut().unwrap().push(rng.random::<u8>() & 1);
         }
         prover_secret_state.r_output_and_bit_vec = Some(BitVec::new());
-        for _ in 0..public_parameter.big_w {
+        for _ in 0..public_parameter.big_iw_size {
             prover_secret_state.r_output_and_bit_vec.as_mut().unwrap().push(rng.random::<u8>() & 1);
         }
         prover_secret_state.r_prime_bit_vec = Some(BitVec::new());
-        for _ in 0..public_parameter.big_w {
+        for _ in 0..public_parameter.big_iw_size {
             prover_secret_state.r_prime_bit_vec.as_mut().unwrap().push(rng.random::<u8>() & 1);
         }
         prover_secret_state.tilde_a_bit_vec_rep = Some(Vec::new());
@@ -55,12 +55,11 @@ mod tests {
             8,
             10,
             SeedU8x16::insecurely_random(),
-            20,
-            30,
-            40,
-            41,
-            Vec::new(),
-            Vec::new(),
+            (0..100).collect(),
+            (100..200).collect(),
+            (200..300).collect(),
+            4,
+            50
         );
         let mut pa_secret_state = ProverSecretState::<GF2p256, GF2p8>::new(
             &public_parameter,
@@ -120,21 +119,21 @@ mod tests {
             
             // test length of bit vectors
             assert_eq!(pa_secret_state.r_input_bit_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
-            assert_eq!(pa_secret_state.r_output_and_bit_vec.as_ref().unwrap().len(), public_parameter.big_w);
-            assert_eq!(pa_secret_state.r_prime_bit_vec.as_ref().unwrap().len(), public_parameter.big_w);
+            assert_eq!(pa_secret_state.r_output_and_bit_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
+            assert_eq!(pa_secret_state.r_prime_bit_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
             assert_eq!(pa_secret_state.tilde_a_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
             assert_eq!(pa_secret_state.tilde_b_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
             assert_eq!(pa_secret_state.tilde_c_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
             // test length of voleith mac vectors
             assert_eq!(pa_secret_state.voleith_mac_r_input_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.num_input_bits);
-            assert_eq!(pa_secret_state.voleith_mac_r_output_and_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_w);
-            assert_eq!(pa_secret_state.voleith_mac_r_prime_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_w);
+            assert_eq!(pa_secret_state.voleith_mac_r_output_and_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_iw_size);
+            assert_eq!(pa_secret_state.voleith_mac_r_prime_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_iw_size);
             assert_eq!(pa_secret_state.voleith_mac_tilde_a_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_l);
             assert_eq!(pa_secret_state.voleith_mac_tilde_b_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_l);
             assert_eq!(pa_secret_state.voleith_mac_tilde_c_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_l);
             // test length of voleith key vectors
             assert_eq!(voleith_key_r_input_vec.len(), public_parameter.num_input_bits);
-            assert_eq!(voleith_key_r_prime_vec.len(), public_parameter.big_w);
+            assert_eq!(voleith_key_r_prime_vec.len(), public_parameter.big_iw_size);
             assert_eq!(voleith_key_tilde_a_vec.len(), public_parameter.big_l);
             assert_eq!(voleith_key_tilde_b_vec.len(), public_parameter.big_l);
             assert_eq!(voleith_key_tilde_c_vec.len(), public_parameter.big_l);
@@ -201,22 +200,22 @@ mod tests {
 
             // test length of bit vectors
             assert_eq!(pa_secret_state.r_input_bit_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
-            assert_eq!(pa_secret_state.r_output_and_bit_vec.as_ref().unwrap().len(), public_parameter.big_w);
-            assert_eq!(pa_secret_state.r_prime_bit_vec.as_ref().unwrap().len(), public_parameter.big_w);
+            assert_eq!(pa_secret_state.r_output_and_bit_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
+            assert_eq!(pa_secret_state.r_prime_bit_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
             assert_eq!(pa_secret_state.tilde_a_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
             assert_eq!(pa_secret_state.tilde_b_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
             assert_eq!(pa_secret_state.tilde_c_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
             // test length of voleith mac vectors
             assert_eq!(pa_secret_state.voleith_mac_r_input_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.num_input_bits);
-            assert_eq!(pa_secret_state.voleith_mac_r_output_and_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_w);
-            assert_eq!(pa_secret_state.voleith_mac_r_prime_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_w);
+            assert_eq!(pa_secret_state.voleith_mac_r_output_and_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_iw_size);
+            assert_eq!(pa_secret_state.voleith_mac_r_prime_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_iw_size);
             assert_eq!(pa_secret_state.voleith_mac_tilde_a_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_l);
             assert_eq!(pa_secret_state.voleith_mac_tilde_b_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_l);
             assert_eq!(pa_secret_state.voleith_mac_tilde_c_vec_rep[repetition_id].as_ref().unwrap().len(), public_parameter.big_l);
             // test length of voleith key vectors
             assert_eq!(voleith_key_r_input_vec.len(), public_parameter.num_input_bits);
-            assert_eq!(voleith_key_r_output_and_vec.len(), public_parameter.big_w);
-            assert_eq!(voleith_key_r_prime_vec.len(), public_parameter.big_w);
+            assert_eq!(voleith_key_r_output_and_vec.len(), public_parameter.big_iw_size);
+            assert_eq!(voleith_key_r_prime_vec.len(), public_parameter.big_iw_size);
             assert_eq!(voleith_key_tilde_a_vec.len(), public_parameter.big_l);
             assert_eq!(voleith_key_tilde_b_vec.len(), public_parameter.big_l);
             assert_eq!(voleith_key_tilde_c_vec.len(), public_parameter.big_l);

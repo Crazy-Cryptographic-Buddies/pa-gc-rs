@@ -1,7 +1,7 @@
 use rand::Rng;
 use crate::value_type::{GFAddition, GFMultiplyingBit, InsecureRandom, Zero};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub struct GF2p256 {
     val: (u64, u64, u64, u64)
 }

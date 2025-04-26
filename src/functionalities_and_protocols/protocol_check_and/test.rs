@@ -60,12 +60,11 @@ mod tests {
             8,
             10,
             SeedU8x16::insecurely_random(),
-            20,
-            30,
-            40,
-            41,
-            Vec::new(),
-            Vec::new()
+            (0..100).collect(),
+            (100..200).collect(),
+            (200..300).collect(),
+            4,
+            50
         );
         let rng = rand::rng();
         let nabla_a_rep = (0..public_parameter.kappa).map(
@@ -76,8 +75,8 @@ mod tests {
         ).collect::<Vec<GF2p8>>();
 
         // prepare random vectors for pa
-        let pa_x_bit_vec = generate_random_bit_vec(public_parameter.big_w);
-        let pa_voleith_mac_x_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_w);
+        let pa_x_bit_vec = generate_random_bit_vec(public_parameter.big_iw_size);
+        let pa_voleith_mac_x_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
         let pa_voleith_key_x_vec_rep = pa_voleith_mac_x_vec_rep.iter().zip(nabla_b_rep.iter()).map(
             |(voleith_mac_x_vec, nabla_b)|
                 compute_voleith_key_vec(&pa_x_bit_vec, voleith_mac_x_vec, &nabla_b)
@@ -88,8 +87,8 @@ mod tests {
                 &pa_voleith_key_x_vec_rep[repetition_id],
             );
         }
-        let pa_y_bit_vec = generate_random_bit_vec(public_parameter.big_w);
-        let pa_voleith_mac_y_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_w);
+        let pa_y_bit_vec = generate_random_bit_vec(public_parameter.big_iw_size);
+        let pa_voleith_mac_y_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
         let pa_voleith_key_y_vec_rep = pa_voleith_mac_y_vec_rep.iter().zip(nabla_b_rep.iter()).map(
             |(voleith_mac_y_vec, nabla_b)|
                 compute_voleith_key_vec(&pa_y_bit_vec, voleith_mac_y_vec, &nabla_b)
@@ -100,8 +99,8 @@ mod tests {
                 &pa_voleith_key_y_vec_rep[repetition_id],
             );
         }
-        let pa_z_bit_vec = generate_random_bit_vec(public_parameter.big_w);
-        let pa_voleith_mac_z_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_w);
+        let pa_z_bit_vec = generate_random_bit_vec(public_parameter.big_iw_size);
+        let pa_voleith_mac_z_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
         let pa_voleith_key_z_vec_rep = pa_voleith_mac_z_vec_rep.iter().zip(nabla_b_rep.iter()).map(
             |(voleith_mac_z_vec, nabla_b)|
                 compute_voleith_key_vec(&pa_z_bit_vec, voleith_mac_z_vec, &nabla_b)
@@ -112,8 +111,8 @@ mod tests {
                 &pa_voleith_key_z_vec_rep[repetition_id],
             );
         }
-        let pa_a_bit_vec_rep = generate_random_bit_vec_rep(public_parameter.kappa, public_parameter.big_w);
-        let pa_voleith_mac_a_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_w);
+        let pa_a_bit_vec_rep = generate_random_bit_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
+        let pa_voleith_mac_a_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
         let pa_voleith_key_a_vec_rep = izip!(pa_a_bit_vec_rep.iter(), pa_voleith_mac_a_vec_rep.iter(), nabla_b_rep.iter()).map(
             |(a_bit_vec, voleith_mac_a_vec, nabla_b)|
                 compute_voleith_key_vec(a_bit_vec, voleith_mac_a_vec, &nabla_b)
@@ -124,8 +123,8 @@ mod tests {
                 &pa_voleith_key_a_vec_rep[repetition_id],
             );
         }
-        let pa_b_bit_vec_rep = generate_random_bit_vec_rep(public_parameter.kappa, public_parameter.big_w);
-        let pa_voleith_mac_b_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_w);
+        let pa_b_bit_vec_rep = generate_random_bit_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
+        let pa_voleith_mac_b_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
         let pa_voleith_key_b_vec_rep = izip!(pa_b_bit_vec_rep.iter(), pa_voleith_mac_b_vec_rep.iter(), nabla_b_rep.iter()).map(
             |(b_bit_vec, voleith_mac_b_vec, nabla_b)|
                 compute_voleith_key_vec(b_bit_vec, voleith_mac_b_vec, &nabla_b)
@@ -136,8 +135,8 @@ mod tests {
                 &pa_voleith_key_b_vec_rep[repetition_id],
             );
         }
-        let pa_c_bit_vec_rep = generate_random_bit_vec_rep(public_parameter.kappa, public_parameter.big_w);
-        let pa_voleith_mac_c_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_w);
+        let pa_c_bit_vec_rep = generate_random_bit_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
+        let pa_voleith_mac_c_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
         let pa_voleith_key_c_vec_rep = izip!(pa_c_bit_vec_rep.iter(), pa_voleith_mac_c_vec_rep.iter(), nabla_b_rep.iter()).map(
             |(c_bit_vec, voleith_mac_c_vec, nabla_b)|
                 compute_voleith_key_vec(c_bit_vec, voleith_mac_c_vec, &nabla_b)
@@ -150,8 +149,8 @@ mod tests {
         }
 
         // prepare random vectors for pb
-        let pb_x_bit_vec = generate_random_bit_vec(public_parameter.big_w);
-        let pb_voleith_mac_x_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_w);
+        let pb_x_bit_vec = generate_random_bit_vec(public_parameter.big_iw_size);
+        let pb_voleith_mac_x_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
         let pb_voleith_key_x_vec_rep = pb_voleith_mac_x_vec_rep.iter().zip(nabla_a_rep.iter()).map(
             |(voleith_mac_x_vec, nabla_a)|
                 compute_voleith_key_vec(&pb_x_bit_vec, voleith_mac_x_vec, &nabla_a)
@@ -162,8 +161,8 @@ mod tests {
                 &pb_voleith_key_x_vec_rep[repetition_id],
             );
         }
-        let pb_y_bit_vec = generate_random_bit_vec(public_parameter.big_w);
-        let pb_voleith_mac_y_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_w);
+        let pb_y_bit_vec = generate_random_bit_vec(public_parameter.big_iw_size);
+        let pb_voleith_mac_y_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
         let pb_voleith_key_y_vec_rep = pb_voleith_mac_y_vec_rep.iter().zip(nabla_a_rep.iter()).map(
             |(voleith_mac_y_vec, nabla_a)|
                 compute_voleith_key_vec(&pb_y_bit_vec, voleith_mac_y_vec, &nabla_a)
@@ -181,7 +180,7 @@ mod tests {
             |(pa_x, pa_y, pa_z, pb_x, pb_y)|
                 (pa_x ^ pb_x) & (pa_y ^ pb_y) ^ pa_z
         ).collect());
-        let pb_voleith_mac_z_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_w);
+        let pb_voleith_mac_z_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
         let pb_voleith_key_z_vec_rep = pb_voleith_mac_z_vec_rep.iter().zip(nabla_a_rep.iter()).map(
             |(voleith_mac_z_vec, nabla_a)|
                 compute_voleith_key_vec(&pb_z_bit_vec, voleith_mac_z_vec, &nabla_a)
@@ -192,8 +191,8 @@ mod tests {
                 &pb_voleith_key_z_vec_rep[repetition_id],
             );
         }
-        let pb_a_bit_vec_rep = generate_random_bit_vec_rep(public_parameter.kappa, public_parameter.big_w);
-        let pb_voleith_mac_a_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_w);
+        let pb_a_bit_vec_rep = generate_random_bit_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
+        let pb_voleith_mac_a_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
         let pb_voleith_key_a_vec_rep = izip!(pb_a_bit_vec_rep.iter(), pb_voleith_mac_a_vec_rep.iter(), nabla_a_rep.iter()).map(
             |(a_bit_vec, voleith_mac_a_vec, nabla_a)|
                 compute_voleith_key_vec(a_bit_vec, voleith_mac_a_vec, &nabla_a)
@@ -204,8 +203,8 @@ mod tests {
                 &pb_voleith_key_a_vec_rep[repetition_id],
             );
         }
-        let pb_b_bit_vec_rep = generate_random_bit_vec_rep(public_parameter.kappa, public_parameter.big_w);
-        let pb_voleith_mac_b_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_w);
+        let pb_b_bit_vec_rep = generate_random_bit_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
+        let pb_voleith_mac_b_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
         let pb_voleith_key_b_vec_rep = izip!(pb_b_bit_vec_rep.iter(), pb_voleith_mac_b_vec_rep.iter(), nabla_a_rep.iter()).map(
             |(b_bit_vec, voleith_mac_b_vec, nabla_a)|
                 compute_voleith_key_vec(b_bit_vec, voleith_mac_b_vec, &nabla_a)
@@ -230,7 +229,7 @@ mod tests {
                             (pa_a ^ pb_a) & (pa_b ^ pb_b) ^ pa_c
                 ).collect())
         ).collect::<Vec<BitVec>>();
-        let pb_voleith_mac_c_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_w);
+        let pb_voleith_mac_c_vec_rep = generate_random_gf2p8_vec_rep(public_parameter.kappa, public_parameter.big_iw_size);
         let pb_voleith_key_c_vec_rep = izip!(pb_c_bit_vec_rep.iter(), pb_voleith_mac_c_vec_rep.iter(), nabla_a_rep.iter()).map(
             |(c_bit_vec, voleith_mac_c_vec, nabla_a)|
                 compute_voleith_key_vec(c_bit_vec, voleith_mac_c_vec, &nabla_a)

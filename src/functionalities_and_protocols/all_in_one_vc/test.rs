@@ -18,12 +18,11 @@ mod tests {
             8,
             20,
             SeedU8x16::insecurely_random(),
-            10,
-            10,
-            20,
-            30,
-            Vec::new(),
-            Vec::new(),
+            (0..100).collect(),
+            (100..200).collect(),
+            (200..300).collect(),
+            4,
+            50
         );
         // let prover_secret_input = ProverSecretInput::new(
         //     SeedU8x16::insecurely_random(),

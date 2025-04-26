@@ -41,21 +41,21 @@ impl VerifierInProtocolSvole2PC {
         
         let voleith_key_r_output_and_vec: GFVec<GFVOLEitH> = {
             let mut hat_r_output_and_bit_multiplying_nabla: GFVec<GFVOLEitH> = GFVec::new();
-            for i in 0..public_parameter.big_w {
+            for i in 0..public_parameter.big_iw_size {
                 hat_r_output_and_bit_multiplying_nabla.push(nabla_rep[repetition_id].gf_multiply_bit(hat_r_output_bit_vec[i]));
             }
             public_voleith_key_vec.split_off(
-                public_voleith_key_vec.len() - public_parameter.big_w
+                public_voleith_key_vec.len() - public_parameter.big_iw_size
             ).vec_add(&hat_r_output_and_bit_multiplying_nabla)
         };
 
         let voleith_key_r_prime_vec: GFVec<GFVOLEitH> = {
             let mut hat_r_prime_bit_multiplying_nabla: GFVec<GFVOLEitH> = GFVec::new();
-            for i in 0..public_parameter.big_w {
+            for i in 0..public_parameter.big_iw_size {
                 hat_r_prime_bit_multiplying_nabla.push(nabla_rep[repetition_id].gf_multiply_bit(hat_r_prime_bit_vec[i]));
             }
             public_voleith_key_vec.split_off(
-                public_voleith_key_vec.len() - public_parameter.big_w
+                public_voleith_key_vec.len() - public_parameter.big_iw_size
             ).vec_add(&hat_r_prime_bit_multiplying_nabla)
         };
 
