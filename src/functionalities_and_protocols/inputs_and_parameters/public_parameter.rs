@@ -10,7 +10,7 @@ pub struct PublicParameter {
     pub big_w: usize,
     pub big_l: usize,
     pub big_n: usize,
-    pub sum_big_ia_ib_iw: usize,
+    pub sum_big_ia_ib: usize,
     pub big_ia: Vec<usize>,
     pub big_ib: Vec<usize>,
 }
@@ -30,7 +30,7 @@ impl PublicParameter {
             big_w,
             big_l,
             big_n: big_ia_size + big_ib_size + 2 * big_w + 3 * big_l,
-            sum_big_ia_ib_iw: big_ia_size + big_ib_size + big_w,
+            sum_big_ia_ib: big_ia_size + big_ib_size,
             big_ia,
             big_ib,       
         }

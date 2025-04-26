@@ -40,6 +40,10 @@ impl BitVec {
             ).collect()
         }
     }
+    
+    pub fn append(&mut self, other: &mut Self) {
+        self.val.append(&mut other.val);
+    }
 }
 
 impl ZeroVec for BitVec {

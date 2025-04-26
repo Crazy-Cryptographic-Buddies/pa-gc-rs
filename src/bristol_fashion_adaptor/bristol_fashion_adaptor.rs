@@ -163,6 +163,14 @@ impl BristolFashionAdaptor {
     pub fn get_num_output_bits(&self) -> usize {
         self.num_output_bits
     }
+    
+    pub fn get_num_wires(&self) -> usize {
+        self.num_wires
+    }
+    
+    pub fn get_gate_vec(&self) -> &Vec<GateInfo> {
+        self.gate_vec.as_ref()   
+    }
 }
 
 // #[test]
