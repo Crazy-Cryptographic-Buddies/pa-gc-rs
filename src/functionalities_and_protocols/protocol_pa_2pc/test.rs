@@ -91,13 +91,19 @@ mod tests {
             &mut pa_secret_state.vole_mac_r_input_vec,
             &mut pb_secret_state.other_vole_key_r_input_vec
         );
+        assert_eq!(pa_secret_state.r_input_bit_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
+        assert_eq!(pa_secret_state.vole_mac_r_input_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
+        assert_eq!(pb_secret_state.other_vole_key_r_input_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
         InsecureFunctionalityPre::generate_random_tuples::<GFVOLE, GFVOLEitH>(
             public_parameter.big_iw_size,
             &pb_secret_state.delta.as_ref().unwrap(),
-            &mut pb_secret_state.r_output_and_bit_vec,
-            &mut pb_secret_state.vole_mac_r_output_and_vec,
-            &mut pa_secret_state.other_vole_key_r_output_and_vec
+            &mut pa_secret_state.r_output_and_bit_vec,
+            &mut pa_secret_state.vole_mac_r_output_and_vec,
+            &mut pb_secret_state.other_vole_key_r_output_and_vec
         );
+        assert_eq!(pa_secret_state.r_output_and_bit_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
+        assert_eq!(pa_secret_state.vole_mac_r_output_and_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
+        assert_eq!(pb_secret_state.other_vole_key_r_output_and_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
 
         // pb obtains vole-authenticated bits
         InsecureFunctionalityPre::generate_random_tuples::<GFVOLE, GFVOLEitH>(
@@ -107,6 +113,10 @@ mod tests {
             &mut pb_secret_state.vole_mac_r_input_vec,
             &mut pa_secret_state.other_vole_key_r_input_vec
         );
+        assert_eq!(pb_secret_state.r_input_bit_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
+        assert_eq!(pb_secret_state.vole_mac_r_input_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
+        assert_eq!(pa_secret_state.other_vole_key_r_input_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
+        
         InsecureFunctionalityPre::generate_random_tuples::<GFVOLE, GFVOLEitH>(
             public_parameter.big_iw_size,
             &pa_secret_state.delta.as_ref().unwrap(),
@@ -114,12 +124,17 @@ mod tests {
             &mut pb_secret_state.vole_mac_r_output_and_vec,
             &mut pa_secret_state.other_vole_key_r_output_and_vec
         );
+        assert_eq!(pb_secret_state.r_output_and_bit_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
+        assert_eq!(pb_secret_state.vole_mac_r_output_and_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
+        assert_eq!(pa_secret_state.other_vole_key_r_output_and_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
         let mut pa_label_input_vec = (0..public_parameter.num_input_bits).map(
             |_| GFVOLE::insecurely_random()
         ).collect::<GFVec<GFVOLE>>();
         let mut pa_label_output_and_vec = (0..public_parameter.big_iw_size).map(
             |_| GFVOLE::insecurely_random()
         ).collect::<GFVec<GFVOLE>>();
+        assert_eq!(pa_label_input_vec.len(), public_parameter.num_input_bits);
+        assert_eq!(pa_label_output_and_vec.len(), public_parameter.big_iw_size);
 
         // initialize traces for pa
         let mut pa_r_bit_vec = initialize_trace::<u8, BitVec>(
@@ -128,24 +143,28 @@ mod tests {
             &pa_secret_state.r_input_bit_vec.as_ref().unwrap(),
             &pa_secret_state.r_output_and_bit_vec.as_ref().unwrap()
         );
+        assert_eq!(pa_r_bit_vec.len(), bristol_fashion_adaptor.get_num_wires());
         let mut pa_vole_mac_r_vec = initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
             public_parameter,
             bristol_fashion_adaptor.get_num_wires(),
             &pa_secret_state.vole_mac_r_input_vec.as_ref().unwrap(),
             &pa_secret_state.vole_mac_r_output_and_vec.as_ref().unwrap()
         );
+        assert_eq!(pa_vole_mac_r_vec.len(), bristol_fashion_adaptor.get_num_wires());
         let mut pa_other_vole_key_r_vec = initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
             public_parameter,
             bristol_fashion_adaptor.get_num_wires(),
             &pa_secret_state.other_vole_key_r_input_vec.as_ref().unwrap(),
             &pa_secret_state.other_vole_key_r_output_and_vec.as_ref().unwrap()
         );
+        assert_eq!(pa_other_vole_key_r_vec.len(), bristol_fashion_adaptor.get_num_wires());
         let mut pa_label_vec = initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
             public_parameter,
             bristol_fashion_adaptor.get_num_wires(),
             &pa_label_input_vec,
             &pa_label_output_and_vec
         );
+        assert_eq!(pa_label_vec.len(), bristol_fashion_adaptor.get_num_wires());
 
         // initialize traces for pb
         let mut pb_r_bit_vec = initialize_trace::<u8, BitVec>(
@@ -154,18 +173,21 @@ mod tests {
             &pb_secret_state.r_input_bit_vec.as_ref().unwrap(),
             &pb_secret_state.r_output_and_bit_vec.as_ref().unwrap()
         );
+        assert_eq!(pb_r_bit_vec.len(), bristol_fashion_adaptor.get_num_wires());
         let mut pb_vole_mac_r_vec = initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
             public_parameter,
             bristol_fashion_adaptor.get_num_wires(),
             &pb_secret_state.vole_mac_r_input_vec.as_ref().unwrap(),
             &pb_secret_state.vole_mac_r_output_and_vec.as_ref().unwrap()
         );
+        assert_eq!(pb_vole_mac_r_vec.len(), bristol_fashion_adaptor.get_num_wires());
         let mut pb_other_vole_key_r_vec = initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
             public_parameter,
             bristol_fashion_adaptor.get_num_wires(),
             &pb_secret_state.other_vole_key_r_input_vec.as_ref().unwrap(),
             &pb_secret_state.other_vole_key_r_output_and_vec.as_ref().unwrap()
         );
+        assert_eq!(pb_other_vole_key_r_vec.len(), bristol_fashion_adaptor.get_num_wires());
 
         // obtain multiplication AND triples
         InsecureFunctionalityPre::generate_random_and_tuples(
@@ -180,15 +202,15 @@ mod tests {
         );
 
         // Prepare masked_r_and_output_bit_vec for computing with AND gates
-        let mut pa_r_prime_bit_vec = vec![0u8; public_parameter.big_iw_size];
-        let mut pa_vole_mac_r_prime_vec = vec![GFVOLE::zero(); public_parameter.big_iw_size];
-        let mut pa_other_vole_key_r_prime_vec = vec![GFVOLE::zero(); public_parameter.big_iw_size];
+        // let mut pa_r_prime_bit_vec = vec![0u8; public_parameter.big_iw_size];
+        // let mut pa_vole_mac_r_prime_vec = vec![GFVOLE::zero(); public_parameter.big_iw_size];
+        // let mut pa_other_vole_key_r_prime_vec = vec![GFVOLE::zero(); public_parameter.big_iw_size];
         let mut pa_middle_r_and_output_bit_vec = vec![[0u8; 4]; public_parameter.big_iw_size];
         let mut pa_middle_vole_mac_r_and_output_bit_vec = vec![[GFVOLE::zero(); 4]; public_parameter.big_iw_size];
         let mut pa_other_middle_vole_key_r_and_output_bit_vec = vec![[GFVOLE::zero(); 4]; public_parameter.big_iw_size];
-        let mut pb_r_prime_bit_vec = vec![0u8; public_parameter.big_iw_size];
-        let mut pb_vole_mac_r_prime_vec = vec![GFVOLE::zero(); public_parameter.big_iw_size];
-        let mut pb_other_vole_key_r_prime_vec = vec![GFVOLE::zero(); public_parameter.big_iw_size];
+        // let mut pb_r_prime_bit_vec = vec![0u8; public_parameter.big_iw_size];
+        // let mut pb_vole_mac_r_prime_vec = vec![GFVOLE::zero(); public_parameter.big_iw_size];
+        // let mut pb_other_vole_key_r_prime_vec = vec![GFVOLE::zero(); public_parameter.big_iw_size];
         let mut pb_middle_r_and_output_bit_vec = vec![[0u8; 4]; public_parameter.big_iw_size];
         let mut pb_middle_vole_mac_r_and_output_bit_vec = vec![[GFVOLE::zero(); 4]; public_parameter.big_iw_size];
         let mut pb_other_middle_vole_key_r_and_output_bit_vec = vec![[GFVOLE::zero(); 4]; public_parameter.big_iw_size];
@@ -211,22 +233,31 @@ mod tests {
                     pb_other_vole_key_r_vec[gate.output_wire] = pb_other_vole_key_r_vec[gate.left_input_wire].gf_add(&pb_other_vole_key_r_vec[gate.right_input_wire]);
                 },
                 GateType::NOT => {
-                    todo!()
+                    // compute for pa
+                    pa_r_bit_vec[gate.output_wire] = pa_r_bit_vec[gate.left_input_wire];
+                    pa_vole_mac_r_vec[gate.output_wire] = pa_vole_mac_r_vec[gate.left_input_wire];
+                    pa_other_vole_key_r_vec[gate.output_wire] = pa_other_vole_key_r_vec[gate.left_input_wire];
+                    pa_label_vec[gate.output_wire] = pa_label_vec[gate.left_input_wire];
+                    
+                    // compute for pb
+                    pb_r_bit_vec[gate.output_wire] = !pb_r_bit_vec[gate.left_input_wire];
+                    pb_vole_mac_r_vec[gate.output_wire] = pb_vole_mac_r_vec[gate.left_input_wire];
+                    pb_other_vole_key_r_vec[gate.output_wire] = pb_other_vole_key_r_vec[gate.left_input_wire];
                 },
                 GateType::AND => {
                     InsecureFunctionalityPre::generate_random_authenticated_and_tuples(
                         pa_secret_state.delta.as_ref().unwrap(),
                         pa_r_bit_vec[gate.left_input_wire],
                         pa_r_bit_vec[gate.right_input_wire],
-                        &mut pa_r_prime_bit_vec[and_cursor],
-                        &mut pa_vole_mac_r_prime_vec[and_cursor],
-                        &mut pb_other_vole_key_r_prime_vec[and_cursor],
+                        &mut pa_secret_state.r_prime_bit_vec[and_cursor],
+                        &mut pa_secret_state.vole_mac_r_prime_vec[and_cursor],
+                        &mut pb_secret_state.other_vole_key_r_prime_vec[and_cursor],
                         pa_secret_state.delta.as_ref().unwrap(),
                         pb_r_bit_vec[gate.left_input_wire],
                         pb_r_bit_vec[gate.right_input_wire],
-                        &mut pb_r_prime_bit_vec[and_cursor],
-                        &mut pb_vole_mac_r_prime_vec[and_cursor],
-                        &mut pa_other_vole_key_r_vec[and_cursor],
+                        &mut pb_secret_state.r_prime_bit_vec[and_cursor],
+                        &mut pb_secret_state.vole_mac_r_prime_vec[and_cursor],
+                        &mut pa_secret_state.other_vole_key_r_prime_vec[and_cursor],
                     );
 
                     // PA computes
@@ -234,17 +265,17 @@ mod tests {
                         compute_authenticated_middle_r_and_output_bit_vec(
                             k, &pa_secret_state.delta,
                             &mut pa_middle_r_and_output_bit_vec[and_cursor][k],
-                            pa_r_prime_bit_vec[and_cursor],
+                            pa_secret_state.r_prime_bit_vec[and_cursor],
                             pa_r_bit_vec[gate.output_wire],
                             pa_r_bit_vec[gate.left_input_wire],
                             pa_r_bit_vec[gate.right_input_wire],
                             &mut pa_middle_vole_mac_r_and_output_bit_vec[and_cursor][k],
-                            &pa_vole_mac_r_prime_vec[and_cursor],
+                            &pa_secret_state.vole_mac_r_prime_vec[and_cursor],
                             &pa_vole_mac_r_vec[gate.output_wire],
                             &pa_vole_mac_r_vec[gate.left_input_wire],
                             &pa_vole_mac_r_vec[gate.right_input_wire],
                             &mut pa_other_middle_vole_key_r_and_output_bit_vec[and_cursor][k],
-                            &pa_other_vole_key_r_prime_vec[and_cursor],
+                            &pa_secret_state.other_vole_key_r_prime_vec[and_cursor],
                             &pa_other_vole_key_r_vec[gate.output_wire],
                             &pa_other_vole_key_r_vec[gate.left_input_wire],
                             &pa_other_vole_key_r_vec[gate.right_input_wire]
@@ -256,22 +287,24 @@ mod tests {
                         compute_authenticated_middle_r_and_output_bit_vec(
                             k, &None,
                             &mut pb_middle_r_and_output_bit_vec[and_cursor][k],
-                            pb_r_prime_bit_vec[and_cursor],
+                            pb_secret_state.r_prime_bit_vec[and_cursor],
                             pb_r_bit_vec[gate.output_wire],
                             pb_r_bit_vec[gate.left_input_wire],
                             pb_r_bit_vec[gate.right_input_wire],
                             &mut pb_middle_vole_mac_r_and_output_bit_vec[and_cursor][k],
-                            &pb_vole_mac_r_prime_vec[and_cursor],
+                            &pb_secret_state.vole_mac_r_prime_vec[and_cursor],
                             &pb_vole_mac_r_vec[gate.output_wire],
                             &pb_vole_mac_r_vec[gate.left_input_wire],
                             &pb_vole_mac_r_vec[gate.right_input_wire],
                             &mut pb_other_middle_vole_key_r_and_output_bit_vec[and_cursor][k],
-                            &pb_other_vole_key_r_prime_vec[and_cursor],
+                            &pb_secret_state.other_vole_key_r_prime_vec[and_cursor],
                             &pb_other_vole_key_r_vec[gate.output_wire],
                             &pb_other_vole_key_r_vec[gate.left_input_wire],
                             &pb_other_vole_key_r_vec[gate.right_input_wire]
                         )
                     }
+
+                    and_cursor += 1;
                 }
 
             }

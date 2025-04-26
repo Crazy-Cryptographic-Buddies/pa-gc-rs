@@ -27,7 +27,7 @@ impl ProverInProtocolSVOLE2PC {
         let hat_r_output_and_bit_vec = prover_secret_state.r_output_and_bit_vec.as_ref().unwrap().vec_add(
             &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.big_iw_size)
         );
-        let hat_r_prime_bit_vec = prover_secret_state.r_prime_bit_vec.as_ref().unwrap().vec_add(
+        let hat_r_prime_bit_vec = prover_secret_state.r_prime_bit_vec.vec_add(
             &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.big_iw_size)
         );
         let hat_a_bit_vec = prover_secret_state.tilde_a_bit_vec_rep.as_ref().unwrap()[repetition_id].vec_add(
