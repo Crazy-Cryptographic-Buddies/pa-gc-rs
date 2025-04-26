@@ -28,20 +28,20 @@ mod tests {
         
         // pa obtains vole-authenticated bits
         InsecureFunctionalityPre::generate_random_tuples::<GFVOLE, GFVOLEitH>(
-            public_parameter.sum_big_ia_ib_iw,
+            public_parameter.num_input_bits,
             &pb_secret_state.delta.as_ref().unwrap(),
-            &mut pa_secret_state.r_bit_vec,
-            &mut pa_secret_state.vole_mac_r_vec_rep,
-            &mut pb_secret_state.other_vole_key_r_vec_rep
+            &mut pa_secret_state.r_input_bit_vec,
+            &mut pa_secret_state.vole_mac_r_input_vec_rep,
+            &mut pb_secret_state.other_vole_key_r_input_vec_rep
         );
-        println!("{:?}", pa_secret_state.r_bit_vec.as_ref().unwrap().len());
-        pa_secret_state.r_bit_vec.as_mut().unwrap().append(
-            &mut BitVec::zero_vec(
-                bristol_fashion_adaptor.get_num_wires() - bristol_fashion_adaptor.get_num_input_bits()
-            )
+        InsecureFunctionalityPre::generate_random_tuples::<GFVOLE, GFVOLEitH>(
+            public_parameter.big_w,
+            &pb_secret_state.delta.as_ref().unwrap(),
+            &mut pa_secret_state.r_output_and_bit_vec,
+            &mut pa_secret_state.vole_mac_r_output_and_vec_rep,
+            &mut pb_secret_state.other_vole_key_r_output_and_vec_rep
         );
-        println!("{:?}", pa_secret_state.r_bit_vec.as_ref().unwrap().len());
-        let label_zero = (0..public_parameter.sum_big_ia_ib_iw).map(
+        let label_zero = (0..public_parameter.num_input_bits).map(
             |_| GFVOLE::insecurely_random()
         ).collect::<Vec<GFVOLE>>();
         // let mut pa_r_bit_vec = pa_secret_state.r_bit_vec.as_ref().unwrap().iter().map(
@@ -55,11 +55,18 @@ mod tests {
         
         // pb obtains vole-authenticated bits
         InsecureFunctionalityPre::generate_random_tuples::<GFVOLE, GFVOLEitH>(
-            public_parameter.sum_big_ia_ib_iw,
+            public_parameter.num_input_bits,
             &pa_secret_state.delta.as_ref().unwrap(),
-            &mut pb_secret_state.r_bit_vec,
-            &mut pb_secret_state.vole_mac_r_vec_rep,
-            &mut pa_secret_state.other_vole_key_r_vec_rep
+            &mut pb_secret_state.r_input_bit_vec,
+            &mut pb_secret_state.vole_mac_r_input_vec_rep,
+            &mut pa_secret_state.other_vole_key_r_input_vec_rep
+        );
+        InsecureFunctionalityPre::generate_random_tuples::<GFVOLE, GFVOLEitH>(
+            public_parameter.big_w,
+            &pa_secret_state.delta.as_ref().unwrap(),
+            &mut pb_secret_state.r_output_and_bit_vec,
+            &mut pb_secret_state.vole_mac_r_output_and_vec_rep,
+            &mut pa_secret_state.other_vole_key_r_output_and_vec_rep
         );
         
         // obtain multiplication AND triples

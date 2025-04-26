@@ -19,10 +19,13 @@ impl ProverInProtocolSVOLE2PC {
         prover_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>,
         secret_bit_vec: &mut BitVec,
         secret_voleith_mac_vec: &mut GFVec<GFVOLEitH>
-    ) -> (BitVec, BitVec, BitVec, BitVec, BitVec) {
+    ) -> (BitVec, BitVec, BitVec, BitVec, BitVec, BitVec) {
         // first mask the bits
-        let hat_r_bit_vec = prover_secret_state.r_bit_vec.as_ref().unwrap().vec_add(
-            &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.sum_big_ia_ib_iw)
+        let hat_r_input_bit_vec = prover_secret_state.r_input_bit_vec.as_ref().unwrap().vec_add(
+            &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.num_input_bits)
+        );
+        let hat_r_output_and_bit_vec = prover_secret_state.r_output_and_bit_vec.as_ref().unwrap().vec_add(
+            &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.big_w)
         );
         let hat_r_prime_bit_vec = prover_secret_state.r_prime_bit_vec.as_ref().unwrap().vec_add(
             &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.big_w)
@@ -39,8 +42,11 @@ impl ProverInProtocolSVOLE2PC {
         assert_eq!(secret_bit_vec.len(), 0);
 
         // then distribute the voleith macs
-        prover_secret_state.voleith_mac_r_vec_rep[repetition_id] = Some(
-            secret_voleith_mac_vec.split_off(secret_voleith_mac_vec.len() - public_parameter.sum_big_ia_ib_iw)
+        prover_secret_state.voleith_mac_r_input_vec_rep[repetition_id] = Some(
+            secret_voleith_mac_vec.split_off(secret_voleith_mac_vec.len() - public_parameter.num_input_bits)
+        );
+        prover_secret_state.voleith_mac_r_output_and_vec_rep[repetition_id] = Some(
+            secret_voleith_mac_vec.split_off(secret_voleith_mac_vec.len() - public_parameter.big_w)       
         );
         prover_secret_state.voleith_mac_r_prime_vec_rep[repetition_id] = Some(
             secret_voleith_mac_vec.split_off(secret_voleith_mac_vec.len() - public_parameter.big_w)
@@ -56,16 +62,16 @@ impl ProverInProtocolSVOLE2PC {
         );
         assert_eq!(secret_voleith_mac_vec.len(), 0);
 
-        (hat_r_bit_vec, hat_r_prime_bit_vec, hat_a_bit_vec, hat_b_bit_vec, hat_c_bit_vec)
+        (hat_r_input_bit_vec, hat_r_output_and_bit_vec, hat_r_prime_bit_vec, hat_a_bit_vec, hat_b_bit_vec, hat_c_bit_vec)
     }
 
     pub fn commit_and_fix_bit_vec_and_mac_vec<GFVOLE, GFVOLEitH>(
         public_parameter: &PublicParameter, 
         prover_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>
-    ) -> (Vec<Hash>, Vec<(BitVec, BitVec, BitVec, BitVec, BitVec)>) 
+    ) -> (Vec<Hash>, Vec<(BitVec, BitVec, BitVec, BitVec, BitVec, BitVec)>) 
     where GFVOLE: Clone + GFAddition + Zero, GFVOLEitH: Clone + Zero + GFAddition + U8ForGF {
         let mut com_hash_rep: Vec<Hash> = Vec::new();
-        let mut masked_bit_tuple_rep: Vec<(BitVec, BitVec, BitVec, BitVec, BitVec)> = Vec::new();
+        let mut masked_bit_tuple_rep: Vec<(BitVec, BitVec, BitVec, BitVec, BitVec, BitVec)> = Vec::new();
         for repetition_id in 0..public_parameter.kappa {
             let mut secret_bit_vec: Option<BitVec> = None;
             let mut secret_voleith_mac_vec: Option<GFVec<GFVOLEitH>> = None;
