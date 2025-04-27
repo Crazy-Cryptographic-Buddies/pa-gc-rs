@@ -7,7 +7,7 @@ mod tests {
     use crate::value_type::seed_u8x16::SeedU8x16;
     use crate::vec_type::bit_vec::BitVec;
     use crate::vec_type::gf_vec::GFVec;
-    use crate::value_type::{GFAddition, InsecureRandom};
+    use crate::value_type::{CustomAddition, InsecureRandom};
     use crate::value_type::Zero;
     use crate::vec_type::ZeroVec;
 
@@ -61,12 +61,12 @@ mod tests {
                 shifted_nabla = nabla.clone();
             }
             println!("mac + bit * nabla, key, mac, msg: {:?}, {:?}, {:?}, {:?}",
-                     prover_secret_voleith_mac_vec[j].gf_add(&shifted_nabla),
+                     prover_secret_voleith_mac_vec[j].custom_add(&shifted_nabla),
                      voleith_key_vec[j],
                      prover_secret_voleith_mac_vec[j],
                      prover_secret_bit_vec[j]
             );
-            assert_eq!(voleith_key_vec[j], prover_secret_voleith_mac_vec[j].gf_add(&shifted_nabla));
+            assert_eq!(voleith_key_vec[j], prover_secret_voleith_mac_vec[j].custom_add(&shifted_nabla));
         }
         println!("bit_vec_len, voleith_mac_vec_len, voleith_key_vec_len: {:?}, {:?}, {:?}",
                  prover_secret_bit_vec.len(),

@@ -2,7 +2,7 @@ use blake3::Hash;
 use crate::functionalities_and_protocols::all_in_one_vc::generating_bit_and_com_prg::GeneratingBitAndComPRG;
 use crate::functionalities_and_protocols::hasher::hasher::Hasher;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
-use crate::value_type::{GFAddition, U8ForGF, Zero};
+use crate::value_type::{CustomAddition, U8ForGF, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::{
     bit_vec::BitVec,
@@ -15,7 +15,7 @@ pub struct VerifierInAllInOneVC {
 
 impl VerifierInAllInOneVC {
     
-    pub fn reconstruct<GFVOLEitH: U8ForGF + Clone + Zero + GFAddition>(
+    pub fn reconstruct<GFVOLEitH: U8ForGF + Clone + Zero + CustomAddition>(
         public_parameter: &PublicParameter, 
         nabla: &GFVOLEitH, decom: &(SeedU8x16, Vec<SeedU8x16>)
     ) -> (Hash, GFVec<GFVOLEitH>) {
@@ -53,11 +53,11 @@ impl VerifierInAllInOneVC {
         let mut voleith_key_vec = GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_n);
         for i in 0..1 << public_parameter.tau {
             if i != excluded_index {
-                let i_shifted = nabla.gf_add(&GFVOLEitH::from_u8(i as u8));
+                let i_shifted = nabla.custom_add(&GFVOLEitH::from_u8(i as u8));
                 let bit_vec_i = &reconstructed_bit_vec_vec[i];
                 for j in 0..public_parameter.big_n {
                     if bit_vec_i[j] == 1 {
-                        voleith_key_vec[j] = voleith_key_vec[j].gf_add(&i_shifted);
+                        voleith_key_vec[j] = voleith_key_vec[j].custom_add(&i_shifted);
                     }
                 }
             }

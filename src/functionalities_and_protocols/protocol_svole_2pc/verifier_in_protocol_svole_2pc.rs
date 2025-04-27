@@ -2,7 +2,7 @@ use blake3::Hash;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::protocol_svole::verifier_in_protocol_svole::VerifierInProtocolSVOLE;
 use crate::value_type::seed_u8x16::SeedU8x16;
-use crate::value_type::{GFAddition, GFMultiplyingBit, U8ForGF, Zero};
+use crate::value_type::{CustomAddition, CustomMultiplyingBit, U8ForGF, Zero};
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 use crate::vec_type::Split;
@@ -12,7 +12,7 @@ pub struct VerifierInProtocolSvole2PC;
 
 impl VerifierInProtocolSvole2PC {
     
-    fn distribute_bits_and_voleith_macs_to_state<GFVOLEitH: Clone + Zero + GFMultiplyingBit + GFAddition>(
+    fn distribute_bits_and_voleith_macs_to_state<GFVOLEitH: Clone + Zero + CustomMultiplyingBit + CustomAddition>(
         public_parameter: &PublicParameter,
         repetition_id: usize,
         nabla_rep: &Vec<GFVOLEitH>,
@@ -32,7 +32,7 @@ impl VerifierInProtocolSvole2PC {
         let voleith_key_r_input_vec: GFVec<GFVOLEitH> = {
             let mut hat_r_input_bit_multiplying_nabla: GFVec<GFVOLEitH> = GFVec::new();
             for i in 0..public_parameter.num_input_bits {
-                hat_r_input_bit_multiplying_nabla.push(nabla_rep[repetition_id].gf_multiply_bit(hat_r_input_bit_vec[i]));
+                hat_r_input_bit_multiplying_nabla.push(nabla_rep[repetition_id].custom_multiply_bit(hat_r_input_bit_vec[i]));
             }
             public_voleith_key_vec.split_off(
                 public_voleith_key_vec.len() - public_parameter.num_input_bits
@@ -42,7 +42,7 @@ impl VerifierInProtocolSvole2PC {
         let voleith_key_r_output_and_vec: GFVec<GFVOLEitH> = {
             let mut hat_r_output_and_bit_multiplying_nabla: GFVec<GFVOLEitH> = GFVec::new();
             for i in 0..public_parameter.big_iw_size {
-                hat_r_output_and_bit_multiplying_nabla.push(nabla_rep[repetition_id].gf_multiply_bit(hat_r_output_bit_vec[i]));
+                hat_r_output_and_bit_multiplying_nabla.push(nabla_rep[repetition_id].custom_multiply_bit(hat_r_output_bit_vec[i]));
             }
             public_voleith_key_vec.split_off(
                 public_voleith_key_vec.len() - public_parameter.big_iw_size
@@ -52,7 +52,7 @@ impl VerifierInProtocolSvole2PC {
         let voleith_key_r_prime_vec: GFVec<GFVOLEitH> = {
             let mut hat_r_prime_bit_multiplying_nabla: GFVec<GFVOLEitH> = GFVec::new();
             for i in 0..public_parameter.big_iw_size {
-                hat_r_prime_bit_multiplying_nabla.push(nabla_rep[repetition_id].gf_multiply_bit(hat_r_prime_bit_vec[i]));
+                hat_r_prime_bit_multiplying_nabla.push(nabla_rep[repetition_id].custom_multiply_bit(hat_r_prime_bit_vec[i]));
             }
             public_voleith_key_vec.split_off(
                 public_voleith_key_vec.len() - public_parameter.big_iw_size
@@ -62,7 +62,7 @@ impl VerifierInProtocolSvole2PC {
         let voleith_key_tilde_a_vec: GFVec<GFVOLEitH> = {
             let mut hat_a_bit_multiplying_nabla: GFVec<GFVOLEitH> = GFVec::new();
             for i in 0..public_parameter.big_l {
-                hat_a_bit_multiplying_nabla.push(nabla_rep[repetition_id].gf_multiply_bit(hat_a_bit_vec[i]));
+                hat_a_bit_multiplying_nabla.push(nabla_rep[repetition_id].custom_multiply_bit(hat_a_bit_vec[i]));
             }
             public_voleith_key_vec.split_off(
                 public_voleith_key_vec.len() - public_parameter.big_l
@@ -72,7 +72,7 @@ impl VerifierInProtocolSvole2PC {
         let voleith_key_tilde_b_vec: GFVec<GFVOLEitH> = {
             let mut hat_b_bit_multiplying_nabla: GFVec<GFVOLEitH> = GFVec::new();
             for i in 0..public_parameter.big_l {
-                hat_b_bit_multiplying_nabla.push(nabla_rep[repetition_id].gf_multiply_bit(hat_b_bit_vec[i]));
+                hat_b_bit_multiplying_nabla.push(nabla_rep[repetition_id].custom_multiply_bit(hat_b_bit_vec[i]));
             }
             public_voleith_key_vec.split_off(
                 public_voleith_key_vec.len() - public_parameter.big_l
@@ -82,7 +82,7 @@ impl VerifierInProtocolSvole2PC {
         let voleith_key_tilde_c_vec: GFVec<GFVOLEitH> = {
             let mut hat_c_bit_multiplying_nabla: GFVec<GFVOLEitH> = GFVec::new();
             for i in 0..public_parameter.big_l {
-                hat_c_bit_multiplying_nabla.push(nabla_rep[repetition_id].gf_multiply_bit(hat_c_bit_vec[i]));
+                hat_c_bit_multiplying_nabla.push(nabla_rep[repetition_id].custom_multiply_bit(hat_c_bit_vec[i]));
             }
             public_voleith_key_vec.split_off(
                 public_voleith_key_vec.len() - public_parameter.big_l
@@ -93,7 +93,7 @@ impl VerifierInProtocolSvole2PC {
 
         (voleith_key_r_input_vec, voleith_key_r_output_and_vec, voleith_key_r_prime_vec, voleith_key_tilde_a_vec, voleith_key_tilde_b_vec, voleith_key_tilde_c_vec)
     }
-    pub fn reconstruct_and_fix_voleith_key_vec<GFVOLEitH: Clone + Zero + GFAddition + U8ForGF + GFMultiplyingBit>(
+    pub fn reconstruct_and_fix_voleith_key_vec<GFVOLEitH: Clone + Zero + CustomAddition + U8ForGF + CustomMultiplyingBit>(
         public_parameter: &PublicParameter, 
         prover_com_hash_rep: &Vec<Hash>,
         prover_masked_bit_tuple_rep: &Vec<(BitVec, BitVec, BitVec, BitVec, BitVec, BitVec)>,

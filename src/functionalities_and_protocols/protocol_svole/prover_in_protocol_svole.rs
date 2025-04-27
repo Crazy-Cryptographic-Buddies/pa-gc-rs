@@ -2,7 +2,7 @@ use blake3::Hash;
 use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::value_type::seed_u8x16::SeedU8x16;
-use crate::value_type::{GFAddition, U8ForGF, Zero};
+use crate::value_type::{CustomAddition, U8ForGF, Zero};
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 
@@ -18,7 +18,7 @@ impl ProverInProtocolSVOLE {
         output_secret_bit_vec: &mut BitVec,
         output_secret_voleith_mac_vec: &mut GFVec<GFVOLEitH>
     ) -> Hash
-    where GFVOLEitH: Clone + GFAddition + U8ForGF + Zero {
+    where GFVOLEitH: Clone + CustomAddition + U8ForGF + Zero {
         prover_secret_state.prover_in_all_in_one_vc_rep[repetition_id].commit(
             public_parameter, 
             &prover_secret_state.seed_for_generating_ggm_tree_rep[repetition_id],

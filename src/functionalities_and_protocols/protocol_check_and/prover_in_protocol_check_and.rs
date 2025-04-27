@@ -1,5 +1,5 @@
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
-use crate::value_type::{GFAddition, Zero};
+use crate::value_type::{CustomAddition, Zero};
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 use crate::vec_type::VecAddition;
@@ -8,7 +8,7 @@ pub struct ProverInProtocolCheckAND {
 }
 
 impl ProverInProtocolCheckAND {
-    pub fn compute_masked_bits_and_voleith_macs<GFVOLEitH: Clone + GFAddition + Zero>(
+    pub fn compute_masked_bits_and_voleith_macs<GFVOLEitH: Clone + CustomAddition + Zero>(
         public_parameter: &PublicParameter,
         x_bit_vec: &BitVec, voleith_mac_x_vec_rep: &Vec<GFVec<GFVOLEitH>>,
         y_bit_vec: &BitVec, voleith_mac_y_vec_rep: &Vec<GFVec<GFVOLEitH>>,
@@ -28,7 +28,7 @@ impl ProverInProtocolCheckAND {
         ((d_bit_vec_rep, voleith_mac_d_vec_rep), (e_bit_vec_rep, voleith_mac_e_vec_rep))
     }
 
-    pub fn compute_masked_cross_bits_and_voleith_macs<GFVOLEitH: Clone + Zero + GFAddition> (
+    pub fn compute_masked_cross_bits_and_voleith_macs<GFVOLEitH: Clone + Zero + CustomAddition> (
         public_parameter: &PublicParameter,
         public_d_sum_bit_vec_rep: &Vec<BitVec>, public_e_sum_bit_vec_rep: &Vec<BitVec>,
         z_bit_vec: &BitVec, voleith_mac_z_vec_rep: &Vec<GFVec<GFVOLEitH>>,

@@ -1,5 +1,5 @@
 use rand::Rng;
-use crate::value_type::{GFAddition, GFMultiplyingBit, InsecureRandom, Zero};
+use crate::value_type::{CustomAddition, CustomMultiplyingBit, InsecureRandom, Zero};
 use crate::vec_type::{bit_vec::BitVec, gf_vec::GFVec};
 
 pub struct InsecureFunctionalityPre;
@@ -9,7 +9,7 @@ impl InsecureFunctionalityPre {
         *delta = Some(GFVOLE::insecurely_random());
     }
 
-    fn generate_random_vole_macs_and_keys<GFVOLE: InsecureRandom + GFAddition + GFMultiplyingBit + Clone + Zero>(
+    fn generate_random_vole_macs_and_keys<GFVOLE: InsecureRandom + CustomAddition + CustomMultiplyingBit + Clone + Zero>(
         delta: &GFVOLE,
         rand_bit_vec: &BitVec,
         vole_mac_rand_vec: &mut GFVec<GFVOLE>,
@@ -17,7 +17,7 @@ impl InsecureFunctionalityPre {
     ) {
         for (i, bit) in (0..rand_bit_vec.len()).zip(rand_bit_vec.iter()) {
             let mac = GFVOLE::insecurely_random();
-            let key = mac.gf_add(&delta.gf_multiply_bit(*bit));
+            let key = mac.custom_add(&delta.custom_multiply_bit(*bit));
             vole_mac_rand_vec[i] = mac;
             vole_key_rand_vec[i] = key;
         }
@@ -31,7 +31,7 @@ impl InsecureFunctionalityPre {
         vole_key_rand_vec: &mut GFVec<GFVOLE>,
     )
     where
-        GFVOLE: InsecureRandom + GFAddition + Clone + GFMultiplyingBit + Zero
+        GFVOLE: InsecureRandom + CustomAddition + Clone + CustomMultiplyingBit + Zero
     {
         let mut rng = rand::rng();
         (0..len).for_each(
@@ -81,15 +81,15 @@ impl InsecureFunctionalityPre {
         pb_output_bit: &mut u8, pb_vole_mac_output: &mut GFVOLE, pb_vole_key_output: &mut GFVOLE,
     )
     where
-        GFVOLE: InsecureRandom + GFAddition + GFMultiplyingBit
+        GFVOLE: InsecureRandom + CustomAddition + CustomMultiplyingBit
     {
         let mut rng = rand::rng();
         *pa_output_bit = rng.random::<u8>() & 1;
         *pb_output_bit = (pa_left_input_bit ^ pb_left_input_bit) & (pa_right_input_bit ^ pb_right_input_bit) ^ *pa_output_bit;
         *pa_vole_mac_output = GFVOLE::insecurely_random();
-        *pa_vole_key_output = pa_vole_mac_output.gf_add(&delta_b.gf_multiply_bit(*pa_output_bit));
+        *pa_vole_key_output = pa_vole_mac_output.custom_add(&delta_b.custom_multiply_bit(*pa_output_bit));
         *pb_vole_mac_output = GFVOLE::insecurely_random();
-        *pb_vole_key_output = pb_vole_mac_output.gf_add(&delta_a.gf_multiply_bit(*pb_output_bit));
+        *pb_vole_key_output = pb_vole_mac_output.custom_add(&delta_a.custom_multiply_bit(*pb_output_bit));
     }
 }
 
@@ -102,7 +102,7 @@ mod tests {
     use crate::value_type::gf2p256::GF2p256;
     use crate::vec_type::bit_vec::BitVec;
     use crate::vec_type::gf_vec::GFVec;
-    use crate::value_type::{GFAddition, GFMultiplyingBit, InsecureRandom};
+    use crate::value_type::{CustomAddition, CustomMultiplyingBit, InsecureRandom};
     use crate::value_type::gf2p8::GF2p8;
     use crate::vec_type::ZeroVec;
 
@@ -136,7 +136,7 @@ mod tests {
         ) {
             println!("rand_bit, vole_mac_rand, vole_key_rand: {:?} {:?} {:?}",
                      rand_bit, vole_mac_rand, vole_key_rand);
-            assert_eq!(*vole_key_rand, vole_mac_rand.gf_add(&delta_a.gf_multiply_bit(*rand_bit)));
+            assert_eq!(*vole_key_rand, vole_mac_rand.custom_add(&delta_a.custom_multiply_bit(*rand_bit)));
         }
         println!("test_functionality_pre_generating_random_tuples passed");
     }
@@ -210,8 +210,8 @@ mod tests {
         println!("pa_vole_mac_c, pa_vole_key_c: {:?}, {:?}", pa_vole_mac_c, pa_vole_key_c);
         println!("pb_vole_mac_c, pb_vole_key_c: {:?}, {:?}", pb_vole_mac_c, pb_vole_key_c);
         assert_eq!(pa_c_bit ^ pb_c_bit, (pa_a_bit ^ pb_a_bit) & (pa_b_bit ^ pb_b_bit));
-        assert_eq!(pa_vole_key_c, pa_vole_mac_c.gf_add(&delta_b.gf_multiply_bit(pa_c_bit)));
-        assert_eq!(pb_vole_key_c, pb_vole_mac_c.gf_add(&delta_a.gf_multiply_bit(pb_c_bit)));
+        assert_eq!(pa_vole_key_c, pa_vole_mac_c.custom_add(&delta_b.custom_multiply_bit(pa_c_bit)));
+        assert_eq!(pb_vole_key_c, pb_vole_mac_c.custom_add(&delta_a.custom_multiply_bit(pb_c_bit)));
         println!("test_functionality_pre_generating_random_authenticated_and_tuples passed!");
     }
 }

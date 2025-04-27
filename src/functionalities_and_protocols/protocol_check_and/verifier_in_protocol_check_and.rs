@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::util::verifier::Verifier;
-use crate::value_type::{GFAddition, GFMultiplyingBit, Zero};
+use crate::value_type::{CustomAddition, CustomMultiplyingBit, Zero};
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 use crate::vec_type::VecAddition;
@@ -10,7 +10,7 @@ pub struct VerifierInProtocolCheckAND;
 
 impl VerifierInProtocolCheckAND {
 
-    pub fn verify<GFVOLEitH: PartialEq + Clone + GFAddition + GFMultiplyingBit + Debug + Zero>(
+    pub fn verify<GFVOLEitH: PartialEq + Clone + CustomAddition + CustomMultiplyingBit + Debug + Zero>(
         public_parameter: &PublicParameter,
         pa_published_bit_and_voleith_mac_tuple_rep: &(
             (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>),

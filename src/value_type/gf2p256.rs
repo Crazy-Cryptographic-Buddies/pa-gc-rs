@@ -1,5 +1,5 @@
 use rand::Rng;
-use crate::value_type::{ByteCount, GFAddition, GFMultiplyingBit, InsecureRandom, Zero};
+use crate::value_type::{ByteManipulation, CustomAddition, CustomMultiplyingBit, InsecureRandom, Zero};
 
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub struct GF2p256 {
@@ -10,6 +10,14 @@ impl GF2p256 {
     // pub fn new(val: &(u64, u64, u64, u64)) -> Self {
     //     Self { val: *val }
     // }
+
+    fn eight_bytes_to_u64(bytes: &[u8]) -> u64 {
+        let mut res = 0;
+        for i in 0..4 {
+            res = (res << 8) | (bytes[i] as u64);
+        }
+        res
+    }
 }
 
 impl Zero for GF2p256 {
@@ -18,8 +26,8 @@ impl Zero for GF2p256 {
     }
 }
 
-impl GFAddition for GF2p256 {
-    fn gf_add(&self, rhs: &Self) -> Self {
+impl CustomAddition for GF2p256 {
+    fn custom_add(&self, rhs: &Self) -> Self {
         Self {
             val: (
                 self.val.0 ^ rhs.val.0,
@@ -31,8 +39,8 @@ impl GFAddition for GF2p256 {
     }
 }
 
-impl GFMultiplyingBit for GF2p256 {
-    fn gf_multiply_bit(&self, bit: u8) -> Self {
+impl CustomMultiplyingBit for GF2p256 {
+    fn custom_multiply_bit(&self, bit: u8) -> Self {
         if bit == 0 {
             Self {
                 val: (0, 0, 0, 0)
@@ -56,7 +64,34 @@ impl InsecureRandom for GF2p256 {
     }
 }
 
-impl ByteCount for GF2p256 {
+impl ByteManipulation for GF2p256 {
+    fn from_bytes(bytes: &[u8], cursor: &mut usize) -> Self {
+        let v0 = Self::eight_bytes_to_u64(&bytes[*cursor..]);
+        *cursor += 8;
+        let v1 = Self::eight_bytes_to_u64(&bytes[*cursor..]);
+        *cursor += 8;
+        let v2 = Self::eight_bytes_to_u64(&bytes[*cursor..]);
+        *cursor += 8;
+        let v3 = Self::eight_bytes_to_u64(&bytes[*cursor..]);
+        *cursor += 8;
+        Self {
+            val: (v0, v1, v2, v3)
+        }
+    }
+
+    fn to_bytes(&self) -> Vec<u8> {
+        let mut res = vec![0; GF2p256::num_bytes()];
+        let mut cursor = 0;
+        res[cursor..cursor+8].copy_from_slice(&(self.val.0).to_le_bytes());
+        cursor += 8;
+        res[cursor..cursor+8].copy_from_slice(&(self.val.1).to_le_bytes());
+        cursor += 8;
+        res[cursor..cursor+8].copy_from_slice(&(self.val.2).to_le_bytes());
+        cursor += 8;
+        res[cursor..cursor+8].copy_from_slice(&(self.val.3).to_le_bytes());
+        res
+    }
+
     fn num_bytes() -> usize {
         32
     }

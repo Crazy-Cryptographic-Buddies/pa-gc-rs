@@ -2,7 +2,7 @@ use blake3::Hash;
 use crate::functionalities_and_protocols::all_in_one_vc::generating_bit_and_com_prg::GeneratingBitAndComPRG;
 use crate::functionalities_and_protocols::hasher::hasher::Hasher;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
-use crate::value_type::{GFAddition, U8ForGF, Zero};
+use crate::value_type::{CustomAddition, U8ForGF, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::{
     bit_vec::BitVec, gf_vec::GFVec
@@ -29,7 +29,7 @@ impl ProverInAllInOneVC {
         }
     }
 
-    pub fn commit<GFVOLEitH: Clone + Zero + U8ForGF + GFAddition>(
+    pub fn commit<GFVOLEitH: Clone + Zero + U8ForGF + CustomAddition>(
         &mut self, public_parameter: &PublicParameter, 
         prover_secret_seed_for_generating_ggm_tree: &SeedU8x16,
         output_secret_bit_vec: &mut BitVec, output_secret_voleith_mac_vec: &mut GFVec<GFVOLEitH>
@@ -68,7 +68,7 @@ impl ProverInAllInOneVC {
             for j in 0..public_parameter.big_n {
                 output_secret_bit_vec[j] ^= bit_vec_i[j];
                 if bit_vec_i[j] == 1 {
-                    output_secret_voleith_mac_vec[j] = output_secret_voleith_mac_vec[j].gf_add(&i_gf);
+                    output_secret_voleith_mac_vec[j] = output_secret_voleith_mac_vec[j].custom_add(&i_gf);
                 }        
             }
         }

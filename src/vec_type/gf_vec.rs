@@ -1,6 +1,6 @@
 use std::iter::FusedIterator;
 use std::ops::{Index, IndexMut};
-use crate::value_type::{GFAddition, Zero};
+use crate::value_type::{CustomAddition, Zero};
 use crate::vec_type::{BasicVecFunctions, Split, VecAddition, VecAppending, ZeroVec};
 use crate::vec_type::bit_vec::BitVec;
 
@@ -64,12 +64,12 @@ impl<GF: Zero + Clone> IndexMut<usize> for GFVec<GF> {
     }
 }
 
-impl<GF: Clone + Zero + GFAddition> VecAddition for GFVec<GF> {
+impl<GF: Clone + Zero + CustomAddition> VecAddition for GFVec<GF> {
     fn vec_add(&self, other: &Self) -> Self {
         assert_eq!(self.len(), other.len());
         Self {
             val: self.val.iter().zip(other.val.iter()).map(
-                |(lhs, rhs)| lhs.gf_add(rhs)
+                |(lhs, rhs)| lhs.custom_add(rhs)
             ).collect()
         }
     }

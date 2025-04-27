@@ -1,6 +1,6 @@
 use blake3::Hash;
 use rand::Rng;
-use crate::value_type::{ByteCount, GFAddition, GFMultiplyingBit, HashDigestToGF, InsecureRandom, U8ForGF, Zero};
+use crate::value_type::{ByteManipulation, CustomAddition, CustomMultiplyingBit, HashDigestToGF, InsecureRandom, U8ForGF, Zero};
 
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub struct GF2p8 {
@@ -19,16 +19,16 @@ impl U8ForGF for GF2p8 {
     }
 }
 
-impl GFAddition for GF2p8 {
-    fn gf_add(&self, rhs: &Self) -> Self {
+impl CustomAddition for GF2p8 {
+    fn custom_add(&self, rhs: &Self) -> Self {
         Self {
             val: self.val ^ rhs.val
         }
     }
 }
 
-impl GFMultiplyingBit for GF2p8 {
-    fn gf_multiply_bit(&self, bit: u8) -> Self {
+impl CustomMultiplyingBit for GF2p8 {
+    fn custom_multiply_bit(&self, bit: u8) -> Self {
         if bit == 0 {
             Self {
                 val: 0
@@ -65,7 +65,20 @@ impl HashDigestToGF for GF2p8 {
     }
 }
 
-impl ByteCount for GF2p8 {
+impl ByteManipulation for GF2p8 {
+
+    fn from_bytes(bytes: &[u8], cursor: &mut usize) -> Self {
+        let val = bytes[*cursor];
+        *cursor += 1;
+        Self {
+            val
+        }
+    }
+
+    fn to_bytes(&self) -> Vec<u8> {
+        vec![self.val]
+    }
+
     fn num_bytes() -> usize {
         1
     }

@@ -6,7 +6,7 @@ mod tests {
     use crate::functionalities_and_protocols::protocol_check_and::verifier_in_protocol_check_and::VerifierInProtocolCheckAND;
     use crate::functionalities_and_protocols::util::verifier::Verifier;
     use crate::value_type::gf2p8::GF2p8;
-    use crate::value_type::{GFAddition, InsecureRandom};
+    use crate::value_type::{CustomAddition, InsecureRandom};
     use crate::value_type::seed_u8x16::SeedU8x16;
     use crate::vec_type::bit_vec::BitVec;
     use crate::vec_type::gf_vec::GFVec;
@@ -35,7 +35,7 @@ mod tests {
             bit_vec.iter().zip(voleith_mac_vec.iter()).map(
                 |(bit, voleith_mac)|
                     if *bit == 1 {
-                        nabla.clone().gf_add(voleith_mac)
+                        nabla.clone().custom_add(voleith_mac)
                     } else {
                         voleith_mac.clone()
                     }

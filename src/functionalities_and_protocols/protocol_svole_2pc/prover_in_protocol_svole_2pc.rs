@@ -2,7 +2,7 @@ use blake3::Hash;
 use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::protocol_svole::prover_in_protocol_svole::ProverInProtocolSVOLE;
-use crate::value_type::{GFAddition, U8ForGF, Zero};
+use crate::value_type::{CustomAddition, U8ForGF, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
@@ -63,7 +63,7 @@ impl ProverInProtocolSVOLE2PC {
         public_parameter: &PublicParameter, 
         prover_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>
     ) -> (Vec<Hash>, Vec<(BitVec, BitVec, BitVec, BitVec, BitVec, BitVec)>) 
-    where GFVOLE: Clone + GFAddition + Zero, GFVOLEitH: Clone + Zero + GFAddition + U8ForGF {
+    where GFVOLE: Clone + CustomAddition + Zero, GFVOLEitH: Clone + Zero + CustomAddition + U8ForGF {
         let mut com_hash_rep: Vec<Hash> = Vec::new();
         let mut masked_bit_tuple_rep: Vec<(BitVec, BitVec, BitVec, BitVec, BitVec, BitVec)> = Vec::new();
         for repetition_id in 0..public_parameter.kappa {

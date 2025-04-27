@@ -1,5 +1,5 @@
 use std::fmt::Debug;
-use crate::value_type::{GFAddition, GFMultiplyingBit, Zero};
+use crate::value_type::{CustomAddition, CustomMultiplyingBit, Zero};
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 use crate::vec_type::{BasicVecFunctions, VecAddition};
@@ -7,7 +7,7 @@ use crate::vec_type::{BasicVecFunctions, VecAddition};
 pub struct Verifier;
 
 impl Verifier {
-    pub fn verify_vole_correlations<GFVOLE: GFAddition + GFMultiplyingBit + Clone + Zero + Debug + PartialEq>(
+    pub fn verify_vole_correlations<GFVOLE: CustomAddition + CustomMultiplyingBit + Clone + Zero + Debug + PartialEq>(
         bit_vec: &BitVec,
         voleith_mac_vec: &GFVec<GFVOLE>,
         delta: &GFVOLE,
@@ -20,7 +20,7 @@ impl Verifier {
         println!("bit * nabla + key: {:?}", voleith_key_vec.vec_add(
             &GFVec::<GFVOLE>::from_vec(
                 bit_vec.iter().map(
-                    |bit| delta.gf_multiply_bit(*bit)
+                    |bit| delta.custom_multiply_bit(*bit)
                 ).collect::<Vec<GFVOLE>>()
             )
         ).iter());
@@ -29,7 +29,7 @@ impl Verifier {
             voleith_key_vec.vec_add(
                 &GFVec::<GFVOLE>::from_vec(
                     bit_vec.iter().map(
-                        |bit| delta.gf_multiply_bit(*bit)
+                        |bit| delta.custom_multiply_bit(*bit)
                     ).collect::<Vec<GFVOLE>>()
                 )
             )

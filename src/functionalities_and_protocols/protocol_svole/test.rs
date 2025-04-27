@@ -6,7 +6,7 @@ mod tests {
     use crate::functionalities_and_protocols::protocol_svole::verifier_in_protocol_svole::VerifierInProtocolSVOLE;
     use crate::value_type::gf2p256::GF2p256;
     use crate::value_type::gf2p8::GF2p8;
-    use crate::value_type::GFAddition;
+    use crate::value_type::CustomAddition;
     use crate::value_type::seed_u8x16::SeedU8x16;
     use crate::vec_type::bit_vec::BitVec;
     use crate::vec_type::gf_vec::GFVec;
@@ -62,7 +62,7 @@ mod tests {
                 //          secret_voleith_mac_vec.as_ref().unwrap()[i],
                 //          secret_bit_vec.as_ref().unwrap()[i]
                 // );
-                assert_eq!(public_voleith_key_vec[i], secret_voleith_mac_vec[i].gf_add(&shifted_nabla));
+                assert_eq!(public_voleith_key_vec[i], secret_voleith_mac_vec[i].custom_add(&shifted_nabla));
             }
             // println!("bit_vec_len, voleith_mac_vec_len, voleith_key_vec_len: {:?}, {:?}, {:?}",
             //          secret_bit_vec.as_ref().unwrap().len(),
