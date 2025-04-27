@@ -5,9 +5,7 @@ use crate::functionalities_and_protocols::states_and_parameters::public_paramete
 use crate::value_type::{GFAddition, U8ForGF, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::{
-    bit_vec::BitVec,
-    ZeroVec,
-    gf_vec::GFVec
+    bit_vec::BitVec, gf_vec::GFVec
 };
 
 pub struct ProverInAllInOneVC {
@@ -34,7 +32,7 @@ impl ProverInAllInOneVC {
     pub fn commit<GFVOLEitH: Clone + Zero + U8ForGF + GFAddition>(
         &mut self, public_parameter: &PublicParameter, 
         prover_secret_seed_for_generating_ggm_tree: &SeedU8x16,
-        output_secret_bit_vec: &mut Option<BitVec>, output_secret_voleith_mac_vec: &mut Option<GFVec<GFVOLEitH>>
+        output_secret_bit_vec: &mut BitVec, output_secret_voleith_mac_vec: &mut GFVec<GFVOLEitH>
     ) -> Hash {
         let tree: Vec<SeedU8x16> = public_parameter.one_to_two_prg.generate_ggm_tree(
             prover_secret_seed_for_generating_ggm_tree, public_parameter.tau
@@ -62,20 +60,18 @@ impl ProverInAllInOneVC {
         let com_hash = Some(Hasher::hash_all_coms(&self.com_vec.as_ref().unwrap()));
         
         // compute bit_vec and mac tag
-        let mut bit_vec = BitVec::zero_vec(public_parameter.big_n);
-        let mut voleith_mac_vec = GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_n);
+        // let mut bit_vec = BitVec::zero_vec(public_parameter.big_n);
+        // let mut voleith_mac_vec = GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_n);
         for i in 0..1 << public_parameter.tau {
             let i_gf = GFVOLEitH::from_u8(i as u8);
             let bit_vec_i = &bit_vec_vec[i];
             for j in 0..public_parameter.big_n {
-                bit_vec[j] ^= bit_vec_i[j];
+                output_secret_bit_vec[j] ^= bit_vec_i[j];
                 if bit_vec_i[j] == 1 {
-                    voleith_mac_vec[j] = voleith_mac_vec[j].gf_add(&i_gf);
+                    output_secret_voleith_mac_vec[j] = output_secret_voleith_mac_vec[j].gf_add(&i_gf);
                 }        
             }
         }
-        *output_secret_bit_vec = Some(bit_vec);
-        *output_secret_voleith_mac_vec = Some(voleith_mac_vec);
         com_hash.unwrap()
     }
 

@@ -6,11 +6,12 @@ mod tests {
     use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
     use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::insecure_functionality_pre::insecure_functionality_pre::InsecureFunctionalityPre;
+    use crate::functionalities_and_protocols::protocol_svole_2pc::prover_in_protocol_svole_2pc::ProverInProtocolSVOLE2PC;
     use crate::functionalities_and_protocols::util::parse_two_bits;
     use crate::value_type::gf2p256::GF2p256;
     use crate::value_type::gf2p8::GF2p8;
     use crate::value_type::seed_u8x16::SeedU8x16;
-    use crate::value_type::{GFMultiplyingBit, InsecureRandom, Zero};
+    use crate::value_type::{GFMultiplyingBit, InsecureRandom, U8ForGF, Zero};
     use crate::value_type::GFAddition;
     use crate::vec_type::{VecAppending, ZeroVec};
     use crate::vec_type::bit_vec::BitVec;
@@ -75,7 +76,9 @@ mod tests {
         pa_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>,
         pb_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>,
     )
-    where GFVOLE: Clone + GFAddition + GFMultiplyingBit + InsecureRandom + Zero + Copy {
+    where 
+        GFVOLE: Clone + GFAddition + GFMultiplyingBit + InsecureRandom + Zero + Copy,
+        GFVOLEitH: Clone + Zero + GFAddition + U8ForGF {
         // pa obtains delta from FPre
         InsecureFunctionalityPre::generate_delta(&mut pa_secret_state.delta);
         
@@ -307,11 +310,30 @@ mod tests {
                 }
             }
         }
+        
+        // PA obtains VOLEitH correlations
+        let (
+            pa_com_hash_rep, pa_masked_bit_tuple_rep
+        ) = ProverInProtocolSVOLE2PC::commit_and_fix_bit_vec_and_mac_vec::<GFVOLE, GFVOLEitH>(
+            &public_parameter, pa_secret_state,
+        );
+        
+        // PB obtains VOLEitH correlations
+        let (
+            pb_com_hash_rep, pb_masked_bit_tuple_rep
+        ) = ProverInProtocolSVOLE2PC::commit_and_fix_bit_vec_and_mac_vec::<GFVOLE, GFVOLEitH>(
+            &public_parameter, pb_secret_state,
+        );
+        
+        // making VOLEitH proof and components for garbled tables
+        
     }
     
     #[test]
     fn test_pa_2pc_for_addition() {
-        let bristol_fashion_adaptor = BristolFashionAdaptor::new(&"aes_128.txt".to_string());
+        let bristol_fashion_adaptor = BristolFashionAdaptor::new(
+            &"adder64.txt".to_string()
+        );
         let num_input_bits = bristol_fashion_adaptor.get_num_input_bits();
         let big_ia = (0..num_input_bits >> 1).collect::<Vec<usize>>();
         let big_ib = (big_ia.len()..num_input_bits).collect::<Vec<usize>>();

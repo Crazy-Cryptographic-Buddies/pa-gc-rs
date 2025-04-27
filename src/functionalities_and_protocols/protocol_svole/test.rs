@@ -12,6 +12,7 @@ mod tests {
     use crate::vec_type::gf_vec::GFVec;
     use crate::value_type::InsecureRandom;
     use crate::value_type::Zero;
+    use crate::vec_type::ZeroVec;
 
     #[test]
     fn test_protocol_svole() {
@@ -34,8 +35,8 @@ mod tests {
         for repetition_id in 0..public_parameter.kappa {
             // prepare prover and verifier for all_in_one_vc
             // let prover_in_all_in_one_vc = &mut prover_secret_state.prover_in_all_in_one_vc_rep[repetition_id];
-            let mut secret_bit_vec: Option<BitVec> = None;
-            let mut secret_voleith_mac_vec: Option<GFVec<GF2p8>> = None;
+            let mut secret_bit_vec = BitVec::zero_vec(public_parameter.big_n);
+            let mut secret_voleith_mac_vec = GFVec::<GF2p8>::zero_vec(public_parameter.big_n);
             let prover_com_hash = ProverInProtocolSVOLE::commit(
                 &public_parameter, repetition_id, &mut prover_secret_state,
                 &mut secret_bit_vec, &mut secret_voleith_mac_vec
@@ -52,7 +53,7 @@ mod tests {
 
             for i in 0..public_parameter.big_n {
                 let mut shifted_nabla = GF2p8::zero();
-                if secret_bit_vec.as_ref().unwrap()[i] == 1 {
+                if secret_bit_vec[i] == 1 {
                     shifted_nabla = nabla.clone();
                 }
                 // println!("mac + bit * nabla, key, mac, msg: {:?}, {:?}, {:?}, {:?}",
@@ -61,7 +62,7 @@ mod tests {
                 //          secret_voleith_mac_vec.as_ref().unwrap()[i],
                 //          secret_bit_vec.as_ref().unwrap()[i]
                 // );
-                assert_eq!(public_voleith_key_vec[i], secret_voleith_mac_vec.as_ref().unwrap()[i].gf_add(&shifted_nabla));
+                assert_eq!(public_voleith_key_vec[i], secret_voleith_mac_vec[i].gf_add(&shifted_nabla));
             }
             // println!("bit_vec_len, voleith_mac_vec_len, voleith_key_vec_len: {:?}, {:?}, {:?}",
             //          secret_bit_vec.as_ref().unwrap().len(),

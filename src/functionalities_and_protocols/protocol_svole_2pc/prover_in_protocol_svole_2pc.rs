@@ -6,7 +6,7 @@ use crate::value_type::{GFAddition, U8ForGF, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
-use crate::vec_type::{Split, VecAddition};
+use crate::vec_type::{Split, VecAddition, ZeroVec};
 
 pub struct ProverInProtocolSVOLE2PC {
 
@@ -67,8 +67,12 @@ impl ProverInProtocolSVOLE2PC {
         let mut com_hash_rep: Vec<Hash> = Vec::new();
         let mut masked_bit_tuple_rep: Vec<(BitVec, BitVec, BitVec, BitVec, BitVec, BitVec)> = Vec::new();
         for repetition_id in 0..public_parameter.kappa {
-            let mut secret_bit_vec: Option<BitVec> = None;
-            let mut secret_voleith_mac_vec: Option<GFVec<GFVOLEitH>> = None;
+            let mut secret_bit_vec = BitVec::zero_vec(
+                public_parameter.big_n
+            );
+            let mut secret_voleith_mac_vec = GFVec::<GFVOLEitH>::zero_vec(
+                public_parameter.big_n
+            );
             let com_hash = ProverInProtocolSVOLE::commit(
                 public_parameter, repetition_id,
                 prover_secret_state, &mut secret_bit_vec, &mut secret_voleith_mac_vec
@@ -76,7 +80,7 @@ impl ProverInProtocolSVOLE2PC {
             com_hash_rep.push(com_hash);
             let masked_bit_tuple = Self::distribute_bits_and_voleith_macs_to_state(
                 public_parameter, repetition_id, prover_secret_state, 
-                &mut secret_bit_vec.as_mut().unwrap(), &mut secret_voleith_mac_vec.as_mut().unwrap()
+                &mut secret_bit_vec, &mut secret_voleith_mac_vec
             );
             masked_bit_tuple_rep.push(masked_bit_tuple);
         }

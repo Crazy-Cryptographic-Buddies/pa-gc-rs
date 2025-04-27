@@ -15,8 +15,8 @@ impl ProverInProtocolSVOLE {
         public_parameter: &PublicParameter,
         repetition_id: usize,
         prover_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>,
-        output_secret_bit_vec: &mut Option<BitVec>,
-        output_secret_voleith_mac_vec: &mut Option<GFVec<GFVOLEitH>>
+        output_secret_bit_vec: &mut BitVec,
+        output_secret_voleith_mac_vec: &mut GFVec<GFVOLEitH>
     ) -> Hash
     where GFVOLEitH: Clone + GFAddition + U8ForGF + Zero {
         prover_secret_state.prover_in_all_in_one_vc_rep[repetition_id].commit(

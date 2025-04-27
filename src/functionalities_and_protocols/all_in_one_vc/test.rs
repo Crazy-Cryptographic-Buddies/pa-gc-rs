@@ -9,6 +9,7 @@ mod tests {
     use crate::vec_type::gf_vec::GFVec;
     use crate::value_type::{GFAddition, InsecureRandom};
     use crate::value_type::Zero;
+    use crate::vec_type::ZeroVec;
 
     #[test]
     fn test_committing_and_reconstructing() {
@@ -31,8 +32,8 @@ mod tests {
         // first generate in the prover side
         let mut prover_in_all_in_one_vc = ProverInAllInOneVC::new(&public_parameter);
         let prover_secret_seed_for_generating_ggm_tree = SeedU8x16::insecurely_random();
-        let mut prover_secret_bit_vec: Option<BitVec> = None;
-        let mut prover_secret_voleith_mac_vec: Option<GFVec<GF2p8>> = None;
+        let mut prover_secret_bit_vec = BitVec::zero_vec(public_parameter.big_n);
+        let mut prover_secret_voleith_mac_vec = GFVec::<GF2p8>::zero_vec(public_parameter.big_n);
         let com_hash = prover_in_all_in_one_vc.commit(
             &public_parameter, &prover_secret_seed_for_generating_ggm_tree,
             &mut prover_secret_bit_vec, &mut prover_secret_voleith_mac_vec
@@ -56,20 +57,20 @@ mod tests {
         // );
         for j in 0..public_parameter.big_n {
             let mut shifted_nabla = GF2p8::zero();
-            if prover_secret_bit_vec.as_ref().unwrap()[j] == 1 {
+            if prover_secret_bit_vec[j] == 1 {
                 shifted_nabla = nabla.clone();
             }
             println!("mac + bit * nabla, key, mac, msg: {:?}, {:?}, {:?}, {:?}",
-                     prover_secret_voleith_mac_vec.as_ref().unwrap()[j].gf_add(&shifted_nabla),
+                     prover_secret_voleith_mac_vec[j].gf_add(&shifted_nabla),
                      voleith_key_vec[j],
-                     prover_secret_voleith_mac_vec.as_ref().unwrap()[j],
-                     prover_secret_bit_vec.as_ref().unwrap()[j]
+                     prover_secret_voleith_mac_vec[j],
+                     prover_secret_bit_vec[j]
             );
-            assert_eq!(voleith_key_vec[j], prover_secret_voleith_mac_vec.as_ref().unwrap()[j].gf_add(&shifted_nabla));
+            assert_eq!(voleith_key_vec[j], prover_secret_voleith_mac_vec[j].gf_add(&shifted_nabla));
         }
         println!("bit_vec_len, voleith_mac_vec_len, voleith_key_vec_len: {:?}, {:?}, {:?}",
-                 prover_secret_bit_vec.as_ref().unwrap().len(),
-                 prover_secret_voleith_mac_vec.as_ref().unwrap().len(), voleith_key_vec.len()
+                 prover_secret_bit_vec.len(),
+                 prover_secret_voleith_mac_vec.len(), voleith_key_vec.len()
         );
         println!("voleith correlation checking passed!");
     }

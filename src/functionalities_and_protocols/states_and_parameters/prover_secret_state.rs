@@ -50,14 +50,15 @@ where GFVOLE: Clone + Zero, GFVOLEitH: Clone + Zero {
         public_parameter: &PublicParameter, 
         master_seed_for_generating_ggm_tree: SeedU8x16,
     ) -> Self {
-        let mut seed_for_generating_ggm_tree_rep: Vec<SeedU8x16> = Vec::new();
-        let mut prover_in_all_in_one_vc_rep: Vec<ProverInAllInOneVC> = Vec::new();
+        let mut seed_for_generating_ggm_tree_rep =  vec![SeedU8x16::zero(); public_parameter.kappa];
+        let mut prover_in_all_in_one_vc_rep = (0..public_parameter.kappa).map(
+            |_| ProverInAllInOneVC::new(&public_parameter)
+        ).collect();
         let mut current_seed = master_seed_for_generating_ggm_tree;
         for _ in 0..public_parameter.kappa {
             let (seed0, seed1) = public_parameter.one_to_two_prg.generate_double(&current_seed);
             seed_for_generating_ggm_tree_rep.push(seed0);
             current_seed = seed1;
-            prover_in_all_in_one_vc_rep.push(ProverInAllInOneVC::new(&public_parameter));
         }
         Self {
             delta: None,
@@ -79,7 +80,7 @@ where GFVOLE: Clone + Zero, GFVOLEitH: Clone + Zero {
             other_vole_key_r_prime_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),           
 
             voleith_mac_r_input_vec_rep: vec![GFVec::new(); public_parameter.kappa],
-            voleith_mac_r_output_and_vec_rep: vec![GFVec::new(); public_parameter.kappa],           
+            voleith_mac_r_output_and_vec_rep: vec![GFVec::new(); public_parameter.kappa],
             voleith_mac_r_prime_vec_rep: vec![GFVec::new(); public_parameter.kappa],
             voleith_mac_tilde_a_vec_rep: vec![GFVec::new(); public_parameter.kappa],
             voleith_mac_tilde_b_vec_rep: vec![GFVec::new(); public_parameter.kappa],
