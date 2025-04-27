@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use crate::functionalities_and_protocols::inputs_and_parameters::prover_secret_state::ProverSecretState;
-    use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
+    use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
+    use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_svole::prover_in_protocol_svole::ProverInProtocolSVOLE;
     use crate::functionalities_and_protocols::protocol_svole::verifier_in_protocol_svole::VerifierInProtocolSVOLE;
     use crate::value_type::gf2p256::GF2p256;

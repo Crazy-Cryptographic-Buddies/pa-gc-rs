@@ -1,6 +1,6 @@
 use blake3::Hash;
-use crate::functionalities_and_protocols::inputs_and_parameters::prover_secret_state::ProverSecretState;
-use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
+use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
+use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::protocol_svole::prover_in_protocol_svole::ProverInProtocolSVOLE;
 use crate::value_type::{GFAddition, U8ForGF, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
@@ -21,10 +21,10 @@ impl ProverInProtocolSVOLE2PC {
         secret_voleith_mac_vec: &mut GFVec<GFVOLEitH>
     ) -> (BitVec, BitVec, BitVec, BitVec, BitVec, BitVec) {
         // first mask the bits
-        let hat_r_input_bit_vec = prover_secret_state.r_input_bit_vec.as_ref().unwrap().vec_add(
+        let hat_r_input_bit_vec = prover_secret_state.r_input_bit_vec.vec_add(
             &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.num_input_bits)
         );
-        let hat_r_output_and_bit_vec = prover_secret_state.r_output_and_bit_vec.as_ref().unwrap().vec_add(
+        let hat_r_output_and_bit_vec = prover_secret_state.r_output_and_bit_vec.vec_add(
             &secret_bit_vec.split_off(secret_bit_vec.len() - public_parameter.big_iw_size)
         );
         let hat_r_prime_bit_vec = prover_secret_state.r_prime_bit_vec.vec_add(

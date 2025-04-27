@@ -1,5 +1,5 @@
 use std::fmt::Debug;
-use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
+use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::util::verifier::Verifier;
 use crate::value_type::{GFAddition, GFMultiplyingBit, Zero};
 use crate::vec_type::bit_vec::BitVec;

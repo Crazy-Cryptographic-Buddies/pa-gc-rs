@@ -1,5 +1,5 @@
 use blake3::Hash;
-use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
+use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::protocol_svole::verifier_in_protocol_svole::VerifierInProtocolSVOLE;
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::value_type::{GFAddition, GFMultiplyingBit, U8ForGF, Zero};

@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use itertools::izip;
-    use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
+    use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_check_and::prover_in_protocol_check_and::ProverInProtocolCheckAND;
     use crate::functionalities_and_protocols::protocol_check_and::verifier_in_protocol_check_and::VerifierInProtocolCheckAND;
     use crate::functionalities_and_protocols::util::verifier::Verifier;

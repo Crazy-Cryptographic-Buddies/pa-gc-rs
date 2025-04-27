@@ -1,9 +1,6 @@
 use rand::Rng;
 use crate::value_type::{GFAddition, GFMultiplyingBit, InsecureRandom, Zero};
-use crate::vec_type::{
-    bit_vec::BitVec,
-    gf_vec::GFVec,
-};
+use crate::vec_type::{bit_vec::BitVec, gf_vec::GFVec, ZeroVec};
 
 pub struct InsecureFunctionalityPre;
 
@@ -16,42 +13,35 @@ impl InsecureFunctionalityPre {
     fn generate_random_vole_macs_and_keys<GFVOLE: InsecureRandom + GFAddition + GFMultiplyingBit+ Clone + Zero>(
         delta: &GFVOLE,
         rand_bit_vec: &BitVec,
-    ) -> (GFVec<GFVOLE>, GFVec<GFVOLE>) {
-        let mut vole_mac_vec = GFVec::<GFVOLE>::new();
-        let mut vole_key_vec = GFVec::<GFVOLE>::new();
-        for bit in rand_bit_vec.iter() {
+        vole_mac_rand_vec: &mut GFVec<GFVOLE>,
+        vole_key_rand_vec: &mut GFVec<GFVOLE>,
+    ) {
+        for (i, bit) in (0..rand_bit_vec.len()).zip(rand_bit_vec.iter()) {
             let mac = GFVOLE::insecurely_random();
             let key = mac.gf_add(&delta.gf_multiply_bit(*bit));
-            vole_mac_vec.push(mac);
-            vole_key_vec.push(key);
+            vole_mac_rand_vec[i] = mac;
+            vole_key_rand_vec[i] = key;
         }
-        (vole_mac_vec, vole_key_vec)
     }
 
     pub fn generate_random_tuples<GFVOLE, GFVOLEitH>(
         len: usize,
         delta: &GFVOLE,
-        rand_bit_vec: &mut Option<BitVec>,
-        vole_mac_rand_vec: &mut Option<GFVec<GFVOLE>>,
-        vole_key_rand_vec: &mut Option<GFVec<GFVOLE>>,
+        rand_bit_vec: &mut BitVec,
+        vole_mac_rand_vec: &mut GFVec<GFVOLE>,
+        vole_key_rand_vec: &mut GFVec<GFVOLE>,
     ) 
     where GFVOLE: InsecureRandom + GFAddition + Clone + GFMultiplyingBit + Zero {
         let mut rng = rand::rng();
-        *rand_bit_vec = Some(
-            BitVec::from_vec(
-                (0..len).map(
-                    |_| rng.random::<u8>() & 1u8
-                ).collect()
-            )
+        (0..len).for_each( 
+            |i| { 
+                rand_bit_vec[i] = rng.random::<u8>() & 1u8; 
+            }
         );
 
-        let (
-            vole_mac_vec, vole_key_vec
-        ) = Self::generate_random_vole_macs_and_keys(
-            delta, rand_bit_vec.as_ref().unwrap(),
+        Self::generate_random_vole_macs_and_keys(
+            delta, rand_bit_vec, vole_mac_rand_vec, vole_key_rand_vec
         );
-        *vole_mac_rand_vec = Some(vole_mac_vec);
-        *vole_key_rand_vec = Some(vole_key_vec);
     }
     
     pub fn generate_random_and_tuples(
@@ -130,6 +120,7 @@ mod tests {
     use crate::vec_type::gf_vec::GFVec;
     use crate::value_type::{GFAddition, GFMultiplyingBit, InsecureRandom};
     use crate::value_type::gf2p8::GF2p8;
+    use crate::vec_type::ZeroVec;
 
     #[test]
     fn test_functionality_pre_generating_random_tuples() {
@@ -140,9 +131,9 @@ mod tests {
 
         let num_random_tuples = 100;
 
-        let mut rand_bit_vec: Option<BitVec> = None;
-        let mut vole_mac_rand_vec: Option<GFVec<GF2p256>> = None;
-        let mut vole_key_rand_vec: Option<GFVec<GF2p256>> = None;
+        let mut rand_bit_vec = BitVec::zero_vec(num_random_tuples);
+        let mut vole_mac_rand_vec = GFVec::<GF2p256>::zero_vec(num_random_tuples);
+        let mut vole_key_rand_vec = GFVec::<GF2p256>::zero_vec(num_random_tuples);
 
         InsecureFunctionalityPre::generate_random_tuples::<GF2p256, GF2p8>(
             num_random_tuples, &delta_a,
@@ -150,15 +141,15 @@ mod tests {
         );
 
         // check the lengths
-        assert_eq!(rand_bit_vec.as_ref().unwrap().len(), num_random_tuples);
-        assert_eq!(vole_mac_rand_vec.as_ref().unwrap().len(), num_random_tuples);
-        assert_eq!(vole_key_rand_vec.as_ref().unwrap().len(), num_random_tuples);
+        assert_eq!(rand_bit_vec.len(), num_random_tuples);
+        assert_eq!(vole_mac_rand_vec.len(), num_random_tuples);
+        assert_eq!(vole_key_rand_vec.len(), num_random_tuples);
 
         for (rand_bit, vole_mac_rand, vole_key_rand) in izip!(
-        rand_bit_vec.as_ref().unwrap().iter(), 
-        vole_mac_rand_vec.as_ref().unwrap().iter(), 
-        vole_key_rand_vec.as_ref().unwrap().iter()
-    ) {
+            rand_bit_vec.iter(), 
+            vole_mac_rand_vec.iter(), 
+            vole_key_rand_vec.iter()
+        ) {
             println!("rand_bit, vole_mac_rand, vole_key_rand: {:?} {:?} {:?}",
                      rand_bit, vole_mac_rand, vole_key_rand);
             assert_eq!(*vole_key_rand, vole_mac_rand.gf_add(&delta_a.gf_multiply_bit(*rand_bit)));

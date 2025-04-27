@@ -2,8 +2,8 @@
 mod tests {
     use itertools::izip;
     use rand::Rng;
-    use crate::functionalities_and_protocols::inputs_and_parameters::prover_secret_state::ProverSecretState;
-    use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
+    use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
+    use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_svole_2pc::prover_in_protocol_svole_2pc::ProverInProtocolSVOLE2PC;
     use crate::functionalities_and_protocols::protocol_svole_2pc::verifier_in_protocol_svole_2pc::VerifierInProtocolSvole2PC;
     use crate::value_type::{gf2p8::GF2p8};
@@ -14,13 +14,11 @@ mod tests {
 
     fn sample_secret_bit_vecs(public_parameter: &PublicParameter, prover_secret_state: &mut ProverSecretState<GF2p256, GF2p8>) {
         let mut rng = rand::rng();
-        prover_secret_state.r_input_bit_vec = Some(BitVec::new());
-        for _ in 0..public_parameter.num_input_bits {
-            prover_secret_state.r_input_bit_vec.as_mut().unwrap().push(rng.random::<u8>() & 1);
+        for i in 0..public_parameter.num_input_bits {
+            prover_secret_state.r_input_bit_vec[i] = rng.random::<u8>() & 1;
         }
-        prover_secret_state.r_output_and_bit_vec = Some(BitVec::new());
-        for _ in 0..public_parameter.big_iw_size {
-            prover_secret_state.r_output_and_bit_vec.as_mut().unwrap().push(rng.random::<u8>() & 1);
+        for i in 0..public_parameter.big_iw_size {
+            prover_secret_state.r_output_and_bit_vec[i] = rng.random::<u8>() & 1;
         }
         // prover_secret_state.r_prime_bit_vec = Some(BitVec::new());
         for i in 0..public_parameter.big_iw_size {
@@ -118,8 +116,8 @@ mod tests {
             ) = &pa_voleith_key_tuple_rep[repetition_id];
             
             // test length of bit vectors
-            assert_eq!(pa_secret_state.r_input_bit_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
-            assert_eq!(pa_secret_state.r_output_and_bit_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
+            assert_eq!(pa_secret_state.r_input_bit_vec.len(), public_parameter.num_input_bits);
+            assert_eq!(pa_secret_state.r_output_and_bit_vec.len(), public_parameter.big_iw_size);
             assert_eq!(pa_secret_state.r_prime_bit_vec.len(), public_parameter.big_iw_size);
             assert_eq!(pa_secret_state.tilde_a_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
             assert_eq!(pa_secret_state.tilde_b_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
@@ -138,7 +136,7 @@ mod tests {
             assert_eq!(voleith_key_tilde_b_vec.len(), public_parameter.big_l);
             assert_eq!(voleith_key_tilde_c_vec.len(), public_parameter.big_l);
             for (bit, mac, key) in izip!(
-                pa_secret_state.r_input_bit_vec.as_ref().unwrap().iter(), 
+                pa_secret_state.r_input_bit_vec.iter(), 
                 pa_secret_state.voleith_mac_r_input_vec_rep[repetition_id].as_ref().unwrap().iter(), 
                 voleith_key_r_input_vec.iter()
             ) {
@@ -146,7 +144,7 @@ mod tests {
                 assert_eq!(nabla_b_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac), *key);
             }
             for (bit, mac, key) in izip!(
-                pa_secret_state.r_output_and_bit_vec.as_ref().unwrap().iter(), 
+                pa_secret_state.r_output_and_bit_vec.iter(), 
                 pa_secret_state.voleith_mac_r_output_and_vec_rep[repetition_id].as_ref().unwrap().iter(), 
                 voleith_key_r_output_and_vec.iter()
             ) {
@@ -199,8 +197,8 @@ mod tests {
             ) = &pb_voleith_key_tuple_rep[repetition_id];
 
             // test length of bit vectors
-            assert_eq!(pa_secret_state.r_input_bit_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
-            assert_eq!(pa_secret_state.r_output_and_bit_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
+            assert_eq!(pa_secret_state.r_input_bit_vec.len(), public_parameter.num_input_bits);
+            assert_eq!(pa_secret_state.r_output_and_bit_vec.len(), public_parameter.big_iw_size);
             assert_eq!(pa_secret_state.r_prime_bit_vec.len(), public_parameter.big_iw_size);
             assert_eq!(pa_secret_state.tilde_a_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
             assert_eq!(pa_secret_state.tilde_b_bit_vec_rep.as_ref().unwrap()[repetition_id].len(), public_parameter.big_l);
@@ -220,7 +218,7 @@ mod tests {
             assert_eq!(voleith_key_tilde_b_vec.len(), public_parameter.big_l);
             assert_eq!(voleith_key_tilde_c_vec.len(), public_parameter.big_l);
             for (bit, mac, key) in izip!(
-                pb_secret_state.r_input_bit_vec.as_ref().unwrap().iter(), 
+                pb_secret_state.r_input_bit_vec.iter(), 
                 pb_secret_state.voleith_mac_r_input_vec_rep[repetition_id].as_ref().unwrap().iter(), 
                 voleith_key_r_input_vec.iter()
             ) {
@@ -228,7 +226,7 @@ mod tests {
                 assert_eq!(nabla_a_rep[repetition_id].gf_multiply_bit(*bit).gf_add(mac), *key);
             }
             for (bit, mac, key) in izip!(
-                pb_secret_state.r_output_and_bit_vec.as_ref().unwrap().iter(), 
+                pb_secret_state.r_output_and_bit_vec.iter(), 
                 pb_secret_state.voleith_mac_r_output_and_vec_rep[repetition_id].as_ref().unwrap().iter(), 
                 voleith_key_r_output_and_vec.iter()
             ) {

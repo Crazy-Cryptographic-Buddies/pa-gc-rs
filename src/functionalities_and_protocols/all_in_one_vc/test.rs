@@ -2,7 +2,7 @@
 mod tests {
     use crate::functionalities_and_protocols::all_in_one_vc::prover_in_all_in_one_vc::ProverInAllInOneVC;
     use crate::functionalities_and_protocols::all_in_one_vc::verifier_in_all_in_one_vc::VerifierInAllInOneVC;
-    use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
+    use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::value_type::gf2p8::GF2p8;
     use crate::value_type::seed_u8x16::SeedU8x16;
     use crate::vec_type::bit_vec::BitVec;

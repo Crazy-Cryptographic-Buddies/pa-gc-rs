@@ -1,4 +1,4 @@
-use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
+use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::value_type::{GFAddition, Zero};
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;

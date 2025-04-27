@@ -4,8 +4,8 @@ mod tests {
     use std::ops::{Index, IndexMut};
     use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
     use crate::bristol_fashion_adaptor::GateType;
-    use crate::functionalities_and_protocols::inputs_and_parameters::prover_secret_state::ProverSecretState;
-    use crate::functionalities_and_protocols::inputs_and_parameters::public_parameter::PublicParameter;
+    use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
+    use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::insecure_functionality_pre::insecure_functionality_pre::InsecureFunctionalityPre;
     use crate::functionalities_and_protocols::util::parse_two_bits;
     use crate::value_type::gf2p256::GF2p256;
@@ -91,9 +91,9 @@ mod tests {
             &mut pa_secret_state.vole_mac_r_input_vec,
             &mut pb_secret_state.other_vole_key_r_input_vec
         );
-        assert_eq!(pa_secret_state.r_input_bit_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
-        assert_eq!(pa_secret_state.vole_mac_r_input_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
-        assert_eq!(pb_secret_state.other_vole_key_r_input_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
+        assert_eq!(pa_secret_state.r_input_bit_vec.len(), public_parameter.num_input_bits);
+        assert_eq!(pa_secret_state.vole_mac_r_input_vec.len(), public_parameter.num_input_bits);
+        assert_eq!(pb_secret_state.other_vole_key_r_input_vec.len(), public_parameter.num_input_bits);
         InsecureFunctionalityPre::generate_random_tuples::<GFVOLE, GFVOLEitH>(
             public_parameter.big_iw_size,
             &pb_secret_state.delta.as_ref().unwrap(),
@@ -101,9 +101,9 @@ mod tests {
             &mut pa_secret_state.vole_mac_r_output_and_vec,
             &mut pb_secret_state.other_vole_key_r_output_and_vec
         );
-        assert_eq!(pa_secret_state.r_output_and_bit_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
-        assert_eq!(pa_secret_state.vole_mac_r_output_and_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
-        assert_eq!(pb_secret_state.other_vole_key_r_output_and_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
+        assert_eq!(pa_secret_state.r_output_and_bit_vec.len(), public_parameter.big_iw_size);
+        assert_eq!(pa_secret_state.vole_mac_r_output_and_vec.len(), public_parameter.big_iw_size);
+        assert_eq!(pb_secret_state.other_vole_key_r_output_and_vec.len(), public_parameter.big_iw_size);
 
         // pb obtains vole-authenticated bits
         InsecureFunctionalityPre::generate_random_tuples::<GFVOLE, GFVOLEitH>(
@@ -113,9 +113,9 @@ mod tests {
             &mut pb_secret_state.vole_mac_r_input_vec,
             &mut pa_secret_state.other_vole_key_r_input_vec
         );
-        assert_eq!(pb_secret_state.r_input_bit_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
-        assert_eq!(pb_secret_state.vole_mac_r_input_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
-        assert_eq!(pa_secret_state.other_vole_key_r_input_vec.as_ref().unwrap().len(), public_parameter.num_input_bits);
+        assert_eq!(pb_secret_state.r_input_bit_vec.len(), public_parameter.num_input_bits);
+        assert_eq!(pb_secret_state.vole_mac_r_input_vec.len(), public_parameter.num_input_bits);
+        assert_eq!(pa_secret_state.other_vole_key_r_input_vec.len(), public_parameter.num_input_bits);
         
         InsecureFunctionalityPre::generate_random_tuples::<GFVOLE, GFVOLEitH>(
             public_parameter.big_iw_size,
@@ -124,9 +124,9 @@ mod tests {
             &mut pb_secret_state.vole_mac_r_output_and_vec,
             &mut pa_secret_state.other_vole_key_r_output_and_vec
         );
-        assert_eq!(pb_secret_state.r_output_and_bit_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
-        assert_eq!(pb_secret_state.vole_mac_r_output_and_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
-        assert_eq!(pa_secret_state.other_vole_key_r_output_and_vec.as_ref().unwrap().len(), public_parameter.big_iw_size);
+        assert_eq!(pb_secret_state.r_output_and_bit_vec.len(), public_parameter.big_iw_size);
+        assert_eq!(pb_secret_state.vole_mac_r_output_and_vec.len(), public_parameter.big_iw_size);
+        assert_eq!(pa_secret_state.other_vole_key_r_output_and_vec.len(), public_parameter.big_iw_size);
         let mut pa_label_input_vec = (0..public_parameter.num_input_bits).map(
             |_| GFVOLE::insecurely_random()
         ).collect::<GFVec<GFVOLE>>();
@@ -140,22 +140,22 @@ mod tests {
         let mut pa_r_bit_vec = initialize_trace::<u8, BitVec>(
             public_parameter,
             bristol_fashion_adaptor.get_num_wires(),
-            &pa_secret_state.r_input_bit_vec.as_ref().unwrap(),
-            &pa_secret_state.r_output_and_bit_vec.as_ref().unwrap()
+            &pa_secret_state.r_input_bit_vec,
+            &pa_secret_state.r_output_and_bit_vec
         );
         assert_eq!(pa_r_bit_vec.len(), bristol_fashion_adaptor.get_num_wires());
         let mut pa_vole_mac_r_vec = initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
             public_parameter,
             bristol_fashion_adaptor.get_num_wires(),
-            &pa_secret_state.vole_mac_r_input_vec.as_ref().unwrap(),
-            &pa_secret_state.vole_mac_r_output_and_vec.as_ref().unwrap()
+            &pa_secret_state.vole_mac_r_input_vec,
+            &pa_secret_state.vole_mac_r_output_and_vec
         );
         assert_eq!(pa_vole_mac_r_vec.len(), bristol_fashion_adaptor.get_num_wires());
         let mut pa_other_vole_key_r_vec = initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
             public_parameter,
             bristol_fashion_adaptor.get_num_wires(),
-            &pa_secret_state.other_vole_key_r_input_vec.as_ref().unwrap(),
-            &pa_secret_state.other_vole_key_r_output_and_vec.as_ref().unwrap()
+            &pa_secret_state.other_vole_key_r_input_vec,
+            &pa_secret_state.other_vole_key_r_output_and_vec
         );
         assert_eq!(pa_other_vole_key_r_vec.len(), bristol_fashion_adaptor.get_num_wires());
         let mut pa_label_vec = initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
@@ -170,22 +170,22 @@ mod tests {
         let mut pb_r_bit_vec = initialize_trace::<u8, BitVec>(
             public_parameter,
             bristol_fashion_adaptor.get_num_wires(),
-            &pb_secret_state.r_input_bit_vec.as_ref().unwrap(),
-            &pb_secret_state.r_output_and_bit_vec.as_ref().unwrap()
+            &pb_secret_state.r_input_bit_vec,
+            &pb_secret_state.r_output_and_bit_vec
         );
         assert_eq!(pb_r_bit_vec.len(), bristol_fashion_adaptor.get_num_wires());
         let mut pb_vole_mac_r_vec = initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
             public_parameter,
             bristol_fashion_adaptor.get_num_wires(),
-            &pb_secret_state.vole_mac_r_input_vec.as_ref().unwrap(),
-            &pb_secret_state.vole_mac_r_output_and_vec.as_ref().unwrap()
+            &pb_secret_state.vole_mac_r_input_vec,
+            &pb_secret_state.vole_mac_r_output_and_vec
         );
         assert_eq!(pb_vole_mac_r_vec.len(), bristol_fashion_adaptor.get_num_wires());
         let mut pb_other_vole_key_r_vec = initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
             public_parameter,
             bristol_fashion_adaptor.get_num_wires(),
-            &pb_secret_state.other_vole_key_r_input_vec.as_ref().unwrap(),
-            &pb_secret_state.other_vole_key_r_output_and_vec.as_ref().unwrap()
+            &pb_secret_state.other_vole_key_r_input_vec,
+            &pb_secret_state.other_vole_key_r_output_and_vec
         );
         assert_eq!(pb_other_vole_key_r_vec.len(), bristol_fashion_adaptor.get_num_wires());
 
@@ -240,7 +240,7 @@ mod tests {
                     pa_label_vec[gate.output_wire] = pa_label_vec[gate.left_input_wire];
                     
                     // compute for pb
-                    pb_r_bit_vec[gate.output_wire] = !pb_r_bit_vec[gate.left_input_wire];
+                    pb_r_bit_vec[gate.output_wire] = pb_r_bit_vec[gate.left_input_wire];
                     pb_vole_mac_r_vec[gate.output_wire] = pb_vole_mac_r_vec[gate.left_input_wire];
                     pb_other_vole_key_r_vec[gate.output_wire] = pb_other_vole_key_r_vec[gate.left_input_wire];
                 },
