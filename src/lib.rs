@@ -6,8 +6,8 @@ pub(crate) mod util;
 mod test;
 mod functionalities_and_protocols;
 
-fn enforce_testing() {
-    if !cfg!(test) {
-        panic!("This is not called during testing!");
-    }
-}
+// fn enforce_testing() {
+//     if !cfg!(test) {
+//         panic!("This is not called during testing!");
+//     }
+// }

@@ -1,6 +1,5 @@
 #[cfg(test)]
 mod tests {
-    use std::fmt::Debug;
     use std::ops::{Index, IndexMut};
     use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
     use crate::bristol_fashion_adaptor::GateType;
@@ -64,7 +63,7 @@ mod tests {
             .gf_add(&other_vole_key_r_right_input.gf_multiply_bit(k0))
             .gf_add(&other_vole_key_r_left_input.gf_multiply_bit(k1));
         if delta.is_some() {
-            &other_vole_key_r_gamma_k.gf_add(
+            other_vole_key_r_gamma_k.gf_add(
                 &delta.as_ref().unwrap().gf_multiply_bit(k0).gf_multiply_bit(k1)
             );
         }
@@ -127,10 +126,10 @@ mod tests {
         assert_eq!(pb_secret_state.r_output_and_bit_vec.len(), public_parameter.big_iw_size);
         assert_eq!(pb_secret_state.vole_mac_r_output_and_vec.len(), public_parameter.big_iw_size);
         assert_eq!(pa_secret_state.other_vole_key_r_output_and_vec.len(), public_parameter.big_iw_size);
-        let mut pa_label_input_vec = (0..public_parameter.num_input_bits).map(
+        let pa_label_input_vec = (0..public_parameter.num_input_bits).map(
             |_| GFVOLE::insecurely_random()
         ).collect::<GFVec<GFVOLE>>();
-        let mut pa_label_output_and_vec = (0..public_parameter.big_iw_size).map(
+        let pa_label_output_and_vec = (0..public_parameter.big_iw_size).map(
             |_| GFVOLE::insecurely_random()
         ).collect::<GFVec<GFVOLE>>();
         assert_eq!(pa_label_input_vec.len(), public_parameter.num_input_bits);
@@ -192,7 +191,7 @@ mod tests {
         // obtain multiplication AND triples
         InsecureFunctionalityPre::generate_random_and_tuples(
             public_parameter.kappa,
-            public_parameter.big_l * public_parameter.kappa,
+            public_parameter.big_l,
             &mut pa_secret_state.tilde_a_bit_vec_rep,
             &mut pa_secret_state.tilde_b_bit_vec_rep,
             &mut pa_secret_state.tilde_c_bit_vec_rep,
@@ -218,7 +217,7 @@ mod tests {
         //follow topological of circuit to compute
         let mut and_cursor = 0usize;
         for gate in bristol_fashion_adaptor.get_gate_vec() {
-            println!("{:?}", (gate.left_input_wire, gate.right_input_wire, gate.output_wire, gate.gate_type.clone()));
+            // println!("{:?}", (gate.left_input_wire, gate.right_input_wire, gate.output_wire, gate.gate_type.clone()));
             match gate.gate_type {
                 GateType::XOR => {
                     // compute for pa
@@ -306,14 +305,13 @@ mod tests {
 
                     and_cursor += 1;
                 }
-
             }
         }
     }
     
     #[test]
     fn test_pa_2pc_for_addition() {
-        let bristol_fashion_adaptor = BristolFashionAdaptor::new(&"sha256.txt".to_string());
+        let bristol_fashion_adaptor = BristolFashionAdaptor::new(&"aes_128.txt".to_string());
         let num_input_bits = bristol_fashion_adaptor.get_num_input_bits();
         let big_ia = (0..num_input_bits >> 1).collect::<Vec<usize>>();
         let big_ib = (big_ia.len()..num_input_bits).collect::<Vec<usize>>();
@@ -326,8 +324,8 @@ mod tests {
             big_ia,
             big_ib,
             bristol_fashion_adaptor.determine_and_gate_output_wires(),
-            4,
-            50,
+            bs,
+            rm,
         );
         
         let mut pa_secret_state = ProverSecretState::<GF2p256, GF2p8>::new(

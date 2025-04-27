@@ -1,16 +1,15 @@
 use rand::Rng;
 use crate::value_type::{GFAddition, GFMultiplyingBit, InsecureRandom, Zero};
-use crate::vec_type::{bit_vec::BitVec, gf_vec::GFVec, ZeroVec};
+use crate::vec_type::{bit_vec::BitVec, gf_vec::GFVec};
 
 pub struct InsecureFunctionalityPre;
 
 impl InsecureFunctionalityPre {
-    
     pub fn generate_delta<GFVOLE: InsecureRandom>(delta: &mut Option<GFVOLE>) {
         *delta = Some(GFVOLE::insecurely_random());
     }
 
-    fn generate_random_vole_macs_and_keys<GFVOLE: InsecureRandom + GFAddition + GFMultiplyingBit+ Clone + Zero>(
+    fn generate_random_vole_macs_and_keys<GFVOLE: InsecureRandom + GFAddition + GFMultiplyingBit + Clone + Zero>(
         delta: &GFVOLE,
         rand_bit_vec: &BitVec,
         vole_mac_rand_vec: &mut GFVec<GFVOLE>,
@@ -30,12 +29,14 @@ impl InsecureFunctionalityPre {
         rand_bit_vec: &mut BitVec,
         vole_mac_rand_vec: &mut GFVec<GFVOLE>,
         vole_key_rand_vec: &mut GFVec<GFVOLE>,
-    ) 
-    where GFVOLE: InsecureRandom + GFAddition + Clone + GFMultiplyingBit + Zero {
+    )
+    where
+        GFVOLE: InsecureRandom + GFAddition + Clone + GFMultiplyingBit + Zero
+    {
         let mut rng = rand::rng();
-        (0..len).for_each( 
-            |i| { 
-                rand_bit_vec[i] = rng.random::<u8>() & 1u8; 
+        (0..len).for_each(
+            |i| {
+                rand_bit_vec[i] = rng.random::<u8>() & 1u8;
             }
         );
 
@@ -43,53 +44,34 @@ impl InsecureFunctionalityPre {
             delta, rand_bit_vec, vole_mac_rand_vec, vole_key_rand_vec
         );
     }
-    
+
     pub fn generate_random_and_tuples(
-        kappa: usize, len: usize, 
-        pa_rand_a_bit_vec_rep: &mut Option<Vec<BitVec>>, 
-        pa_rand_b_bit_vec_rep: &mut Option<Vec<BitVec>>, 
-        pa_rand_c_bit_vec_rep: &mut Option<Vec<BitVec>>,
-        pb_rand_a_bit_vec_rep: &mut Option<Vec<BitVec>>, 
-        pb_rand_b_bit_vec_rep: &mut Option<Vec<BitVec>>, 
-        pb_rand_c_bit_vec_rep: &mut Option<Vec<BitVec>>
+        kappa: usize, len: usize,
+        pa_rand_a_bit_vec_rep: &mut Vec<BitVec>,
+        pa_rand_b_bit_vec_rep: &mut Vec<BitVec>,
+        pa_rand_c_bit_vec_rep: &mut Vec<BitVec>,
+        pb_rand_a_bit_vec_rep: &mut Vec<BitVec>,
+        pb_rand_b_bit_vec_rep: &mut Vec<BitVec>,
+        pb_rand_c_bit_vec_rep: &mut Vec<BitVec>
     ) {
-        *pa_rand_a_bit_vec_rep = Some(Vec::new());
-        *pa_rand_b_bit_vec_rep = Some(Vec::new());
-        *pa_rand_c_bit_vec_rep = Some(Vec::new());
-        *pb_rand_a_bit_vec_rep = Some(Vec::new());
-        *pb_rand_b_bit_vec_rep = Some(Vec::new());
-        *pb_rand_c_bit_vec_rep = Some(Vec::new());
         let mut rng = rand::rng();
-        (0..kappa).for_each(|_| {
-            let mut pa_rand_a_bit_vec= BitVec::new();
-            let mut pa_rand_b_bit_vec = BitVec::new();
-            let mut pa_rand_c_bit_vec = BitVec::new();
-            let mut pb_rand_a_bit_vec = BitVec::new();
-            let mut pb_rand_b_bit_vec = BitVec::new();
-            let mut pb_rand_c_bit_vec = BitVec::new();
-            for _ in 0..len {
-                pa_rand_a_bit_vec.push(rng.random::<u8>() & 1);
-                pa_rand_b_bit_vec.push(rng.random::<u8>() & 1);
-                pa_rand_c_bit_vec.push(rng.random::<u8>() & 1);
-                pb_rand_a_bit_vec.push(rng.random::<u8>() & 1);
-                pb_rand_b_bit_vec.push(rng.random::<u8>() & 1);
-                pb_rand_c_bit_vec.push(
-                    (pa_rand_a_bit_vec.iter().last().unwrap() ^ pb_rand_a_bit_vec.iter().last().unwrap())
-                        & (pa_rand_b_bit_vec.iter().last().unwrap() ^ pb_rand_b_bit_vec.iter().last().unwrap())
-                        ^ pa_rand_c_bit_vec.iter().last().unwrap()
-                );
+        for repetition_id in 0..kappa {
+            for i in 0..len {
+                pa_rand_a_bit_vec_rep[repetition_id][i] = rng.random::<u8>() & 1;
+                pa_rand_b_bit_vec_rep[repetition_id][i] = rng.random::<u8>() & 1;
+                pa_rand_c_bit_vec_rep[repetition_id][i] = rng.random::<u8>() & 1;
+                pb_rand_a_bit_vec_rep[repetition_id][i] = rng.random::<u8>() & 1;
+                pb_rand_b_bit_vec_rep[repetition_id][i] = rng.random::<u8>() & 1;
+                pb_rand_c_bit_vec_rep[repetition_id][i] =
+                    (pa_rand_a_bit_vec_rep[repetition_id][i] ^ pb_rand_a_bit_vec_rep[repetition_id][i])
+                        & (pa_rand_b_bit_vec_rep[repetition_id][i] ^ pb_rand_b_bit_vec_rep[repetition_id][i])
+                        ^ pa_rand_c_bit_vec_rep[repetition_id][i];
             }
-            pa_rand_a_bit_vec_rep.as_mut().unwrap().push(pa_rand_a_bit_vec);
-            pa_rand_b_bit_vec_rep.as_mut().unwrap().push(pa_rand_b_bit_vec);
-            pa_rand_c_bit_vec_rep.as_mut().unwrap().push(pa_rand_c_bit_vec);
-            pb_rand_a_bit_vec_rep.as_mut().unwrap().push(pb_rand_a_bit_vec);
-            pb_rand_b_bit_vec_rep.as_mut().unwrap().push(pb_rand_b_bit_vec);
-            pb_rand_c_bit_vec_rep.as_mut().unwrap().push(pb_rand_c_bit_vec);
-        });
+        }
     }
-    
+
     pub fn generate_random_authenticated_and_tuples<GFVOLE>(
-        delta_a: &GFVOLE, 
+        delta_a: &GFVOLE,
         pa_left_input_bit: u8,
         pa_right_input_bit: u8,
         pa_output_bit: &mut u8, pa_vole_mac_output: &mut GFVOLE, pa_vole_key_output: &mut GFVOLE,
@@ -98,7 +80,9 @@ impl InsecureFunctionalityPre {
         pb_right_input_bit: u8,
         pb_output_bit: &mut u8, pb_vole_mac_output: &mut GFVOLE, pb_vole_key_output: &mut GFVOLE,
     )
-    where GFVOLE: InsecureRandom + GFAddition + GFMultiplyingBit {
+    where
+        GFVOLE: InsecureRandom + GFAddition + GFMultiplyingBit
+    {
         let mut rng = rand::rng();
         *pa_output_bit = rng.random::<u8>() & 1;
         *pb_output_bit = (pa_left_input_bit ^ pb_left_input_bit) & (pa_right_input_bit ^ pb_right_input_bit) ^ *pa_output_bit;
@@ -161,12 +145,12 @@ mod tests {
     fn test_functionality_pre_generating_random_and_tuples () {
         let kappa = 10;
         let num_random_and_tuples = 100;
-        let mut pa_rand_a_bit_vec_rep: Option<Vec<BitVec>> = None;
-        let mut pa_rand_b_bit_vec_rep: Option<Vec<BitVec>> = None;
-        let mut pa_rand_c_bit_vec_rep: Option<Vec<BitVec>> = None;
-        let mut pb_rand_a_bit_vec_rep: Option<Vec<BitVec>> = None;
-        let mut pb_rand_b_bit_vec_rep: Option<Vec<BitVec>> = None;
-        let mut pb_rand_c_bit_vec_rep: Option<Vec<BitVec>> = None;
+        let mut pa_rand_a_bit_vec_rep: Vec<BitVec> = vec![BitVec::zero_vec(num_random_and_tuples); kappa];
+        let mut pa_rand_b_bit_vec_rep: Vec<BitVec> = vec![BitVec::zero_vec(num_random_and_tuples); kappa];
+        let mut pa_rand_c_bit_vec_rep: Vec<BitVec> = vec![BitVec::zero_vec(num_random_and_tuples); kappa];
+        let mut pb_rand_a_bit_vec_rep: Vec<BitVec> = vec![BitVec::zero_vec(num_random_and_tuples); kappa];
+        let mut pb_rand_b_bit_vec_rep: Vec<BitVec> = vec![BitVec::zero_vec(num_random_and_tuples); kappa];
+        let mut pb_rand_c_bit_vec_rep: Vec<BitVec> = vec![BitVec::zero_vec(num_random_and_tuples); kappa];
         InsecureFunctionalityPre::generate_random_and_tuples(
             kappa, num_random_and_tuples,
             &mut pa_rand_a_bit_vec_rep, &mut pa_rand_b_bit_vec_rep, &mut pa_rand_c_bit_vec_rep,
@@ -177,8 +161,8 @@ mod tests {
             pa_rand_a_bit_vec, pa_rand_b_bit_vec, pa_rand_c_bit_vec,
             pb_rand_a_bit_vec, pb_rand_b_bit_vec, pb_rand_c_bit_vec
         ) in izip!(
-            pa_rand_a_bit_vec_rep.as_ref().unwrap().iter(), pa_rand_b_bit_vec_rep.as_ref().unwrap().iter(), pa_rand_c_bit_vec_rep.as_ref().unwrap().iter(),
-            pb_rand_a_bit_vec_rep.as_ref().unwrap().iter(), pb_rand_b_bit_vec_rep.as_ref().unwrap().iter(), pb_rand_c_bit_vec_rep.as_ref().unwrap().iter()
+            pa_rand_a_bit_vec_rep.iter(), pa_rand_b_bit_vec_rep.iter(), pa_rand_c_bit_vec_rep.iter(),
+            pb_rand_a_bit_vec_rep.iter(), pb_rand_b_bit_vec_rep.iter(), pb_rand_c_bit_vec_rep.iter()
         ) {
             for (
                 pa_rand_a_bit, pa_rand_b_bit, pa_rand_c_bit, 

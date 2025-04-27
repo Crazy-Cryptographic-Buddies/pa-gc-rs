@@ -2,9 +2,7 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
-use rand::Rng;
 use crate::bristol_fashion_adaptor::{GateInfo, GateType};
-use crate::util::conversion::Conversion;
 
 pub struct BristolFashionAdaptor {
     num_wires: usize,
@@ -136,25 +134,16 @@ impl BristolFashionAdaptor {
         }
         wire_values[wire_values.len().saturating_sub(self.num_output_bits)..].to_vec()
     }
-
-    pub fn compute_output_hex_string_from_input_hex_string(&self, input_hex_string: String)
-        -> String
-    {
-        let input_bit_vec: Vec<u8> = Conversion::hex_string_to_bit_vec(&input_hex_string);
-        let output_bit_vec = self.compute_output_bits(&input_bit_vec);
-        let output_hex_string = Conversion::bit_vec_to_hex_string(&output_bit_vec);
-        output_hex_string
-    }
     
-    pub fn compute_num_and_gates(&self) -> usize {
-        let mut num_and_gates: usize = 0;
-        for gate in &self.gate_vec {
-            if gate.gate_type == GateType::AND {
-                num_and_gates += 1;
-            }
-        }
-        num_and_gates   
-    }
+    // pub fn compute_num_and_gates(&self) -> usize {
+    //     let mut num_and_gates: usize = 0;
+    //     for gate in &self.gate_vec {
+    //         if gate.gate_type == GateType::AND {
+    //             num_and_gates += 1;
+    //         }
+    //     }
+    //     num_and_gates   
+    // }
     
     pub fn determine_and_gate_output_wires(&self) -> Vec<usize> {
         self.gate_vec.iter().filter_map(|gate| {
@@ -170,9 +159,9 @@ impl BristolFashionAdaptor {
         self.num_input_bits
     }
     
-    pub fn get_num_output_bits(&self) -> usize {
-        self.num_output_bits
-    }
+    // pub fn get_num_output_bits(&self) -> usize {
+    //     self.num_output_bits
+    // }
     
     pub fn get_num_wires(&self) -> usize {
         self.num_wires
@@ -198,38 +187,53 @@ impl BristolFashionAdaptor {
 //     assert_eq!(output_hex_string_1, expected_output_hex_string_1);
 // }
 
-#[test]
-pub fn adder64_test_compute_output_hex_string_from_input_hex_string() {
-    let mut rng = rand::rng();
-    let a: u64 = rng.random::<u64>();
-    let b: u64 = rng.random::<u64>();
-    let sum =  a.wrapping_add(b);
-    println!("a: {:?}, b: {:?}, sum: {:?}", a, b, sum);
-    let expected_output_bit_vec = Conversion::u64_to_bit_vec(sum);
-    let mut input_bit_vec = Conversion::u64_to_bit_vec(a);
-    input_bit_vec.append(&mut Conversion::u64_to_bit_vec(b));
-    let bristol_fashion_adaptor = BristolFashionAdaptor::new(&"adder64.txt".to_string());
-    let output_bit_vec = bristol_fashion_adaptor.compute_output_bits(&input_bit_vec);
-    println!("         output_bit_vec: {:?}", output_bit_vec);
-    println!("expected_output_bit_vec: {:?}", expected_output_bit_vec);
-    assert_eq!(output_bit_vec, expected_output_bit_vec);
-    println!("test passed");
-}
+#[cfg(test)]
+mod tests {
+    use rand::Rng;
+    use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
+    use crate::util::conversion::Conversion;
 
-#[test]
-pub fn sub64_test_compute_output_hex_string_from_input_hex_string() {
-    let mut rng = rand::rng();
-    let a: u64 = rng.random::<u64>();
-    let b: u64 = rng.random::<u64>();
-    let sum =  a.wrapping_sub(b);
-    println!("a: {:?}, b: {:?}, sum: {:?}", a, b, sum);
-    let expected_output_bit_vec = Conversion::u64_to_bit_vec(sum);
-    let mut input_bit_vec = Conversion::u64_to_bit_vec(a);
-    input_bit_vec.append(&mut Conversion::u64_to_bit_vec(b));
-    let bristol_fashion_adaptor = BristolFashionAdaptor::new(&"sub64.txt".to_string());
-    let output_bit_vec = bristol_fashion_adaptor.compute_output_bits(&input_bit_vec);
-    println!("         output_bit_vec: {:?}", output_bit_vec);
-    println!("expected_output_bit_vec: {:?}", expected_output_bit_vec);
-    assert_eq!(output_bit_vec, expected_output_bit_vec);
-    println!("test passed");
+    // pub fn compute_output_hex_string_from_input_hex_string(input_hex_string: String)
+    //                                                        -> String {
+    //     let input_bit_vec: Vec<u8> = Conversion::hex_string_to_bit_vec(&input_hex_string);
+    //     let output_bit_vec = self.compute_output_bits(&input_bit_vec);
+    //     let output_hex_string = Conversion::bit_vec_to_hex_string(&output_bit_vec);
+    //     output_hex_string
+    // }
+
+    #[test]
+    pub fn adder64_test_compute_output_hex_string_from_input_hex_string() {
+        let mut rng = rand::rng();
+        let a: u64 = rng.random::<u64>();
+        let b: u64 = rng.random::<u64>();
+        let sum =  a.wrapping_add(b);
+        println!("a: {:?}, b: {:?}, sum: {:?}", a, b, sum);
+        let expected_output_bit_vec = Conversion::u64_to_bit_vec(sum);
+        let mut input_bit_vec = Conversion::u64_to_bit_vec(a);
+        input_bit_vec.append(&mut Conversion::u64_to_bit_vec(b));
+        let bristol_fashion_adaptor = BristolFashionAdaptor::new(&"adder64.txt".to_string());
+        let output_bit_vec = bristol_fashion_adaptor.compute_output_bits(&input_bit_vec);
+        println!("         output_bit_vec: {:?}", output_bit_vec);
+        println!("expected_output_bit_vec: {:?}", expected_output_bit_vec);
+        assert_eq!(output_bit_vec, expected_output_bit_vec);
+        println!("test passed");
+    }
+
+    #[test]
+    pub fn sub64_test_compute_output_hex_string_from_input_hex_string() {
+        let mut rng = rand::rng();
+        let a: u64 = rng.random::<u64>();
+        let b: u64 = rng.random::<u64>();
+        let sum =  a.wrapping_sub(b);
+        println!("a: {:?}, b: {:?}, sum: {:?}", a, b, sum);
+        let expected_output_bit_vec = Conversion::u64_to_bit_vec(sum);
+        let mut input_bit_vec = Conversion::u64_to_bit_vec(a);
+        input_bit_vec.append(&mut Conversion::u64_to_bit_vec(b));
+        let bristol_fashion_adaptor = BristolFashionAdaptor::new(&"sub64.txt".to_string());
+        let output_bit_vec = bristol_fashion_adaptor.compute_output_bits(&input_bit_vec);
+        println!("         output_bit_vec: {:?}", output_bit_vec);
+        println!("expected_output_bit_vec: {:?}", expected_output_bit_vec);
+        assert_eq!(output_bit_vec, expected_output_bit_vec);
+        println!("test passed");
+    }
 }

@@ -66,7 +66,6 @@ mod tests {
             4,
             50
         );
-        let rng = rand::rng();
         let nabla_a_rep = (0..public_parameter.kappa).map(
             |_| GF2p8::insecurely_random()
         ).collect::<Vec<GF2p8>>();

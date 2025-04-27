@@ -13,9 +13,9 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
     pub r_input_bit_vec: BitVec,
     pub r_output_and_bit_vec: BitVec,
     pub r_prime_bit_vec: BitVec,
-    pub tilde_a_bit_vec_rep: Option<Vec<BitVec>>,
-    pub tilde_b_bit_vec_rep: Option<Vec<BitVec>>,
-    pub tilde_c_bit_vec_rep: Option<Vec<BitVec>>,
+    pub tilde_a_bit_vec_rep: Vec<BitVec>,
+    pub tilde_b_bit_vec_rep: Vec<BitVec>,
+    pub tilde_c_bit_vec_rep: Vec<BitVec>,
     
     // vole macs
     pub vole_mac_r_input_vec: GFVec<GFVOLE>,
@@ -28,12 +28,12 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
     pub other_vole_key_r_prime_vec: GFVec<GFVOLE>,
 
     // voleith macs
-    pub voleith_mac_r_input_vec_rep: Vec<Option<GFVec<GFVOLEitH>>>,
-    pub voleith_mac_r_output_and_vec_rep: Vec<Option<GFVec<GFVOLEitH>>>,
-    pub voleith_mac_r_prime_vec_rep: Vec<Option<GFVec<GFVOLEitH>>>,
-    pub voleith_mac_tilde_a_vec_rep: Vec<Option<GFVec<GFVOLEitH>>>,
-    pub voleith_mac_tilde_b_vec_rep: Vec<Option<GFVec<GFVOLEitH>>>,
-    pub voleith_mac_tilde_c_vec_rep: Vec<Option<GFVec<GFVOLEitH>>>,
+    pub voleith_mac_r_input_vec_rep: Vec<GFVec<GFVOLEitH>>,
+    pub voleith_mac_r_output_and_vec_rep: Vec<GFVec<GFVOLEitH>>,
+    pub voleith_mac_r_prime_vec_rep: Vec<GFVec<GFVOLEitH>>,
+    pub voleith_mac_tilde_a_vec_rep: Vec<GFVec<GFVOLEitH>>,
+    pub voleith_mac_tilde_b_vec_rep: Vec<GFVec<GFVOLEitH>>,
+    pub voleith_mac_tilde_c_vec_rep: Vec<GFVec<GFVOLEitH>>,
 
     // random bits from PisVOLE
     pub prover_in_all_in_one_vc_rep: Vec<ProverInAllInOneVC>,
@@ -44,7 +44,8 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
     // pub bar_c_bit_vec_rep: Vec<Option<BitVec>>,
 }
 
-impl<GFVOLE: Clone + Zero, GFVOLEitH: Clone> ProverSecretState<GFVOLE, GFVOLEitH> {
+impl<GFVOLE, GFVOLEitH> ProverSecretState<GFVOLE, GFVOLEitH>
+where GFVOLE: Clone + Zero, GFVOLEitH: Clone + Zero {
     pub fn new(
         public_parameter: &PublicParameter, 
         master_seed_for_generating_ggm_tree: SeedU8x16,
@@ -65,9 +66,9 @@ impl<GFVOLE: Clone + Zero, GFVOLEitH: Clone> ProverSecretState<GFVOLE, GFVOLEitH
             r_input_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.num_input_bits]),
             r_output_and_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.big_iw_size]),
             r_prime_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.big_iw_size]),
-            tilde_a_bit_vec_rep: None,
-            tilde_b_bit_vec_rep: None,
-            tilde_c_bit_vec_rep: None,
+            tilde_a_bit_vec_rep: vec![BitVec::from_vec(vec![0u8; public_parameter.big_l]); public_parameter.kappa],
+            tilde_b_bit_vec_rep: vec![BitVec::from_vec(vec![0u8; public_parameter.big_l]); public_parameter.kappa],
+            tilde_c_bit_vec_rep: vec![BitVec::from_vec(vec![0u8; public_parameter.big_l]); public_parameter.kappa],
             
             vole_mac_r_input_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.num_input_bits),
             vole_mac_r_output_and_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),
@@ -77,12 +78,12 @@ impl<GFVOLE: Clone + Zero, GFVOLEitH: Clone> ProverSecretState<GFVOLE, GFVOLEitH
             other_vole_key_r_output_and_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),
             other_vole_key_r_prime_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),           
 
-            voleith_mac_r_input_vec_rep: vec![None; public_parameter.kappa],
-            voleith_mac_r_output_and_vec_rep: vec![None; public_parameter.kappa],           
-            voleith_mac_r_prime_vec_rep: vec![None; public_parameter.kappa],
-            voleith_mac_tilde_a_vec_rep: vec![None; public_parameter.kappa],
-            voleith_mac_tilde_b_vec_rep: vec![None; public_parameter.kappa],
-            voleith_mac_tilde_c_vec_rep: vec![None; public_parameter.kappa],
+            voleith_mac_r_input_vec_rep: vec![GFVec::new(); public_parameter.kappa],
+            voleith_mac_r_output_and_vec_rep: vec![GFVec::new(); public_parameter.kappa],           
+            voleith_mac_r_prime_vec_rep: vec![GFVec::new(); public_parameter.kappa],
+            voleith_mac_tilde_a_vec_rep: vec![GFVec::new(); public_parameter.kappa],
+            voleith_mac_tilde_b_vec_rep: vec![GFVec::new(); public_parameter.kappa],
+            voleith_mac_tilde_c_vec_rep: vec![GFVec::new(); public_parameter.kappa],
 
             prover_in_all_in_one_vc_rep,
             // bar_r_bit_vec_rep: vec![None; public_parameter.kappa],
