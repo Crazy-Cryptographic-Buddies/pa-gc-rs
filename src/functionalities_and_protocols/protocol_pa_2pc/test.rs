@@ -416,14 +416,15 @@ mod tests {
         let bristol_fashion_adaptor = BristolFashionAdaptor::new(
             &"adder64.txt".to_string()
         );
+        println!("Num AND gates: {:?}", bristol_fashion_adaptor.determine_and_gate_output_wires().len());
         let num_input_bits = bristol_fashion_adaptor.get_num_input_bits();
         let big_ia = (0..num_input_bits >> 1).collect::<Vec<usize>>();
         let big_ib = (big_ia.len()..num_input_bits).collect::<Vec<usize>>();
-        let bs = 10;
-        let rm = 8;
+        let bs = 1;
+        let rm = bristol_fashion_adaptor.determine_and_gate_output_wires().len();
         let public_parameter = PublicParameter::new(
             8,
-            10,
+            32,
             SeedU8x16::insecurely_random(),
             big_ia,
             big_ib,

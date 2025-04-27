@@ -14,9 +14,7 @@ impl ProverInProtocolCheckAND {
         y_bit_vec: &BitVec, voleith_mac_y_vec_rep: &Vec<GFVec<GFVOLEitH>>,
         a_bit_vec_rep: &Vec<BitVec>, voleith_mac_a_vec_rep: &Vec<GFVec<GFVOLEitH>>,
         b_bit_vec_rep: &Vec<BitVec>, voleith_mac_b_vec_rep: &Vec<GFVec<GFVOLEitH>>,
-    ) -> (
-        (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>), (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>)
-    ) {
+    ) -> ((Vec<BitVec>, Vec<GFVec<GFVOLEitH>>), (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>)) {
         let mut d_bit_vec_rep: Vec<BitVec> = Vec::new();
         let mut e_bit_vec_rep: Vec<BitVec> = Vec::new();
         let mut voleith_mac_d_vec_rep: Vec<GFVec<GFVOLEitH>> = Vec::new();
