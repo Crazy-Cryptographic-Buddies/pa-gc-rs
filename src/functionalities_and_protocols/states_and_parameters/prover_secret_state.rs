@@ -4,7 +4,7 @@ use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::value_type::Zero;
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
-use crate::vec_type::ZeroVec;
+use crate::vec_type::{BasicVecFunctions, ZeroVec};
 
 pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
     pub delta: Option<GFVOLE>,

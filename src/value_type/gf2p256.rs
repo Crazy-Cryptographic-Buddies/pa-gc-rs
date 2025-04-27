@@ -1,5 +1,5 @@
 use rand::Rng;
-use crate::value_type::{GFAddition, GFMultiplyingBit, InsecureRandom, Zero};
+use crate::value_type::{ByteCount, GFAddition, GFMultiplyingBit, InsecureRandom, Zero};
 
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub struct GF2p256 {
@@ -53,5 +53,11 @@ impl InsecureRandom for GF2p256 {
         let v2 = rng.random::<u64>();
         let v3 = rng.random::<u64>();
         Self { val: (v0, v1, v2, v3) }
+    }
+}
+
+impl ByteCount for GF2p256 {
+    fn num_bytes() -> usize {
+        32
     }
 }

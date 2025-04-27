@@ -10,7 +10,7 @@ mod tests {
     use crate::value_type::seed_u8x16::SeedU8x16;
     use crate::vec_type::bit_vec::BitVec;
     use crate::vec_type::gf_vec::GFVec;
-    use crate::vec_type::VecAddition;
+    use crate::vec_type::{BasicVecFunctions, VecAddition};
 
     fn generate_random_bit_vec(len: usize) -> BitVec {
         let mut bit_vec = BitVec::new();

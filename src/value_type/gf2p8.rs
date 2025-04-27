@@ -1,8 +1,8 @@
 use blake3::Hash;
 use rand::Rng;
-use crate::value_type::{GFAddition, GFMultiplyingBit, HashDigestToGF, InsecureRandom, U8ForGF, Zero};
+use crate::value_type::{ByteCount, GFAddition, GFMultiplyingBit, HashDigestToGF, InsecureRandom, U8ForGF, Zero};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub struct GF2p8 {
     val: u8
 }
@@ -62,5 +62,11 @@ impl HashDigestToGF for GF2p8 {
         Self {
             val: hash_digest.as_bytes()[0]
         }
+    }
+}
+
+impl ByteCount for GF2p8 {
+    fn num_bytes() -> usize {
+        1
     }
 }

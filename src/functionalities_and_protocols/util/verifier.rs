@@ -2,7 +2,7 @@ use std::fmt::Debug;
 use crate::value_type::{GFAddition, GFMultiplyingBit, Zero};
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
-use crate::vec_type::VecAddition;
+use crate::vec_type::{BasicVecFunctions, VecAddition};
 
 pub struct Verifier;
 

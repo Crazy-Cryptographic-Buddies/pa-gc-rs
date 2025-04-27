@@ -16,3 +16,10 @@ pub trait Split {
 pub trait VecAppending {
     fn append(&mut self, other: &mut Self);
 }
+
+pub trait BasicVecFunctions<OutputType> {
+    fn len(&self) -> usize;
+    fn as_slice(&self) -> &[OutputType];
+    
+    fn from_vec(vec: Vec<OutputType>) -> Self;
+}

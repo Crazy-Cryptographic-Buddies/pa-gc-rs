@@ -12,6 +12,12 @@ pub trait Zero {
     fn zero() -> Self;
 }
 
+impl Zero for u8 {
+    fn zero() -> Self {
+        0
+    }   
+}
+
 pub trait U8ForGF {
     fn from_u8(u8_value: u8) -> Self;
     fn get_u8(&self) -> u8;
@@ -27,4 +33,8 @@ pub trait GFAddition {
 
 pub trait HashDigestToGF {
     fn from_hash_digest(hash_digest: &Hash) -> Self;
+}
+
+pub trait ByteCount {
+    fn num_bytes() -> usize;
 }

@@ -1,6 +1,7 @@
+use std::iter::FusedIterator;
 use std::ops::{Index, IndexMut};
 use crate::value_type::{GFAddition, Zero};
-use crate::vec_type::{Split, VecAddition, VecAppending, ZeroVec};
+use crate::vec_type::{BasicVecFunctions, Split, VecAddition, VecAppending, ZeroVec};
 use crate::vec_type::bit_vec::BitVec;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -12,12 +13,6 @@ impl<GF: Clone + Zero> GFVec<GF> {
     pub fn new() -> Self {
         Self {
            val: Vec::<GF>::new()
-        }
-    }
-    
-    pub fn from_vec(val: Vec<GF>) -> Self {
-        Self {
-            val
         }
     }
     
@@ -98,6 +93,22 @@ impl<GF> FromIterator<GF> for GFVec<GF> {
     fn from_iter<T: IntoIterator<Item = GF>>(iter: T) -> Self {
         Self {
             val: iter.into_iter().collect()
+        }
+    }
+}
+
+impl<GF> BasicVecFunctions<GF> for GFVec<GF> {
+    fn len(&self) -> usize {
+        self.val.len()
+    }
+
+    fn as_slice(&self) -> &[GF] {
+        &self.val
+    }
+
+    fn from_vec(vec: Vec<GF>) -> Self {
+        Self {
+            val: vec
         }
     }
 }
