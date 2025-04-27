@@ -81,7 +81,7 @@ mod tests {
                 compute_voleith_key_vec(&pa_x_bit_vec, voleith_mac_x_vec, &nabla_b)
         ).collect::<Vec<GFVec<GF2p8>>>();
         for repetition_id in 0..public_parameter.kappa {
-            Verifier::verify_voleith_correlations(
+            Verifier::verify_vole_correlations(
                 &pa_x_bit_vec, &pa_voleith_mac_x_vec_rep[repetition_id], &nabla_b_rep[repetition_id],
                 &pa_voleith_key_x_vec_rep[repetition_id],
             );
@@ -93,7 +93,7 @@ mod tests {
                 compute_voleith_key_vec(&pa_y_bit_vec, voleith_mac_y_vec, &nabla_b)
         ).collect::<Vec<GFVec<GF2p8>>>();
         for repetition_id in 0..public_parameter.kappa {
-            Verifier::verify_voleith_correlations(
+            Verifier::verify_vole_correlations(
                 &pa_y_bit_vec, &pa_voleith_mac_y_vec_rep[repetition_id], &nabla_b_rep[repetition_id],
                 &pa_voleith_key_y_vec_rep[repetition_id],
             );
@@ -105,7 +105,7 @@ mod tests {
                 compute_voleith_key_vec(&pa_z_bit_vec, voleith_mac_z_vec, &nabla_b)
         ).collect::<Vec<GFVec<GF2p8>>>();
         for repetition_id in 0..public_parameter.kappa {
-            Verifier::verify_voleith_correlations(
+            Verifier::verify_vole_correlations(
                 &pa_z_bit_vec, &pa_voleith_mac_z_vec_rep[repetition_id], &nabla_b_rep[repetition_id],
                 &pa_voleith_key_z_vec_rep[repetition_id],
             );
@@ -117,7 +117,7 @@ mod tests {
                 compute_voleith_key_vec(a_bit_vec, voleith_mac_a_vec, &nabla_b)
         ).collect::<Vec<GFVec<GF2p8>>>();
         for repetition_id in 0..public_parameter.kappa {
-            Verifier::verify_voleith_correlations(
+            Verifier::verify_vole_correlations(
                 &pa_a_bit_vec_rep[repetition_id], &pa_voleith_mac_a_vec_rep[repetition_id], &nabla_b_rep[repetition_id],
                 &pa_voleith_key_a_vec_rep[repetition_id],
             );
@@ -129,7 +129,7 @@ mod tests {
                 compute_voleith_key_vec(b_bit_vec, voleith_mac_b_vec, &nabla_b)
         ).collect::<Vec<GFVec<GF2p8>>>();
         for repetition_id in 0..public_parameter.kappa {
-            Verifier::verify_voleith_correlations(
+            Verifier::verify_vole_correlations(
                 &pa_b_bit_vec_rep[repetition_id], &pa_voleith_mac_b_vec_rep[repetition_id], &nabla_b_rep[repetition_id],
                 &pa_voleith_key_b_vec_rep[repetition_id],
             );
@@ -141,7 +141,7 @@ mod tests {
                 compute_voleith_key_vec(c_bit_vec, voleith_mac_c_vec, &nabla_b)
         ).collect::<Vec<GFVec<GF2p8>>>();
         for repitition_id in 0..public_parameter.kappa {
-            Verifier::verify_voleith_correlations(
+            Verifier::verify_vole_correlations(
                 &pa_c_bit_vec_rep[repitition_id], &pa_voleith_mac_c_vec_rep[repitition_id], &nabla_b_rep[repitition_id],
                 &pa_voleith_key_c_vec_rep[repitition_id],
             );
@@ -155,7 +155,7 @@ mod tests {
                 compute_voleith_key_vec(&pb_x_bit_vec, voleith_mac_x_vec, &nabla_a)
         ).collect::<Vec<GFVec<GF2p8>>>();
         for repetition_id in 0..public_parameter.kappa {
-            Verifier::verify_voleith_correlations(
+            Verifier::verify_vole_correlations(
                 &pb_x_bit_vec, &pb_voleith_mac_x_vec_rep[repetition_id], &nabla_a_rep[repetition_id],
                 &pb_voleith_key_x_vec_rep[repetition_id],
             );
@@ -167,7 +167,7 @@ mod tests {
                 compute_voleith_key_vec(&pb_y_bit_vec, voleith_mac_y_vec, &nabla_a)
         ).collect::<Vec<GFVec<GF2p8>>>();
         for repetition_id in 0..public_parameter.kappa {
-            Verifier::verify_voleith_correlations(
+            Verifier::verify_vole_correlations(
                 &pb_y_bit_vec, &pb_voleith_mac_y_vec_rep[repetition_id], &nabla_a_rep[repetition_id],
                 &pb_voleith_key_y_vec_rep[repetition_id],
             );
@@ -185,7 +185,7 @@ mod tests {
                 compute_voleith_key_vec(&pb_z_bit_vec, voleith_mac_z_vec, &nabla_a)
         ).collect::<Vec<GFVec<GF2p8>>>();
         for repetition_id in 0..public_parameter.kappa {
-            Verifier::verify_voleith_correlations(
+            Verifier::verify_vole_correlations(
                 &pb_z_bit_vec, &pb_voleith_mac_z_vec_rep[repetition_id], &nabla_a_rep[repetition_id],
                 &pb_voleith_key_z_vec_rep[repetition_id],
             );
@@ -197,7 +197,7 @@ mod tests {
                 compute_voleith_key_vec(a_bit_vec, voleith_mac_a_vec, &nabla_a)
         ).collect::<Vec<GFVec<GF2p8>>>();
         for repetition_id in 0..public_parameter.kappa {
-            Verifier::verify_voleith_correlations(
+            Verifier::verify_vole_correlations(
                 &pb_a_bit_vec_rep[repetition_id], &pb_voleith_mac_a_vec_rep[repetition_id], &nabla_a_rep[repetition_id],
                 &pb_voleith_key_a_vec_rep[repetition_id],
             );
@@ -209,7 +209,7 @@ mod tests {
                 compute_voleith_key_vec(b_bit_vec, voleith_mac_b_vec, &nabla_a)
         ).collect::<Vec<GFVec<GF2p8>>>();
         for repetition_id in 0..public_parameter.kappa {
-            Verifier::verify_voleith_correlations(
+            Verifier::verify_vole_correlations(
                 &pb_b_bit_vec_rep[repetition_id], &pb_voleith_mac_b_vec_rep[repetition_id], &nabla_a_rep[repetition_id],
                 &pb_voleith_key_b_vec_rep[repetition_id],
             );
@@ -234,7 +234,7 @@ mod tests {
                 compute_voleith_key_vec(c_bit_vec, voleith_mac_c_vec, &nabla_a)
         ).collect::<Vec<GFVec<GF2p8>>>();
         for repetition_id in 0..public_parameter.kappa {
-            Verifier::verify_voleith_correlations(
+            Verifier::verify_vole_correlations(
                 &pb_c_bit_vec_rep[repetition_id], &pb_voleith_mac_c_vec_rep[repetition_id], &nabla_a_rep[repetition_id],
                 &pb_voleith_key_c_vec_rep[repetition_id],
             );
