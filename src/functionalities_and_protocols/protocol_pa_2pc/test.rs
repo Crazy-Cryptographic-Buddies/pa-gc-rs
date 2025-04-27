@@ -325,8 +325,90 @@ mod tests {
             &public_parameter, pb_secret_state,
         );
         
-        // making VOLEitH proof and components for garbled tables
-        
+        // // making VOLEitH proof and components for garbled tables
+        // and_cursor = 0usize;
+        // for gate in bristol_fashion_adaptor.get_gate_vec() {
+        //     match gate.gate_type {
+        //         GateType::XOR => {
+        //             // compute for pa
+        //             for repetition_id in 0..public_parameter.kappa {
+        //                 pa_vole_mac_r_vec[gate.output_wire] = pa_vole_mac_r_vec[gate.left_input_wire].gf_add(&pa_vole_mac_r_vec[gate.right_input_wire]);
+        //             }
+        //             
+        //             // compute for pb
+        //             pb_vole_mac_r_vec[gate.output_wire] = pb_vole_mac_r_vec[gate.left_input_wire].gf_add(&pb_vole_mac_r_vec[gate.right_input_wire]);
+        //         },
+        //         GateType::NOT => {
+        //             // compute for pa
+        //             pa_vole_mac_r_vec[gate.output_wire] = pa_vole_mac_r_vec[gate.left_input_wire];
+        //             
+        //             // compute for pb
+        //             pb_vole_mac_r_vec[gate.output_wire] = pb_vole_mac_r_vec[gate.left_input_wire];
+        //         },
+        //         GateType::AND => {
+        //             InsecureFunctionalityPre::generate_random_authenticated_and_tuples(
+        //                 pa_secret_state.delta.as_ref().unwrap(),
+        //                 pa_r_bit_vec[gate.left_input_wire],
+        //                 pa_r_bit_vec[gate.right_input_wire],
+        //                 &mut pa_secret_state.r_prime_bit_vec[and_cursor],
+        //                 &mut pa_secret_state.vole_mac_r_prime_vec[and_cursor],
+        //                 &mut pb_secret_state.other_vole_key_r_prime_vec[and_cursor],
+        //                 pa_secret_state.delta.as_ref().unwrap(),
+        //                 pb_r_bit_vec[gate.left_input_wire],
+        //                 pb_r_bit_vec[gate.right_input_wire],
+        //                 &mut pb_secret_state.r_prime_bit_vec[and_cursor],
+        //                 &mut pb_secret_state.vole_mac_r_prime_vec[and_cursor],
+        //                 &mut pa_secret_state.other_vole_key_r_prime_vec[and_cursor],
+        //             );
+        // 
+        //             // PA computes
+        //             for k in 0..4 {
+        //                 compute_authenticated_middle_r_and_output_bit_vec(
+        //                     k, &pa_secret_state.delta,
+        //                     &mut pa_middle_r_and_output_bit_vec[and_cursor][k],
+        //                     pa_secret_state.r_prime_bit_vec[and_cursor],
+        //                     pa_r_bit_vec[gate.output_wire],
+        //                     pa_r_bit_vec[gate.left_input_wire],
+        //                     pa_r_bit_vec[gate.right_input_wire],
+        //                     &mut pa_middle_vole_mac_r_and_output_bit_vec[and_cursor][k],
+        //                     &pa_secret_state.vole_mac_r_prime_vec[and_cursor],
+        //                     &pa_vole_mac_r_vec[gate.output_wire],
+        //                     &pa_vole_mac_r_vec[gate.left_input_wire],
+        //                     &pa_vole_mac_r_vec[gate.right_input_wire],
+        //                     &mut pa_other_middle_vole_key_r_and_output_bit_vec[and_cursor][k],
+        //                     &pa_secret_state.other_vole_key_r_prime_vec[and_cursor],
+        //                     &pa_other_vole_key_r_vec[gate.output_wire],
+        //                     &pa_other_vole_key_r_vec[gate.left_input_wire],
+        //                     &pa_other_vole_key_r_vec[gate.right_input_wire]
+        //                 );
+        //             }
+        // 
+        //             // PB computes
+        //             for k in 0..4 {
+        //                 compute_authenticated_middle_r_and_output_bit_vec(
+        //                     k, &None,
+        //                     &mut pb_middle_r_and_output_bit_vec[and_cursor][k],
+        //                     pb_secret_state.r_prime_bit_vec[and_cursor],
+        //                     pb_r_bit_vec[gate.output_wire],
+        //                     pb_r_bit_vec[gate.left_input_wire],
+        //                     pb_r_bit_vec[gate.right_input_wire],
+        //                     &mut pb_middle_vole_mac_r_and_output_bit_vec[and_cursor][k],
+        //                     &pb_secret_state.vole_mac_r_prime_vec[and_cursor],
+        //                     &pb_vole_mac_r_vec[gate.output_wire],
+        //                     &pb_vole_mac_r_vec[gate.left_input_wire],
+        //                     &pb_vole_mac_r_vec[gate.right_input_wire],
+        //                     &mut pb_other_middle_vole_key_r_and_output_bit_vec[and_cursor][k],
+        //                     &pb_secret_state.other_vole_key_r_prime_vec[and_cursor],
+        //                     &pb_other_vole_key_r_vec[gate.output_wire],
+        //                     &pb_other_vole_key_r_vec[gate.left_input_wire],
+        //                     &pb_other_vole_key_r_vec[gate.right_input_wire]
+        //                 )
+        //             }
+        // 
+        //             and_cursor += 1;
+        //         }
+        //     }
+        // }
     }
     
     #[test]
