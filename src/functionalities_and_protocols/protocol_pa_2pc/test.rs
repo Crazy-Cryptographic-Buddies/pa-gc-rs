@@ -1,5 +1,6 @@
 #[cfg(test)]
 mod tests {
+    use std::fmt::Debug;
     use std::ops::{Index, IndexMut};
     use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
     use crate::bristol_fashion_adaptor::GateType;
@@ -8,6 +9,7 @@ mod tests {
     use crate::functionalities_and_protocols::insecure_functionality_pre::insecure_functionality_pre::InsecureFunctionalityPre;
     use crate::functionalities_and_protocols::protocol_svole_2pc::prover_in_protocol_svole_2pc::ProverInProtocolSVOLE2PC;
     use crate::functionalities_and_protocols::util::parse_two_bits;
+    use crate::functionalities_and_protocols::util::verifier::Verifier;
     use crate::value_type::gf2p256::GF2p256;
     use crate::value_type::gf2p8::GF2p8;
     use crate::value_type::seed_u8x16::SeedU8x16;
@@ -81,7 +83,7 @@ mod tests {
         pb_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>,
     )
     where 
-        GFVOLE: Clone + GFAddition + GFMultiplyingBit + InsecureRandom + Zero + Copy,
+        GFVOLE: Clone + GFAddition + GFMultiplyingBit + InsecureRandom + Zero + Copy + PartialEq + Debug,
         GFVOLEitH: Clone + Zero + GFAddition + U8ForGF + Copy + GFMultiplyingBit {
         // pa obtains delta from FPre
         InsecureFunctionalityPre::generate_delta(&mut pa_secret_state.delta);
@@ -110,7 +112,6 @@ mod tests {
         assert_eq!(pa_secret_state.r_output_and_bit_vec.len(), public_parameter.big_iw_size);
         assert_eq!(pa_secret_state.vole_mac_r_output_and_vec.len(), public_parameter.big_iw_size);
         assert_eq!(pb_secret_state.other_vole_key_r_output_and_vec.len(), public_parameter.big_iw_size);
-
         // pb obtains vole-authenticated bits
         InsecureFunctionalityPre::generate_random_tuples::<GFVOLE, GFVOLEitH>(
             public_parameter.num_input_bits,
@@ -411,6 +412,14 @@ mod tests {
                 }
             }
         }
+    }
+    
+    fn verify<GFVOLE, GFVOLEitH>(
+        bristol_fashion_adaptor: &BristolFashionAdaptor,
+        public_parameter: &PublicParameter,
+        nabla_a_rep: Vec<GFVOLEitH>, nabla_b_rep: Vec<GFVOLEitH>,
+    ) {
+        
     }
     
     #[test]

@@ -12,4 +12,8 @@ impl Hasher {
         }
         hasher.finalize()
     }
+    
+    // pub fn hash_for_garbling(first_label_bytes: &[u8], second_label_bytes: &[u8], gamma: usize, k: usize, garbled_row_byte_length: usize) -> Hash {
+    //     
+    // }
 }
