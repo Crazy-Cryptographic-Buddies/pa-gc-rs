@@ -8,9 +8,9 @@ use crate::vec_type::gf_vec::GFVec;
 use crate::vec_type::Split;
 use crate::vec_type::VecAddition;
 
-pub struct VerifierInProtocolSvole2PC;
+pub struct VerifierInProtocolSVOLE2PC;
 
-impl VerifierInProtocolSvole2PC {
+impl VerifierInProtocolSVOLE2PC {
     
     fn distribute_bits_and_voleith_macs_to_state<GFVOLEitH: Clone + Zero + CustomMultiplyingBit + CustomAddition>(
         public_parameter: &PublicParameter,
@@ -102,6 +102,7 @@ impl VerifierInProtocolSvole2PC {
     ) -> Vec<(GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>)> {
         let mut voleith_key_tuple_rep: Vec<(GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>)> = Vec::new();
         for repetition_id in 0..public_parameter.kappa {
+            println!("repetition_id: {}", repetition_id);
             let mut public_voleith_key_vec = VerifierInProtocolSVOLE::reconstruct(
                 public_parameter, 
                 &prover_com_hash_rep[repetition_id], 

@@ -6,7 +6,7 @@ mod tests {
     use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
     use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_svole_2pc::prover_in_protocol_svole_2pc::ProverInProtocolSVOLE2PC;
-    use crate::functionalities_and_protocols::protocol_svole_2pc::verifier_in_protocol_svole_2pc::VerifierInProtocolSvole2PC;
+    use crate::functionalities_and_protocols::protocol_svole_2pc::verifier_in_protocol_svole_2pc::VerifierInProtocolSVOLE2PC;
     use crate::value_type::{gf2p8::GF2p8};
     use crate::value_type::{CustomAddition, CustomMultiplyingBit, InsecureRandom};
     use crate::value_type::gf2p256::GF2p256;
@@ -100,10 +100,10 @@ mod tests {
         let pb_decom_rep = ProverInProtocolSVOLE2PC::open(&public_parameter, &mut pb_secret_state, &nabla_a_rep);
         
         // reconstruct
-        let pa_voleith_key_tuple_rep = VerifierInProtocolSvole2PC::reconstruct_and_fix_voleith_key_vec(
+        let pa_voleith_key_tuple_rep = VerifierInProtocolSVOLE2PC::reconstruct_and_fix_voleith_key_vec(
             &public_parameter, &pa_com_hash_rep, &pa_masked_bit_tuple_rep, &nabla_b_rep, &pa_decom_rep
         );
-        let pb_voleith_key_tuple_rep = VerifierInProtocolSvole2PC::reconstruct_and_fix_voleith_key_vec(
+        let pb_voleith_key_tuple_rep = VerifierInProtocolSVOLE2PC::reconstruct_and_fix_voleith_key_vec(
             &public_parameter, &pb_com_hash_rep, &pb_masked_bit_tuple_rep, &nabla_a_rep, &pb_decom_rep
         );
         

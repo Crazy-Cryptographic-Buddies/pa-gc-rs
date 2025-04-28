@@ -76,11 +76,16 @@ where GFVOLE: Clone + Zero + Copy, GFVOLEitH: Clone + Zero + Copy {
             |_| ProverInAllInOneVC::new(&public_parameter)
         ).collect();
         let mut current_seed = master_seed;
-        for _ in 0..public_parameter.kappa {
+        // println!("kappa: {:?}", public_parameter.kappa);
+        for repetition_id in 0..public_parameter.kappa {
             let (seed0, seed1) = public_parameter.one_to_two_prg.generate_double(&current_seed);
-            seed_for_generating_ggm_tree_rep.push(seed0);
+            // println!("(seed0, seed1): {:?}", (seed0, seed1));
+            seed_for_generating_ggm_tree_rep[repetition_id] = seed0;
+            // println!("seed0: {:?}", seed0);
             current_seed = seed1;
         }
+        // println!("seed_for_generating_ggm_tree_rep: {:?}", seed_for_generating_ggm_tree_rep);
+        // println!("current_seed: {:?}", current_seed);
         Self {
             delta: None,
             

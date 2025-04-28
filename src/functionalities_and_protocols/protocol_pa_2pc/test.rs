@@ -6,10 +6,13 @@ mod tests {
     use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
     use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_pa_2pc::prover_in_pa_2pc::ProverInPA2PC;
+    use crate::functionalities_and_protocols::protocol_pa_2pc::verifier_in_pa_2pc::VerifierInPA2PC;
+    use crate::functionalities_and_protocols::states_and_parameters::proof_transcript;
+    use crate::functionalities_and_protocols::util::verifier::Verifier;
     use crate::value_type::gf2p256::GF2p256;
     use crate::value_type::gf2p8::GF2p8;
     use crate::value_type::seed_u8x16::SeedU8x16;
-    use crate::value_type::{ByteManipulation, InsecureRandom};
+    use crate::value_type::{ByteManipulation, InsecureRandom, U8ForGF};
     use crate::vec_type::{BasicVecFunctions};
     
     // fn verify<GFVOLE, GFVOLEitH>(
@@ -84,8 +87,18 @@ mod tests {
         let permutation_rep = (0..public_parameter.kappa).map(
             |i| insecurely_generate_random_permutation(public_parameter.big_l)
         ).collect::<Vec<Vec<usize>>>();
+        
+        let nabla_a_rep = (0..public_parameter.kappa).map(|_|
+            GFVOLEitH::from_u8(rng.random::<u8>())
+        ).collect::<Vec<GFVOLEitH>>();
+        let nabla_b_rep = (0..public_parameter.kappa).map(|_|
+            GFVOLEitH::from_u8(rng.random::<u8>())
+        ).collect::<Vec<GFVOLEitH>>();
+        
+        println!("nabla_a_rep {:?}", nabla_a_rep);
+        println!("nabla_b_rep {:?}", nabla_b_rep);
 
-        ProverInPA2PC::prove(
+        let proof_transcript = ProverInPA2PC::prove(
             &bristol_fashion_adaptor,
             &public_parameter,
             &preprocessing_transcript,
@@ -94,6 +107,16 @@ mod tests {
             &mut pb_secret_state,
             &pa_input_bit_vec,
             &pb_input_bit_vec,
+            &nabla_a_rep,
+            &nabla_b_rep
         );
+        
+        VerifierInPA2PC::verify::<GFVOLE, GFVOLEitH>(
+            &public_parameter,
+            &permutation_rep,
+            &nabla_a_rep, &nabla_b_rep,
+            &preprocessing_transcript,
+            &proof_transcript
+        )
     }
 }

@@ -2,7 +2,7 @@ use std::ops::{Index, IndexMut};
 use crate::vec_type::{BasicVecFunctions, Split, VecAddition, VecAppending, ZeroVec};
 use crate::vec_type::gf_vec::GFVec;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct BitVec {
     val: Vec<u8>
 }
