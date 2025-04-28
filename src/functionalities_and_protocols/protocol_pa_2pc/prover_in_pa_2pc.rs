@@ -822,6 +822,36 @@ impl ProverInPA2PC {
             // println!("- PA label:  {:?}", (recovered_hat_z_vec[gate.output_wire], pa_secret_state.label_zero_vec.as_ref().unwrap()[gate.output_wire].clone().custom_add(&pa_secret_state.delta.as_ref().unwrap().custom_multiply_bit(recovered_hat_z_vec[gate.output_wire]))));
             // assert_eq!((recovered_hat_z_vec[gate.output_wire], recovered_label_vec[gate.output_wire].clone()), (recovered_hat_z_vec[gate.output_wire], pa_secret_state.label_zero_vec.as_ref().unwrap()[gate.output_wire].clone().custom_add(&pa_secret_state.delta.as_ref().unwrap().custom_multiply_bit(recovered_hat_z_vec[gate.output_wire]))));
         }
+
+        // Output determination
+
+        // PA determines its output
+        let mut output_cursor = 0usize;
+        for output_wire in &public_parameter.big_io {
+            proof_transcript.pa_published_output_r_bit_vec[output_cursor] = pa_secret_state.r_trace_bit_vec[*output_wire];
+            proof_transcript.pa_published_output_vole_mac_r_vec[output_cursor] = pa_secret_state.vole_mac_r_trace_vec[*output_wire].clone();
+            for repetition_id in 0..public_parameter.kappa {
+                proof_transcript.pa_published_output_voleith_mac_r_vec_rep[repetition_id][output_cursor] = pa_secret_state.voleith_mac_r_trace_vec_rep[repetition_id][*output_wire].clone();
+            }
+            output_cursor += 1;
+        }
+        // PB check PA's output and publishes
+        output_cursor = 0usize;
+        for output_wire in &public_parameter.big_io {
+            assert_eq!(
+                proof_transcript.pa_published_output_vole_mac_r_vec[output_cursor],
+                pb_secret_state.other_vole_key_r_trace_vec[*output_wire].custom_add(
+                    &pb_secret_state.delta.as_ref().unwrap().custom_multiply_bit(proof_transcript.pa_published_output_r_bit_vec[output_cursor])
+                )
+            );
+            proof_transcript.pb_published_output_r_bit_vec[output_cursor] = pb_secret_state.r_trace_bit_vec[*output_wire];
+            for repetition_id in 0..public_parameter.kappa {
+                proof_transcript.pb_published_output_voleith_mac_r_vec_rep[repetition_id][output_cursor] = pb_secret_state.voleith_mac_r_trace_vec_rep[repetition_id][*output_wire].clone();
+            }
+            proof_transcript.published_output_bit_vec[output_cursor] = recovered_hat_z_vec[*output_wire] ^ proof_transcript.pa_published_output_r_bit_vec[output_cursor] ^ proof_transcript.pb_published_output_r_bit_vec[output_cursor];
+            output_cursor += 1;
+        }
+
         proof_transcript
     }
 }
