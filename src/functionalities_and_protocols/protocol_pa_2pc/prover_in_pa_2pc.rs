@@ -6,7 +6,7 @@ use crate::bristol_fashion_adaptor::{GateInfo, GateType};
 use crate::functionalities_and_protocols::hasher::hasher::Hasher;
 use crate::functionalities_and_protocols::insecure_functionality_pre::insecure_functionality_pre::InsecureFunctionalityPre;
 use crate::functionalities_and_protocols::protocol_check_and::prover_in_protocol_check_and::ProverInProtocolCheckAND;
-use crate::functionalities_and_protocols::protocol_pa_2pc::{permute, split_off_rm};
+use crate::functionalities_and_protocols::protocol_pa_2pc::{initialize_trace, permute, split_off_rm};
 use crate::functionalities_and_protocols::protocol_svole_2pc::prover_in_protocol_svole_2pc::ProverInProtocolSVOLE2PC;
 use crate::functionalities_and_protocols::states_and_parameters::preprocessing_transcript::PreprocessingTranscript;
 use crate::functionalities_and_protocols::states_and_parameters::proof_transcript::ProofTranscript;
@@ -22,26 +22,6 @@ use crate::vec_type::{BasicVecFunctions, Split, VecAppending, ZeroVec};
 pub struct ProverInPA2PC;
 
 impl ProverInPA2PC {
-
-    fn initialize_trace<PrimitiveType, VecType>(
-        public_parameter: &PublicParameter,
-        input_vec: &VecType,
-        output_and_vec: &VecType,
-        to_be_written_trace: &mut VecType,
-    )
-    where PrimitiveType: Clone + Zero + Copy,
-          VecType: Clone + VecAppending + ZeroVec + BasicVecFunctions<PrimitiveType>
-          + Index<usize, Output = PrimitiveType> + IndexMut<usize, Output = PrimitiveType> {
-
-        // let mut res = vec![PrimitiveType::zero(); circuit_num_wires];
-
-        to_be_written_trace.as_mut_slice()[0..input_vec.len()].copy_from_slice(input_vec.as_slice());
-        let mut and_cursor = 0usize;
-        for wire in public_parameter.big_iw.iter() {
-            to_be_written_trace[*wire] = output_and_vec[and_cursor].clone();
-            and_cursor += 1;
-        }
-    }
 
     fn compute_vole_authenticated_middle_r_and_output_bit_vec<GFVOLE: CustomAddition + CustomMultiplyingBit>(
         k: usize, delta: &Option<GFVOLE>,
@@ -146,7 +126,7 @@ impl ProverInPA2PC {
         assert_eq!(pa_label_zero_output_and_vec.len(), public_parameter.big_iw_size);
 
         // initialize traces for pa
-        Self::initialize_trace::<u8, BitVec>(
+        initialize_trace::<u8, BitVec>(
             public_parameter,
             &pa_secret_state.r_input_bit_vec,
             &pa_secret_state.r_output_and_bit_vec,
@@ -154,7 +134,7 @@ impl ProverInPA2PC {
         );
         assert_eq!(pa_secret_state.r_trace_bit_vec.len(), public_parameter.num_wires);
         // let mut pa_vole_mac_r_trace_vec = GFVec::<GFVOLE>::zero_vec(public_parameter.num_wires);
-        Self::initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
+        initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
             public_parameter,
             &pa_secret_state.vole_mac_r_input_vec,
             &pa_secret_state.vole_mac_r_output_and_vec,
@@ -162,7 +142,7 @@ impl ProverInPA2PC {
         );
         assert_eq!(pa_secret_state.vole_mac_r_trace_vec.len(), public_parameter.num_wires);
         // let mut pa_other_vole_key_r_trace_vec = GFVec::<GFVOLE>::zero_vec(public_parameter.num_wires);
-        Self::initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
+        initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
             public_parameter,
             &pa_secret_state.other_vole_key_r_input_vec,
             &pa_secret_state.other_vole_key_r_output_and_vec,
@@ -170,7 +150,7 @@ impl ProverInPA2PC {
         );
         assert_eq!(pa_secret_state.other_vole_key_r_trace_vec.len(), public_parameter.num_wires);
         // let mut pa_label_zero_trace_vec = GFVec::<GFVOLE>::zero_vec(public_parameter.num_wires);
-        Self::initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
+        initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
             public_parameter,
             &pa_label_zero_input_vec,
             &pa_label_zero_output_and_vec,
@@ -180,7 +160,7 @@ impl ProverInPA2PC {
 
         // initialize traces for pb
         //let mut pb_r_trace_bit_vec = BitVec::zero_vec(public_parameter.num_wires);
-        Self::initialize_trace::<u8, BitVec>(
+        initialize_trace::<u8, BitVec>(
             public_parameter,
             &pb_secret_state.r_input_bit_vec,
             &pb_secret_state.r_output_and_bit_vec,
@@ -188,7 +168,7 @@ impl ProverInPA2PC {
         );
         assert_eq!(pb_secret_state.r_trace_bit_vec.len(), public_parameter.num_wires);
         // let mut pb_vole_mac_r_trace_vec = GFVec::<GFVOLE>::zero_vec(public_parameter.num_wires);
-        Self::initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
+        initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
             public_parameter,
             &pb_secret_state.vole_mac_r_input_vec,
             &pb_secret_state.vole_mac_r_output_and_vec,
@@ -196,7 +176,7 @@ impl ProverInPA2PC {
         );
         assert_eq!(pb_secret_state.vole_mac_r_trace_vec.len(), public_parameter.num_wires);
         // let mut pb_other_vole_key_r_trace_vec = GFVec::<GFVOLE>::zero_vec(public_parameter.num_wires);
-        Self::initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
+        initialize_trace::<GFVOLE, GFVec<GFVOLE>>(
             public_parameter,
             &pb_secret_state.other_vole_key_r_input_vec,
             &pb_secret_state.other_vole_key_r_output_and_vec,
@@ -247,6 +227,7 @@ impl ProverInPA2PC {
                     pb_secret_state.other_vole_key_r_trace_vec[gate.output_wire] = pb_secret_state.other_vole_key_r_trace_vec[gate.left_input_wire].custom_add(&pb_secret_state.other_vole_key_r_trace_vec[gate.right_input_wire]);
                 },
                 GateType::NOT => {
+                    unimplemented!();
                     // compute for pa
                     pa_secret_state.r_trace_bit_vec[gate.output_wire] = pa_secret_state.r_trace_bit_vec[gate.left_input_wire];
                     pa_secret_state.vole_mac_r_trace_vec[gate.output_wire] = pa_secret_state.vole_mac_r_trace_vec[gate.left_input_wire];
@@ -342,7 +323,7 @@ impl ProverInPA2PC {
         // let mut pb_middle_voleith_mac_r_and_output_vec = vec![vec![[GFVOLEitH::zero(); 4]; public_parameter.big_iw_size]; public_parameter.kappa];
         (0..public_parameter.kappa).for_each(
             |repetition_id| {
-                Self::initialize_trace::<GFVOLEitH, GFVec<GFVOLEitH>>(
+                initialize_trace::<GFVOLEitH, GFVec<GFVOLEitH>>(
                     &public_parameter,
                     &pa_secret_state.voleith_mac_r_input_vec_rep[repetition_id],
                     &pa_secret_state.voleith_mac_r_output_and_vec_rep[repetition_id],
@@ -352,7 +333,7 @@ impl ProverInPA2PC {
         );
         (0..public_parameter.kappa).for_each(
             |repetition_id| {
-                Self::initialize_trace::<GFVOLEitH, GFVec<GFVOLEitH>>(
+                initialize_trace::<GFVOLEitH, GFVec<GFVOLEitH>>(
                     &public_parameter,
                     &pb_secret_state.voleith_mac_r_input_vec_rep[repetition_id],
                     &pb_secret_state.voleith_mac_r_output_and_vec_rep[repetition_id],
@@ -379,6 +360,7 @@ impl ProverInPA2PC {
                     }
                 },
                 GateType::NOT => {
+                    unimplemented!();
                     // compute for pa
                     for repetition_id in 0..public_parameter.kappa {
                         pa_secret_state.voleith_mac_r_trace_vec_rep[repetition_id][gate.output_wire] = pa_secret_state.voleith_mac_r_trace_vec_rep[repetition_id][gate.left_input_wire];
@@ -642,7 +624,7 @@ impl ProverInPA2PC {
 
         // PB checks what PA just published and computes z_hat
         let mut input_cursor = 0usize;
-        let mut pb_published_z_hat_input_vec = vec![0u8; public_parameter.big_ib.len()];
+        let mut pb_published_hat_z_input_vec_with_ib = vec![0u8; public_parameter.big_ib.len()];
         public_parameter.big_ib.iter().for_each(|input_wire| {
             let (pa_input_bit, pa_vole_mac, _) = &pa_published_authenticated_input_vec[input_cursor];
             // println!("{:?}", (pb_secret_state.other_vole_key_r_trace_vec[*input_wire].clone(),
@@ -656,7 +638,7 @@ impl ProverInPA2PC {
                     &pb_secret_state.delta.as_ref().unwrap().custom_multiply_bit(*pa_input_bit)
                 )
             );
-            pb_published_z_hat_input_vec[input_cursor] = *pa_input_bit ^ pb_secret_state.r_trace_bit_vec[*input_wire] ^ pb_input_bits[input_cursor];
+            pb_published_hat_z_input_vec_with_ib[input_cursor] = *pa_input_bit ^ pb_secret_state.r_trace_bit_vec[*input_wire] ^ pb_input_bits[input_cursor];
             input_cursor += 1;
         });
 
@@ -665,7 +647,7 @@ impl ProverInPA2PC {
         let pa_published_label_with_ib = public_parameter.big_ib.iter().map(
             |input_wire| {
                 let label = pa_secret_state.label_zero_vec.as_ref().unwrap()[*input_wire].custom_add(
-                    &pa_secret_state.delta.as_ref().unwrap().custom_multiply_bit(pb_published_z_hat_input_vec[input_cursor])
+                    &pa_secret_state.delta.as_ref().unwrap().custom_multiply_bit(pb_published_hat_z_input_vec_with_ib[input_cursor])
                 );
                 input_cursor += 1;
                 label
@@ -683,7 +665,7 @@ impl ProverInPA2PC {
 
         // PA checks what PB just published
         input_cursor = 0usize;
-        let mut pa_published_z_hat_input_vec = vec![0u8; public_parameter.big_ia.len()];
+        let mut pa_published_hat_z_input_vec_with_ia = vec![0u8; public_parameter.big_ia.len()];
         public_parameter.big_ia.iter().for_each(|input_wire| {
             let (pb_input_bit, pb_vole_mac, _) = &pb_published_authenticated_input_vec[input_cursor];
             // println!("{:?}", (pa_secret_state.other_vole_key_r_trace_vec[*input_wire].clone(),
@@ -697,7 +679,7 @@ impl ProverInPA2PC {
                     &pa_secret_state.delta.as_ref().unwrap().custom_multiply_bit(*pb_input_bit)
                 )
             );
-            pa_published_z_hat_input_vec[input_cursor] = *pb_input_bit ^ pa_secret_state.r_trace_bit_vec[*input_wire] ^ pa_input_bits[input_cursor];
+            pa_published_hat_z_input_vec_with_ia[input_cursor] = *pb_input_bit ^ pa_secret_state.r_trace_bit_vec[*input_wire] ^ pa_input_bits[input_cursor];
             input_cursor += 1;
         });
 
@@ -706,7 +688,7 @@ impl ProverInPA2PC {
         let pa_published_label_with_ia = public_parameter.big_ia.iter().map(
             |input_wire| {
                 let label = pa_secret_state.label_zero_vec.as_ref().unwrap()[*input_wire].custom_add(
-                    &pa_secret_state.delta.as_ref().unwrap().custom_multiply_bit(pa_published_z_hat_input_vec[input_cursor])
+                    &pa_secret_state.delta.as_ref().unwrap().custom_multiply_bit(pa_published_hat_z_input_vec_with_ia[input_cursor])
                 );
                 input_cursor += 1;
                 label
@@ -732,20 +714,32 @@ impl ProverInPA2PC {
             pa_published_authenticated_input_vec,
             pb_published_authenticated_input_vec,
         );
+        
+        // fill in input_hat_z
+        input_cursor = 0usize;
+        for input_wire in &public_parameter.big_ia {
+            proof_transcript.published_hat_z_input_bit_vec[*input_wire] = pa_published_hat_z_input_vec_with_ia[input_cursor];
+            input_cursor += 1;
+        }
+        input_cursor = 0usize;
+        for input_wire in &public_parameter.big_ib {
+            proof_transcript.published_hat_z_input_bit_vec[*input_wire] = pb_published_hat_z_input_vec_with_ib[input_cursor];
+            input_cursor += 1;
+        }
 
         // PB Circuit evaluation --------------------------------------------------------------------------------
         let mut recovered_label_vec = vec![GFVOLE::zero(); public_parameter.num_wires];
-        let mut recovered_hat_z_vec = vec![0u8; public_parameter.num_wires];
+        let mut recovered_hat_z_bit_vec = vec![0u8; public_parameter.num_wires];
         input_cursor = 0usize;
         public_parameter.big_ia.iter().for_each(|input_wire| {
             recovered_label_vec[*input_wire] = pa_published_label_with_ia[input_cursor].clone();
-            recovered_hat_z_vec[*input_wire] = pa_published_z_hat_input_vec[input_cursor];
+            recovered_hat_z_bit_vec[*input_wire] = pa_published_hat_z_input_vec_with_ia[input_cursor];
             input_cursor += 1;
         });
         input_cursor = 0usize;
         public_parameter.big_ib.iter().for_each(|input_wire| {
             recovered_label_vec[*input_wire] = pa_published_label_with_ib[input_cursor].clone();
-            recovered_hat_z_vec[*input_wire] = pb_published_z_hat_input_vec[input_cursor];
+            recovered_hat_z_bit_vec[*input_wire] = pb_published_hat_z_input_vec_with_ib[input_cursor];
             input_cursor += 1;
         });
         let garbled_table = &preprocessing_transcript.garbled_table;
@@ -763,15 +757,16 @@ impl ProverInPA2PC {
             // println!("{:?}:", gate.gate_type);
             match gate.gate_type {
                 GateType::XOR => {
-                    recovered_hat_z_vec[gate.output_wire] = recovered_hat_z_vec[gate.left_input_wire] ^ recovered_hat_z_vec[gate.right_input_wire];
+                    recovered_hat_z_bit_vec[gate.output_wire] = recovered_hat_z_bit_vec[gate.left_input_wire] ^ recovered_hat_z_bit_vec[gate.right_input_wire];
                     recovered_label_vec[gate.output_wire] = recovered_label_vec[gate.left_input_wire].custom_add(&recovered_label_vec[gate.right_input_wire]);
                 }
                 GateType::NOT => {
-                    recovered_hat_z_vec[gate.output_wire] = recovered_hat_z_vec[gate.left_input_wire] ^ 1u8;
+                    unimplemented!();
+                    recovered_hat_z_bit_vec[gate.output_wire] = recovered_hat_z_bit_vec[gate.left_input_wire] ^ 1u8;
                     recovered_label_vec[gate.output_wire] = recovered_label_vec[gate.left_input_wire].clone();
                 }
                 GateType::AND => {
-                    let recovered_k =  recovered_hat_z_vec[gate.left_input_wire] + (recovered_hat_z_vec[gate.right_input_wire] << 1);
+                    let recovered_k =  recovered_hat_z_bit_vec[gate.left_input_wire] + (recovered_hat_z_bit_vec[gate.right_input_wire] << 1);
                     // println!("{:?}", (recovered_k, recovered_label_vec[gate.left_input_wire].clone(), recovered_label_vec[gate.right_input_wire].clone()));
                     let decrypted_gabled_row = Hasher::hash_for_garbling::<GFVOLE, GFVOLEitH>(
                         public_parameter,
@@ -784,7 +779,7 @@ impl ProverInPA2PC {
                       &garbled_table[and_cursor][recovered_k as usize]
                     );
 
-                    recovered_hat_z_vec[gate.output_wire] = pb_secret_state.middle_r_and_output_bit_vec[and_cursor][recovered_k as usize] ^ decrypted_gabled_row.first_u8;
+                    recovered_hat_z_bit_vec[gate.output_wire] = pb_secret_state.middle_r_and_output_bit_vec[and_cursor][recovered_k as usize] ^ decrypted_gabled_row.first_u8;
                     recovered_label_vec[gate.output_wire] = decrypted_gabled_row.vole_mac_remaining_field.custom_add(
                         &pb_secret_state.middle_vole_mac_r_and_output_vec[and_cursor][recovered_k as usize]
                     );
@@ -801,7 +796,7 @@ impl ProverInPA2PC {
                             &pb_secret_state.delta.as_ref().unwrap().custom_multiply_bit(decrypted_gabled_row.first_u8)
                         )
                     );
-                    proof_transcript.pb_published_middle_hat_z_bit_vec[and_cursor] = recovered_hat_z_vec[gate.output_wire];
+                    proof_transcript.published_middle_hat_z_bit_vec[and_cursor] = recovered_hat_z_bit_vec[gate.output_wire];
                     proof_transcript.pb_published_middle_label_vec[and_cursor] = recovered_label_vec[gate.output_wire].clone();
                     proof_transcript.pb_published_middle_r_bit_vec[and_cursor] = pb_secret_state.middle_r_and_output_bit_vec[and_cursor][recovered_k as usize];
                     (0..public_parameter.kappa).for_each(|repetition_id| {
@@ -841,7 +836,7 @@ impl ProverInPA2PC {
             for repetition_id in 0..public_parameter.kappa {
                 proof_transcript.pb_published_output_voleith_mac_r_vec_rep[repetition_id][output_cursor] = pb_secret_state.voleith_mac_r_trace_vec_rep[repetition_id][*output_wire].clone();
             }
-            proof_transcript.published_output_bit_vec[output_cursor] = recovered_hat_z_vec[*output_wire] ^ proof_transcript.pa_published_output_r_bit_vec[output_cursor] ^ proof_transcript.pb_published_output_r_bit_vec[output_cursor];
+            proof_transcript.published_output_bit_vec[output_cursor] = recovered_hat_z_bit_vec[*output_wire] ^ proof_transcript.pa_published_output_r_bit_vec[output_cursor] ^ proof_transcript.pb_published_output_r_bit_vec[output_cursor];
             output_cursor += 1;
         }
 

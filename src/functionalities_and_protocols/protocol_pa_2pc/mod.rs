@@ -1,6 +1,7 @@
 use std::ops::{Index, IndexMut};
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
-use crate::vec_type::{BasicVecFunctions, Split, ZeroVec};
+use crate::value_type::Zero;
+use crate::vec_type::{BasicVecFunctions, Split, VecAppending, ZeroVec};
 
 mod test;
 mod prover_in_pa_2pc;
@@ -37,4 +38,24 @@ where VecType: Split + ZeroVec + Clone + BasicVecFunctions<PrimitiveType> {
             to_be_split_off_vec_rep[repetition_id].split_off(length - public_parameter.rm)
         }
     ).collect::<Vec<VecType>>()
+}
+
+fn initialize_trace<PrimitiveType, VecType>(
+    public_parameter: &PublicParameter,
+    input_vec: &VecType,
+    output_and_vec: &VecType,
+    to_be_written_trace: &mut VecType,
+)
+where PrimitiveType: Clone + Zero + Copy,
+      VecType: Clone + VecAppending + ZeroVec + BasicVecFunctions<PrimitiveType>
+      + Index<usize, Output = PrimitiveType> + IndexMut<usize, Output = PrimitiveType> {
+
+    // let mut res = vec![PrimitiveType::zero(); circuit_num_wires];
+
+    to_be_written_trace.as_mut_slice()[0..input_vec.len()].copy_from_slice(input_vec.as_slice());
+    let mut and_cursor = 0usize;
+    for wire in public_parameter.big_iw.iter() {
+        to_be_written_trace[*wire] = output_and_vec[and_cursor].clone();
+        and_cursor += 1;
+    }
 }

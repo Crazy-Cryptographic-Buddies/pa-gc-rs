@@ -29,7 +29,9 @@ pub struct ProofTranscript<GFVOLE, GFVOLEitH> {
     pub pa_published_output_vole_mac_r_vec: GFVec<GFVOLE>,
     pub pa_published_output_voleith_mac_r_vec_rep: Vec<GFVec<GFVOLEitH>>,
 
-    pub pb_published_middle_hat_z_bit_vec: BitVec,
+    pub published_hat_z_input_bit_vec: BitVec,
+    pub published_middle_hat_z_bit_vec: BitVec,
+    
     pub pb_published_middle_label_vec: GFVec<GFVOLE>,
     pub pb_published_middle_r_bit_vec: BitVec,
     pub pb_published_middle_voleith_mac_r_vec_rep: Vec<GFVec<GFVOLEitH>>,
@@ -90,7 +92,8 @@ where
             pa_published_output_r_bit_vec: BitVec::zero_vec(public_parameter.big_io_size),
             pa_published_output_vole_mac_r_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_io_size),
             pa_published_output_voleith_mac_r_vec_rep: vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_io_size); public_parameter.kappa],
-            pb_published_middle_hat_z_bit_vec: BitVec::zero_vec(public_parameter.big_iw_size),
+            published_hat_z_input_bit_vec: BitVec::zero_vec(public_parameter.num_input_bits),
+            published_middle_hat_z_bit_vec: BitVec::zero_vec(public_parameter.big_iw_size),
             pb_published_middle_label_vec:GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),
             pb_published_middle_r_bit_vec: BitVec::zero_vec(public_parameter.big_iw_size),
             pb_published_middle_voleith_mac_r_vec_rep: vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_iw_size); public_parameter.kappa],

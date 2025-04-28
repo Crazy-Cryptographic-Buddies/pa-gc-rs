@@ -1,5 +1,7 @@
 use std::fmt::Debug;
-use crate::functionalities_and_protocols::protocol_pa_2pc::{permute, split_off_rm};
+use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
+use crate::bristol_fashion_adaptor::GateType;
+use crate::functionalities_and_protocols::protocol_pa_2pc::{initialize_trace, permute, split_off_rm};
 use crate::functionalities_and_protocols::protocol_svole_2pc::verifier_in_protocol_svole_2pc::VerifierInProtocolSVOLE2PC;
 use crate::functionalities_and_protocols::states_and_parameters::preprocessing_transcript::PreprocessingTranscript;
 use crate::functionalities_and_protocols::states_and_parameters::proof_transcript::ProofTranscript;
@@ -7,11 +9,13 @@ use crate::functionalities_and_protocols::states_and_parameters::public_paramete
 use crate::functionalities_and_protocols::util::verifier::Verifier;
 use crate::value_type::{CustomAddition, CustomMultiplyingBit, U8ForGF, Zero};
 use crate::vec_type::{gf_vec::GFVec, BasicVecFunctions, VecAddition, ZeroVec};
+use crate::vec_type::bit_vec::BitVec;
 
 pub struct VerifierInPA2PC;
 
 impl VerifierInPA2PC {
     pub fn verify<GFVOLE, GFVOLEitH>(
+        bristol_fashion_adaptor: &BristolFashionAdaptor,
         public_parameter: &PublicParameter,
         permutation_rep: &Vec<Vec<usize>>,
         nabla_a_rep: &Vec<GFVOLEitH>, nabla_b_rep: &Vec<GFVOLEitH>,
@@ -19,7 +23,7 @@ impl VerifierInPA2PC {
         proof_transcript: &ProofTranscript<GFVOLE, GFVOLEitH>,
     )
     where GFVOLE: Clone,
-          GFVOLEitH: Clone + CustomAddition + CustomMultiplyingBit + Zero + U8ForGF + PartialEq + Debug {
+          GFVOLEitH: Clone + CustomAddition + CustomMultiplyingBit + Zero + U8ForGF + PartialEq + Debug + Copy {
         // form the voleith key vectors
         let mut pa_voleith_key_r_input_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.num_input_bits); public_parameter.kappa];
         let mut pa_voleith_key_r_output_and_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
@@ -154,5 +158,58 @@ impl VerifierInPA2PC {
                 )
             );
         }
+
+        // construct key trace
+        let mut pa_voleith_key_r_trace_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.num_wires); public_parameter.kappa];
+        let mut pa_middle_voleith_key_r_and_output_vec_rep = vec![vec![[GFVOLEitH::zero(); 4]; public_parameter.big_iw_size]; public_parameter.kappa];
+        let mut pb_voleith_key_r_trace_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.num_wires); public_parameter.kappa];
+        let mut pb_middle_voleith_key_r_and_output_vec_rep = vec![vec![[GFVOLEitH::zero(); 4]; public_parameter.big_iw_size]; public_parameter.kappa];
+        let mut and_cursor = 0usize;
+        (0..public_parameter.kappa).for_each(
+            |repetition_id| {
+                initialize_trace::<GFVOLEitH, GFVec<GFVOLEitH>>(
+                    public_parameter,
+                    &pa_voleith_key_r_input_vec_rep[repetition_id],
+                    &pa_voleith_key_r_output_and_vec_rep[repetition_id],
+                    &mut pa_voleith_key_r_trace_vec_rep[repetition_id],
+                );
+                initialize_trace::<GFVOLEitH, GFVec<GFVOLEitH>>(
+                    public_parameter,
+                    &pb_voleith_key_r_input_vec_rep[repetition_id],
+                    &pb_voleith_key_r_output_and_vec_rep[repetition_id],
+                    &mut pb_voleith_key_r_trace_vec_rep[repetition_id],
+                );
+            }
+        );
+        
+        let mut hat_z_bit_trace_vec = BitVec::zero_vec(public_parameter.num_wires);
+        initialize_trace::<u8, BitVec>(
+            public_parameter,
+            &proof_transcript.published_hat_z_input_bit_vec,
+            &proof_transcript.published_middle_hat_z_bit_vec,
+            &mut hat_z_bit_trace_vec,
+        );
+        
+        todo!()
+
+        // // compute voleith keys following circuit
+        // for repetition_id in 0..public_parameter.kappa {
+        //     for gate in bristol_fashion_adaptor.get_gate_vec() {
+        //         match gate.gate_type {
+        //             GateType::XOR => {
+        //                 pa_voleith_key_r_trace_vec_rep[repetition_id][gate.output_wire] = pa_voleith_key_r_trace_vec_rep[repetition_id][gate.left_input_wire].custom_add(&pa_voleith_key_r_trace_vec_rep[repetition_id][gate.right_input_wire]);
+        //                 pb_voleith_key_r_trace_vec_rep[repetition_id][gate.output_wire] = pb_voleith_key_r_trace_vec_rep[repetition_id][gate.left_input_wire].custom_add(&pb_voleith_key_r_trace_vec_rep[repetition_id][gate.right_input_wire]);
+        //             }
+        //             GateType::NOT => {
+        //                 unimplemented!();
+        //             }
+        //             GateType::AND => {
+        //                 pa_middle_voleith_mac_r_and_output_vec_rep[repetition_id][and_cursor] =
+        //                 
+        //                 and_cursor += 1;
+        //             }
+        //         }
+        //     }
+        // }
     }
 }

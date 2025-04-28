@@ -112,6 +112,7 @@ mod tests {
         );
         
         VerifierInPA2PC::verify::<GFVOLE, GFVOLEitH>(
+            &bristol_fashion_adaptor,
             &public_parameter,
             &permutation_rep,
             &nabla_a_rep, &nabla_b_rep,
