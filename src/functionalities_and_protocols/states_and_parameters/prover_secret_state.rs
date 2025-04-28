@@ -41,6 +41,7 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
     pub voleith_mac_r_output_and_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub voleith_mac_r_prime_left_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub voleith_mac_r_prime_right_vec_rep: Vec<GFVec<GFVOLEitH>>,
+    pub middle_vole_mac_r_and_output_vec: Vec<[GFVOLE; 4]>,
     pub voleith_mac_r_prime_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub voleith_mac_r_trace_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub voleith_mac_tilde_a_vec_rep: Vec<GFVec<GFVOLEitH>>,
@@ -57,7 +58,7 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
 }
 
 impl<GFVOLE, GFVOLEitH> ProverSecretState<GFVOLE, GFVOLEitH>
-where GFVOLE: Clone + Zero, GFVOLEitH: Clone + Zero {
+where GFVOLE: Clone + Zero + Copy, GFVOLEitH: Clone + Zero {
     pub fn new(
         public_parameter: &PublicParameter,
         master_seed: SeedU8x16,
@@ -109,6 +110,7 @@ where GFVOLE: Clone + Zero, GFVOLEitH: Clone + Zero {
             voleith_mac_r_output_and_vec_rep: vec![GFVec::new(); public_parameter.kappa],
             voleith_mac_r_prime_left_vec_rep: vec![GFVec::zero_vec(public_parameter.big_iw_size); public_parameter.kappa],
             voleith_mac_r_prime_right_vec_rep: vec![GFVec::zero_vec(public_parameter.big_iw_size); public_parameter.kappa],
+            middle_vole_mac_r_and_output_vec: vec![[GFVOLE::zero(); 4]; public_parameter.big_iw_size],
             voleith_mac_r_prime_vec_rep: vec![GFVec::new(); public_parameter.kappa],
             voleith_mac_r_trace_vec_rep: vec![GFVec::zero_vec(public_parameter.num_wires); public_parameter.kappa],
             voleith_mac_tilde_a_vec_rep: vec![GFVec::new(); public_parameter.kappa],

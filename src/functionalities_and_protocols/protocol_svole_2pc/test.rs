@@ -50,7 +50,7 @@ mod tests {
         let bristol_fashion_adaptor = BristolFashionAdaptor::new(
             &"adder64.txt".to_string()
         );
-        let public_parameter = PublicParameter::new(
+        let public_parameter = PublicParameter::new::<GF2p256, GF2p8>(
             &bristol_fashion_adaptor,
             8,
             10,

@@ -50,7 +50,7 @@ mod tests {
         ).collect();
         let bs = 1;
         let rm = bristol_fashion_adaptor.get_and_gate_output_wire_vec().len();
-        let public_parameter = PublicParameter::new(
+        let public_parameter = PublicParameter::new::<GFVOLE, GFVOLEitH>(
             &bristol_fashion_adaptor,
             8,
             32,
@@ -72,16 +72,12 @@ mod tests {
             SeedU8x16::insecurely_random(),
             false
         );
-
-        let gabled_row_byte_len = 1 + GFVOLE::num_bytes()
-            + GFVOLEitH::num_bytes() * public_parameter.kappa + GFVOLE::num_bytes();
         
-        ProverInPA2PC::preprocess(
+        let preprocessing_transcript = ProverInPA2PC::preprocess(
             &bristol_fashion_adaptor, 
             &public_parameter, 
             &mut pa_secret_state, 
             &mut pb_secret_state,
-            gabled_row_byte_len,
         );
 
         let permutation_rep = (0..public_parameter.kappa).map(
@@ -89,7 +85,9 @@ mod tests {
         ).collect::<Vec<Vec<usize>>>();
 
         ProverInPA2PC::prove(
+            &bristol_fashion_adaptor,
             &public_parameter,
+            &preprocessing_transcript,
             &permutation_rep,
             &mut pa_secret_state,
             &mut pb_secret_state,

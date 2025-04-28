@@ -8,6 +8,7 @@ mod tests {
     use crate::functionalities_and_protocols::util::verifier::Verifier;
     use crate::value_type::gf2p8::GF2p8;
     use crate::value_type::{CustomAddition, InsecureRandom};
+    use crate::value_type::gf2p256::GF2p256;
     use crate::value_type::seed_u8x16::SeedU8x16;
     use crate::vec_type::bit_vec::BitVec;
     use crate::vec_type::gf_vec::GFVec;
@@ -60,7 +61,7 @@ mod tests {
         let bristol_fashion_adaptor = BristolFashionAdaptor::new(
             &"adder64.txt".to_string()
         );
-        let public_parameter = PublicParameter::new(
+        let public_parameter = PublicParameter::new::<GF2p256, GF2p8>(
             &bristol_fashion_adaptor,
             8,
             10,

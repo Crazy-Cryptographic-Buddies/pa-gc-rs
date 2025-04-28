@@ -1,11 +1,11 @@
 use crate::value_type::{CustomAddition, Zero};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct GarbledRow<GFVOLE, GFVOLEitH> {
-    first_u8: u8,
-    vole_mac_field: GFVOLE,
-    voleith_mac_field: Vec<GFVOLEitH>,
-    vole_mac_remaining_field: GFVOLE,
+    pub first_u8: u8,
+    pub vole_mac_field: GFVOLE,
+    pub voleith_mac_field: Vec<GFVOLEitH>,
+    pub vole_mac_remaining_field: GFVOLE,
 }
 
 impl<GFVOLE, GFVOLEitH> GarbledRow<GFVOLE, GFVOLEitH> {

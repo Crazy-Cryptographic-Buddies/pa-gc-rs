@@ -7,6 +7,7 @@ pub enum GateType {
     NOT,
 }
 
+#[derive(Debug)]
 pub struct GateInfo {
     pub left_input_wire: usize,
     pub right_input_wire: usize,

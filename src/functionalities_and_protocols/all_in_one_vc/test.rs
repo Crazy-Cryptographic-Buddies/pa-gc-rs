@@ -9,6 +9,7 @@ mod tests {
     use crate::vec_type::bit_vec::BitVec;
     use crate::vec_type::gf_vec::GFVec;
     use crate::value_type::{CustomAddition, InsecureRandom};
+    use crate::value_type::gf2p256::GF2p256;
     use crate::value_type::Zero;
     use crate::vec_type::ZeroVec;
 
@@ -19,7 +20,7 @@ mod tests {
         let bristol_fashion_adaptor = BristolFashionAdaptor::new(
             &"adder64.txt".to_string()
         );
-        let public_parameter = PublicParameter::new(
+        let public_parameter = PublicParameter::new::<GF2p256, GF2p8>(
             &bristol_fashion_adaptor,
             8,
             20,
