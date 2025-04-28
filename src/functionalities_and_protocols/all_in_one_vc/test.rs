@@ -1,5 +1,6 @@
 #[cfg(test)]
 mod tests {
+    use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
     use crate::functionalities_and_protocols::all_in_one_vc::prover_in_all_in_one_vc::ProverInAllInOneVC;
     use crate::functionalities_and_protocols::all_in_one_vc::verifier_in_all_in_one_vc::VerifierInAllInOneVC;
     use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
@@ -15,15 +16,18 @@ mod tests {
     fn test_committing_and_reconstructing() {
         println!("testing committing and reconstructing...");
         let nabla = GF2p8::insecurely_random();
+        let bristol_fashion_adaptor = BristolFashionAdaptor::new(
+            &"adder64.txt".to_string()
+        );
         let public_parameter = PublicParameter::new(
+            &bristol_fashion_adaptor,
             8,
             20,
             SeedU8x16::insecurely_random(),
             (0..100).collect(),
             (100..200).collect(),
-            (200..300).collect(),
+            10,
             4,
-            50
         );
         // let prover_secret_input = ProverSecretInput::new(
         //     SeedU8x16::insecurely_random(),

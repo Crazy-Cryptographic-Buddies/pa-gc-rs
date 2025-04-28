@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod tests {
     use std::fmt::Debug;
+    use rand::Rng;
     use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
     use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
     use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
@@ -18,6 +19,16 @@ mod tests {
     // ) {
     //
     // }
+
+    fn insecurely_generate_random_permutation(len: usize) -> Vec<usize> {
+        let mut random_permutation = (0..len).collect::<Vec<usize>>();
+        let mut rng = rand::rng();
+        for i in (0..len).rev() {
+            let j = rng.random::<u32>() % (i as u32 + 1u32);
+            random_permutation.swap(i, j as usize);
+        }
+        random_permutation
+    }
     
     #[test]
     fn test_pa_2pc_for_addition() {
@@ -33,12 +44,12 @@ mod tests {
         let bs = 1;
         let rm = bristol_fashion_adaptor.get_and_gate_output_wire_vec().len();
         let public_parameter = PublicParameter::new(
+            &bristol_fashion_adaptor,
             8,
             32,
             SeedU8x16::insecurely_random(),
             big_ia,
             big_ib,
-            bristol_fashion_adaptor.get_and_gate_output_wire_vec().clone(),
             bs,
             rm,
         );
@@ -63,5 +74,16 @@ mod tests {
             &mut pb_secret_state,
             gabled_row_byte_len,
         );
+
+        let permutation_rep = (0..public_parameter.kappa).map(
+            |i| insecurely_generate_random_permutation(public_parameter.big_l)
+        ).collect::<Vec<Vec<usize>>>();
+
+        ProverInPA2PC::prove(
+            &public_parameter,
+            &permutation_rep,
+            &mut pa_secret_state,
+            &mut pb_secret_state,
+        )
     }
 }

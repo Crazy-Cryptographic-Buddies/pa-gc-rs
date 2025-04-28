@@ -106,6 +106,10 @@ impl<GF> BasicVecFunctions<GF> for GFVec<GF> {
         &self.val
     }
 
+    fn as_mut_slice(&mut self) -> &mut [GF] {
+        &mut self.val
+    }
+
     fn from_vec(vec: Vec<GF>) -> Self {
         Self {
             val: vec

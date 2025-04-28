@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod tests {
     use itertools::izip;
+    use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
     use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_check_and::prover_in_protocol_check_and::ProverInProtocolCheckAND;
     use crate::functionalities_and_protocols::protocol_check_and::verifier_in_protocol_check_and::VerifierInProtocolCheckAND;
@@ -56,15 +57,18 @@ mod tests {
 
     #[test]
     fn test_check_and_1() {
+        let bristol_fashion_adaptor = BristolFashionAdaptor::new(
+            &"adder64.txt".to_string()
+        );
         let public_parameter = PublicParameter::new(
+            &bristol_fashion_adaptor,
             8,
             10,
             SeedU8x16::insecurely_random(),
             (0..100).collect(),
             (100..200).collect(),
-            (200..300).collect(),
+            10,
             4,
-            50
         );
         let nabla_a_rep = (0..public_parameter.kappa).map(
             |_| GF2p8::insecurely_random()

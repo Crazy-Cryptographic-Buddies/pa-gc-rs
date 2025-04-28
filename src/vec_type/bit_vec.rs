@@ -92,6 +92,10 @@ impl BasicVecFunctions<u8> for BitVec {
         &self.val
     }
 
+    fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.val   
+    }
+
     fn from_vec(vec: Vec<u8>) -> Self {
         Self {
             val: vec

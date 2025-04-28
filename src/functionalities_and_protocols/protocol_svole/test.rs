@@ -1,5 +1,6 @@
 #[cfg(test)]
 mod tests {
+    use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
     use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
     use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_svole::prover_in_protocol_svole::ProverInProtocolSVOLE;
@@ -17,15 +18,18 @@ mod tests {
     #[test]
     fn test_protocol_svole() {
         // public inputs
+        let bristol_fashion_adaptor = BristolFashionAdaptor::new(
+            &"adder64.txt".to_string()
+        );
         let public_parameter = PublicParameter::new(
+            &bristol_fashion_adaptor,
             8,
             20,
             SeedU8x16::insecurely_random(),
             (0..100).collect(),
             (100..200).collect(),
-            (200..300).collect(),
+            10,
             4,
-            50
         );
         let mut prover_secret_state = ProverSecretState::<GF2p256, GF2p8>::new(
             &public_parameter,

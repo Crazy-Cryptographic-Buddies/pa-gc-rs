@@ -2,6 +2,7 @@
 mod tests {
     use itertools::izip;
     use rand::Rng;
+    use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
     use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
     use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_svole_2pc::prover_in_protocol_svole_2pc::ProverInProtocolSVOLE2PC;
@@ -46,15 +47,18 @@ mod tests {
 
     #[test]
     fn try_commit_and_fix_protocol_svole_2pc_test_case_1() {
+        let bristol_fashion_adaptor = BristolFashionAdaptor::new(
+            &"adder64.txt".to_string()
+        );
         let public_parameter = PublicParameter::new(
+            &bristol_fashion_adaptor,
             8,
             10,
             SeedU8x16::insecurely_random(),
             (0..100).collect(),
             (100..200).collect(),
-            (200..300).collect(),
-            4,
-            50
+            10,
+            4
         );
         let mut pa_secret_state = ProverSecretState::<GF2p256, GF2p8>::new(
             &public_parameter,

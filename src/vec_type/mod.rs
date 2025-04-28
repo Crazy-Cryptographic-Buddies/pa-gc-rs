@@ -20,6 +20,7 @@ pub trait VecAppending {
 pub trait BasicVecFunctions<OutputType> {
     fn len(&self) -> usize;
     fn as_slice(&self) -> &[OutputType];
+    fn as_mut_slice(&mut self) -> &mut [OutputType];
     
     fn from_vec(vec: Vec<OutputType>) -> Self;
 }
