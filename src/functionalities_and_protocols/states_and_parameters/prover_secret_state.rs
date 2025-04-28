@@ -13,25 +13,34 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
     pub seed_for_commitment_randomness: SeedU8x16,
     pub r_input_bit_vec: BitVec,
     pub r_output_and_bit_vec: BitVec,
+    pub r_prime_left_bit_vec: BitVec,
+    pub r_prime_right_bit_vec: BitVec,
     pub r_prime_bit_vec: BitVec,
     pub r_trace_bit_vec: BitVec,
     pub tilde_a_bit_vec_rep: Vec<BitVec>,
     pub tilde_b_bit_vec_rep: Vec<BitVec>,
     pub tilde_c_bit_vec_rep: Vec<BitVec>,
-    
+
+    // label_zero
+    pub label_zero_vec: Option<GFVec<GFVOLE>>,
+
     // vole macs
     pub vole_mac_r_input_vec: GFVec<GFVOLE>,
     pub vole_mac_r_output_and_vec: GFVec<GFVOLE>,
     pub vole_mac_r_prime_vec: GFVec<GFVOLE>,
+    pub vole_mac_r_trace_vec: GFVec<GFVOLE>,
     
     // vole keys
     pub other_vole_key_r_input_vec: GFVec<GFVOLE>,
     pub other_vole_key_r_output_and_vec: GFVec<GFVOLE>,
     pub other_vole_key_r_prime_vec: GFVec<GFVOLE>,
+    pub other_vole_key_r_trace_vec: GFVec<GFVOLE>,
 
     // voleith macs
     pub voleith_mac_r_input_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub voleith_mac_r_output_and_vec_rep: Vec<GFVec<GFVOLEitH>>,
+    pub voleith_mac_r_prime_left_vec_rep: Vec<GFVec<GFVOLEitH>>,
+    pub voleith_mac_r_prime_right_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub voleith_mac_r_prime_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub voleith_mac_r_trace_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub voleith_mac_tilde_a_vec_rep: Vec<GFVec<GFVOLEitH>>,
@@ -52,6 +61,7 @@ where GFVOLE: Clone + Zero, GFVOLEitH: Clone + Zero {
     pub fn new(
         public_parameter: &PublicParameter,
         master_seed: SeedU8x16,
+        is_pa: bool,
     ) -> Self {
         let mut seed_for_generating_ggm_tree_rep =  vec![SeedU8x16::zero(); public_parameter.kappa];
         let mut prover_in_all_in_one_vc_rep = (0..public_parameter.kappa).map(
@@ -70,22 +80,35 @@ where GFVOLE: Clone + Zero, GFVOLEitH: Clone + Zero {
             seed_for_commitment_randomness: current_seed,
             r_input_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.num_input_bits]),
             r_output_and_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.big_iw_size]),
+            r_prime_left_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.big_iw_size]),
+            r_prime_right_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.big_iw_size]),
             r_prime_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.big_iw_size]),
             r_trace_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.num_wires]),
             tilde_a_bit_vec_rep: vec![BitVec::from_vec(vec![0u8; public_parameter.big_l]); public_parameter.kappa],
             tilde_b_bit_vec_rep: vec![BitVec::from_vec(vec![0u8; public_parameter.big_l]); public_parameter.kappa],
             tilde_c_bit_vec_rep: vec![BitVec::from_vec(vec![0u8; public_parameter.big_l]); public_parameter.kappa],
-            
+
+            label_zero_vec: { 
+                if is_pa {
+                    Some(GFVec::<GFVOLE>::zero_vec(public_parameter.num_wires))
+                } else {
+                    None
+                }
+            },
             vole_mac_r_input_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.num_input_bits),
             vole_mac_r_output_and_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),
             vole_mac_r_prime_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),
-            
+            vole_mac_r_trace_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.num_wires),
+
             other_vole_key_r_input_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.num_input_bits),
             other_vole_key_r_output_and_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),
-            other_vole_key_r_prime_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),           
+            other_vole_key_r_prime_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),
 
+            other_vole_key_r_trace_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.num_wires),
             voleith_mac_r_input_vec_rep: vec![GFVec::new(); public_parameter.kappa],
             voleith_mac_r_output_and_vec_rep: vec![GFVec::new(); public_parameter.kappa],
+            voleith_mac_r_prime_left_vec_rep: vec![GFVec::zero_vec(public_parameter.big_iw_size); public_parameter.kappa],
+            voleith_mac_r_prime_right_vec_rep: vec![GFVec::zero_vec(public_parameter.big_iw_size); public_parameter.kappa],
             voleith_mac_r_prime_vec_rep: vec![GFVec::new(); public_parameter.kappa],
             voleith_mac_r_trace_vec_rep: vec![GFVec::zero_vec(public_parameter.num_wires); public_parameter.kappa],
             voleith_mac_tilde_a_vec_rep: vec![GFVec::new(); public_parameter.kappa],

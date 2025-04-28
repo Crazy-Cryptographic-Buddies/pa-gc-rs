@@ -34,6 +34,7 @@ mod tests {
         let mut prover_secret_state = ProverSecretState::<GF2p256, GF2p8>::new(
             &public_parameter,
             SeedU8x16::insecurely_random(),
+            true
         );
 
         for repetition_id in 0..public_parameter.kappa {

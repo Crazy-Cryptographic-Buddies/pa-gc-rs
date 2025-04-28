@@ -62,11 +62,13 @@ mod tests {
         );
         let mut pa_secret_state = ProverSecretState::<GF2p256, GF2p8>::new(
             &public_parameter,
-            SeedU8x16::insecurely_random()
+            SeedU8x16::insecurely_random(),
+            true
         );
         let mut pb_secret_state = ProverSecretState::<GF2p256, GF2p8>::new(
             &public_parameter,
-            SeedU8x16::insecurely_random()
+            SeedU8x16::insecurely_random(),
+            false
         );
         sample_secret_bit_vecs(&public_parameter, &mut pa_secret_state);
         sample_secret_bit_vecs(&public_parameter, &mut pb_secret_state);

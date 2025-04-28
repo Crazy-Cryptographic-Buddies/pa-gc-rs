@@ -1,5 +1,6 @@
 use std::ops::{Index, IndexMut};
 use crate::vec_type::{BasicVecFunctions, Split, VecAddition, VecAppending, ZeroVec};
+use crate::vec_type::gf_vec::GFVec;
 
 #[derive(Clone, Debug)]
 pub struct BitVec {
@@ -99,6 +100,14 @@ impl BasicVecFunctions<u8> for BitVec {
     fn from_vec(vec: Vec<u8>) -> Self {
         Self {
             val: vec
+        }
+    }
+}
+
+impl FromIterator<u8> for BitVec {
+    fn from_iter<T: IntoIterator<Item = u8>>(iter: T) -> Self {
+        Self {
+            val: iter.into_iter().collect()
         }
     }
 }
