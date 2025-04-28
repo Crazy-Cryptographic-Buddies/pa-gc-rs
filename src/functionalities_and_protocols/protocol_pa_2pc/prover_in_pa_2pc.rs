@@ -1,5 +1,6 @@
 use std::fmt::Debug;
 use std::ops::{Index, IndexMut};
+use blake3::Hash;
 use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
 use crate::bristol_fashion_adaptor::GateType;
 use crate::functionalities_and_protocols::hasher::hasher::Hasher;
@@ -14,9 +15,7 @@ use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 use crate::vec_type::{BasicVecFunctions, VecAppending, ZeroVec};
 
-pub struct ProverInPA2PC {
-
-}
+pub struct ProverInPA2PC;
 
 impl ProverInPA2PC {
 
@@ -404,7 +403,6 @@ impl ProverInPA2PC {
                             );
                         }
                     }
-
                     and_cursor += 1;
                 }
             }
@@ -413,7 +411,8 @@ impl ProverInPA2PC {
         // PA encrypts and commits
         and_cursor = 0usize;
         let mut garbled_table: Vec<Vec<GarbledRow<GFVOLE, GFVOLEitH>>> = vec![vec![GarbledRow::zero(); 4]; public_parameter.big_iw_size];
-        for gate in bristol_fashion_adaptor.get_gate_vec() {
+        for and_gate_id in bristol_fashion_adaptor.get_and_gate_id_vec() {
+            let gate = &bristol_fashion_adaptor.get_gate_vec()[*and_gate_id];
             let mut pa_label = [[GFVOLE::zero(); 2]; 2];
             pa_label[0][0] = pa_label_zero_vec[gate.left_input_wire];
             pa_label[0][1] = pa_label_zero_vec[gate.right_input_wire];
@@ -432,7 +431,11 @@ impl ProverInPA2PC {
                     &GarbledRow::new(
                         pa_middle_r_and_output_bit_vec[and_cursor][k as usize],
                         pa_middle_vole_mac_r_and_output_vec[and_cursor][k as usize].clone(),
-                        pa_middle_voleith_mac_r_and_output_vec[and_cursor][k as usize].to_vec(),
+                        (0..public_parameter.kappa).map(
+                            |repetition_id| {
+                                pa_middle_voleith_mac_r_and_output_vec[repetition_id][and_cursor][k as usize]
+                            }
+                        ).collect::<Vec<GFVOLEitH>>(),
                         pa_label_zero_vec[gate.output_wire].custom_add(
                             &pa_other_middle_vole_key_r_and_output_vec[and_cursor][k as usize]
                         ).custom_add(
@@ -443,6 +446,25 @@ impl ProverInPA2PC {
                     )
                 );
             }
+            and_cursor += 1;
+        }
+
+        // PB commits to secret values and VOLEitH macs
+        and_cursor = 0usize;
+        let mut pb_middle_commitment_vec = vec![vec![Hash::from_bytes([0u8; 32]); 4]; public_parameter.big_iw_size];
+        let (mut current_seed, mut randomness) = public_parameter.one_to_two_prg.generate_double(&pb_secret_state.seed_for_commitment_randomness);
+        for _ in 0..public_parameter.big_iw_size {
+            (current_seed, randomness) = public_parameter.one_to_two_prg.generate_double(&current_seed);
+            for k in 0..4 {
+                pb_middle_commitment_vec[and_cursor][k] = Hasher::commit_pb_secret(
+                    pb_middle_r_and_output_bit_vec[and_cursor][k],
+                    &(0..public_parameter.kappa).map(
+                        |repetition_id| pb_middle_voleith_mac_r_and_output_vec[repetition_id][and_cursor][k]
+                    ).collect(),
+                    &randomness
+                );
+            }
+            and_cursor += 1;
         }
     }
 }

@@ -52,4 +52,18 @@ impl Hasher {
         // return value
         GarbledRow::new(mask_u8, mask_vole_mac, mask_voleith_mac_rep, mask_vole_remaining)
     }
+
+    pub fn commit_pb_secret<GFVOLEitH: ByteManipulation>(
+        first_bit: u8, voleith_mac_vec: &Vec<GFVOLEitH>, randomness: &SeedU8x16
+    ) -> Hash {
+        let mut hasher = blake3::Hasher::new();
+        hasher.update(&first_bit.to_bytes());
+        let mut voleith_mac_byte_vec = vec![0u8; GFVOLEitH::num_bytes() * voleith_mac_vec.len()];
+        for (i, voleith_mac) in voleith_mac_vec.iter().enumerate() {
+            voleith_mac_byte_vec[GFVOLEitH::num_bytes() * i..GFVOLEitH::num_bytes() * (i+1)]
+                .copy_from_slice(&voleith_mac.to_bytes());
+        }
+        hasher.update(randomness);
+        hasher.finalize()
+    }
 }

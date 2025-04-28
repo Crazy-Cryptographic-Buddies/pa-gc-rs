@@ -10,6 +10,7 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
     pub delta: Option<GFVOLE>,
     
     pub seed_for_generating_ggm_tree_rep: Vec<SeedU8x16>,
+    pub seed_for_commitment_randomness: SeedU8x16,
     pub r_input_bit_vec: BitVec,
     pub r_output_and_bit_vec: BitVec,
     pub r_prime_bit_vec: BitVec,
@@ -47,14 +48,14 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
 impl<GFVOLE, GFVOLEitH> ProverSecretState<GFVOLE, GFVOLEitH>
 where GFVOLE: Clone + Zero, GFVOLEitH: Clone + Zero {
     pub fn new(
-        public_parameter: &PublicParameter, 
-        master_seed_for_generating_ggm_tree: SeedU8x16,
+        public_parameter: &PublicParameter,
+        master_seed: SeedU8x16,
     ) -> Self {
         let mut seed_for_generating_ggm_tree_rep =  vec![SeedU8x16::zero(); public_parameter.kappa];
         let mut prover_in_all_in_one_vc_rep = (0..public_parameter.kappa).map(
             |_| ProverInAllInOneVC::new(&public_parameter)
         ).collect();
-        let mut current_seed = master_seed_for_generating_ggm_tree;
+        let mut current_seed = master_seed;
         for _ in 0..public_parameter.kappa {
             let (seed0, seed1) = public_parameter.one_to_two_prg.generate_double(&current_seed);
             seed_for_generating_ggm_tree_rep.push(seed0);
@@ -64,6 +65,7 @@ where GFVOLE: Clone + Zero, GFVOLEitH: Clone + Zero {
             delta: None,
             
             seed_for_generating_ggm_tree_rep,
+            seed_for_commitment_randomness: current_seed,
             r_input_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.num_input_bits]),
             r_output_and_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.big_iw_size]),
             r_prime_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.big_iw_size]),

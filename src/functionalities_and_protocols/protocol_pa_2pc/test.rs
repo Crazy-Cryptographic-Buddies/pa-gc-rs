@@ -24,21 +24,21 @@ mod tests {
         type GFVOLE = GF2p256;
         type GFVOLEitH = GF2p8;
         let bristol_fashion_adaptor = BristolFashionAdaptor::new(
-            &"aes_128.txt".to_string()
+            &"adder64.txt".to_string()
         );
-        println!("Num AND gates: {:?}", bristol_fashion_adaptor.determine_and_gate_output_wires().len());
+        println!("Num AND gates: {:?}", bristol_fashion_adaptor.get_and_gate_output_wire_vec().len());
         let num_input_bits = bristol_fashion_adaptor.get_num_input_bits();
         let big_ia = (0..num_input_bits >> 1).collect::<Vec<usize>>();
         let big_ib = (big_ia.len()..num_input_bits).collect::<Vec<usize>>();
         let bs = 1;
-        let rm = bristol_fashion_adaptor.determine_and_gate_output_wires().len();
+        let rm = bristol_fashion_adaptor.get_and_gate_output_wire_vec().len();
         let public_parameter = PublicParameter::new(
             8,
             32,
             SeedU8x16::insecurely_random(),
             big_ia,
             big_ib,
-            bristol_fashion_adaptor.determine_and_gate_output_wires(),
+            bristol_fashion_adaptor.get_and_gate_output_wire_vec().clone(),
             bs,
             rm,
         );

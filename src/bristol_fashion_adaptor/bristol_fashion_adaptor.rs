@@ -9,11 +9,17 @@ pub struct BristolFashionAdaptor {
     num_input_bits: usize,
     num_output_bits: usize,
     gate_vec: Vec<GateInfo>,
+    and_gate_id_vec: Vec<usize>,
+    and_gate_output_wire_vec: Vec<usize>,
 }
 
 impl BristolFashionAdaptor {
     pub fn new(bristol_fashion_circuit_file_name: &String) -> Self {
         Self::read_circuit_file(bristol_fashion_circuit_file_name)
+    }
+
+    fn determine_and_gate_id_vec(gate_vec: &Vec<GateInfo>) -> Vec<usize> {
+        (0..gate_vec.len()).filter(|&i| gate_vec[i].gate_type == GateType::AND).collect()
     }
 
     fn read_circuit_file(circuit_file_name: &String) -> Self {
@@ -90,11 +96,16 @@ impl BristolFashionAdaptor {
             );
         }
 
+        let and_gate_id_vec = Self::determine_and_gate_id_vec(&gate_vec);
+        let and_gate_output_wire_vec = Self::determine_and_gate_output_wires(&gate_vec, &and_gate_id_vec);
+
         Self {
             num_wires,
             num_input_bits,
             num_output_bits,
             gate_vec,
+            and_gate_id_vec,
+            and_gate_output_wire_vec
         }
     }
 
@@ -145,14 +156,12 @@ impl BristolFashionAdaptor {
     //     num_and_gates   
     // }
     
-    pub fn determine_and_gate_output_wires(&self) -> Vec<usize> {
-        self.gate_vec.iter().filter_map(|gate| {
-            if gate.gate_type == GateType::AND {
-                Some(gate.output_wire)
-            } else {
-                None
+    pub fn determine_and_gate_output_wires(gate_vec: &Vec<GateInfo>, and_gate_id_vec: &Vec<usize>) -> Vec<usize> {
+        and_gate_id_vec.iter().map(
+            |gate_id| {
+                gate_vec[*gate_id].output_wire
             }
-        }).collect()
+        ).collect()
     }
     
     pub fn get_num_input_bits(&self) -> usize {
@@ -169,6 +178,13 @@ impl BristolFashionAdaptor {
     
     pub fn get_gate_vec(&self) -> &Vec<GateInfo> {
         self.gate_vec.as_ref()   
+    }
+    pub fn get_and_gate_id_vec(&self) -> &Vec<usize> {
+        self.and_gate_id_vec.as_ref()
+    }
+    
+    pub fn get_and_gate_output_wire_vec(&self) -> &Vec<usize> {
+        self.and_gate_output_wire_vec.as_ref()
     }
 }
 
