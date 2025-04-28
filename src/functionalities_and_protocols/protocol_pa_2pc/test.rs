@@ -41,10 +41,11 @@ mod tests {
         println!("Num AND gates: {:?}", bristol_fashion_adaptor.get_and_gate_output_wire_vec().len());
         let num_input_bits = bristol_fashion_adaptor.get_num_input_bits();
         let big_ia = (0..num_input_bits >> 1).collect::<Vec<usize>>();
+        let big_ib = (big_ia.len()..num_input_bits).collect::<Vec<usize>>();
+        // let big_io = (bristol_fashion_adaptor.get_num_wires() - bristol_fashion_adaptor.get_num_output_bits()..bristol_fashion_adaptor.get_num_wires()).collect::<Vec<usize>>();
         let pa_input_bit_vec = big_ia.iter().map(
             |i| rng.random::<u8>() & 1
         ).collect();
-        let big_ib = (big_ia.len()..num_input_bits).collect::<Vec<usize>>();
         let pb_input_bit_vec = big_ib.iter().map(
             |i| rng.random::<u8>() & 1
         ).collect();

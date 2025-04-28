@@ -12,6 +12,7 @@ pub struct PublicParameter {
     pub bs: usize,
     pub rm: usize,
     pub big_iw_size: usize,
+    pub big_io_size: usize,
     pub big_l: usize,
     pub big_n: usize,
     pub num_input_bits: usize,
@@ -19,6 +20,7 @@ pub struct PublicParameter {
     pub big_ia: Vec<usize>,
     pub big_ib: Vec<usize>,
     pub big_iw: Vec<usize>,
+    pub big_io: Vec<usize>,
     pub garbled_row_byte_len: usize,
 }
 
@@ -31,6 +33,7 @@ impl PublicParameter {
     ) -> Self {
         let num_and_gates = bristol_fashion_adaptor.get_and_gate_output_wire_vec().len();
         let big_l = bs * num_and_gates + rm;
+        let big_io_size = bristol_fashion_adaptor.get_num_output_bits();
         Self {
             tau,
             kappa,
@@ -40,11 +43,13 @@ impl PublicParameter {
             bs,
             rm,
             big_iw_size: num_and_gates,
+            big_io_size,
             big_l,
             big_n: big_ia.len() + big_ib.len() + 2 * num_and_gates + 3 * big_l,
             num_input_bits: big_ia.len() + big_ib.len(),
             big_ia,
             big_ib,
+            big_io: bristol_fashion_adaptor.get_output_wire_vec().clone(),
             num_wires: bristol_fashion_adaptor.get_num_wires(),
             big_iw: bristol_fashion_adaptor.get_and_gate_output_wire_vec().clone(),
             garbled_row_byte_len: 1 + GFVOLE::num_bytes() + GFVOLEitH::num_bytes() * kappa + GFVOLE::num_bytes(),

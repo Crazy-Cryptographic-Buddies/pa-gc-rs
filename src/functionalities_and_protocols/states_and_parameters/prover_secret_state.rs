@@ -37,6 +37,7 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
     pub other_vole_key_r_output_and_vec: GFVec<GFVOLE>,
     pub other_vole_key_r_prime_vec: GFVec<GFVOLE>,
     pub other_vole_key_r_trace_vec: GFVec<GFVOLE>,
+    pub other_middle_vole_key_r_and_output_vec: Vec<[GFVOLE; 4]>,
 
     // voleith macs
     pub voleith_mac_r_input_vec_rep: Vec<GFVec<GFVOLEitH>>,
@@ -49,6 +50,11 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
     pub voleith_mac_tilde_b_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub voleith_mac_tilde_c_vec_rep: Vec<GFVec<GFVOLEitH>>,
 
+    pub middle_voleith_mac_r_and_output_vec_rep: Vec<Vec<[GFVOLEitH; 4]>>,
+
+    // commitment randomness
+    pub commitment_randomness_vec_rep: Option<Vec<[SeedU8x16; 4]>>,
+
     // random bits from PisVOLE
     pub prover_in_all_in_one_vc_rep: Vec<ProverInAllInOneVC>,
     // pub bar_r_bit_vec_rep: Vec<Option<BitVec>>,
@@ -59,7 +65,7 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
 }
 
 impl<GFVOLE, GFVOLEitH> ProverSecretState<GFVOLE, GFVOLEitH>
-where GFVOLE: Clone + Zero + Copy, GFVOLEitH: Clone + Zero {
+where GFVOLE: Clone + Zero + Copy, GFVOLEitH: Clone + Zero + Copy {
     pub fn new(
         public_parameter: &PublicParameter,
         master_seed: SeedU8x16,
@@ -107,8 +113,9 @@ where GFVOLE: Clone + Zero + Copy, GFVOLEitH: Clone + Zero {
             other_vole_key_r_input_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.num_input_bits),
             other_vole_key_r_output_and_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),
             other_vole_key_r_prime_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),
-
             other_vole_key_r_trace_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.num_wires),
+            other_middle_vole_key_r_and_output_vec: vec![[GFVOLE::zero(); 4]; public_parameter.big_iw_size],
+
             voleith_mac_r_input_vec_rep: vec![GFVec::new(); public_parameter.kappa],
             voleith_mac_r_output_and_vec_rep: vec![GFVec::new(); public_parameter.kappa],
             voleith_mac_r_prime_left_vec_rep: vec![GFVec::zero_vec(public_parameter.big_iw_size); public_parameter.kappa],
@@ -119,6 +126,14 @@ where GFVOLE: Clone + Zero + Copy, GFVOLEitH: Clone + Zero {
             voleith_mac_tilde_b_vec_rep: vec![GFVec::new(); public_parameter.kappa],
             voleith_mac_tilde_c_vec_rep: vec![GFVec::new(); public_parameter.kappa],
 
+            middle_voleith_mac_r_and_output_vec_rep: vec![vec![[GFVOLEitH::zero(); 4]; public_parameter.big_iw_size]; public_parameter.kappa],
+            commitment_randomness_vec_rep: {
+                if is_pa {
+                    None
+                } else {
+                    Some(vec![[SeedU8x16::zero(); 4]; public_parameter.big_iw_size])
+                }
+            },
             prover_in_all_in_one_vc_rep,
             // bar_r_bit_vec_rep: vec![None; public_parameter.kappa],
             // bar_r_prime_bit_vec_rep: vec![None; public_parameter.kappa],

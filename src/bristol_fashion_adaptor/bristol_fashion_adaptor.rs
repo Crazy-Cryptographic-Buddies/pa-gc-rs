@@ -11,6 +11,7 @@ pub struct BristolFashionAdaptor {
     gate_vec: Vec<GateInfo>,
     and_gate_id_vec: Vec<usize>,
     and_gate_output_wire_vec: Vec<usize>,
+    output_wire_vec: Vec<usize>   
 }
 
 impl BristolFashionAdaptor {
@@ -105,7 +106,8 @@ impl BristolFashionAdaptor {
             num_output_bits,
             gate_vec,
             and_gate_id_vec,
-            and_gate_output_wire_vec
+            and_gate_output_wire_vec,
+            output_wire_vec: (num_wires - num_output_bits..num_wires).collect(),
         }
     }
 
@@ -185,6 +187,14 @@ impl BristolFashionAdaptor {
     
     pub fn get_and_gate_output_wire_vec(&self) -> &Vec<usize> {
         self.and_gate_output_wire_vec.as_ref()
+    }
+    
+    pub fn get_num_output_bits(&self) -> usize {
+        self.num_output_bits
+    }
+    
+    pub fn get_output_wire_vec(&self) -> &Vec<usize> {
+        self.output_wire_vec.as_ref()
     }
 }
 

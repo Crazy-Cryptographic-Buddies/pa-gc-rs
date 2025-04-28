@@ -61,13 +61,16 @@ mod tests {
         let bristol_fashion_adaptor = BristolFashionAdaptor::new(
             &"adder64.txt".to_string()
         );
+        let num_input_bits = bristol_fashion_adaptor.get_num_input_bits();
+        let big_ia = (0..num_input_bits >> 1).collect::<Vec<usize>>();
+        let big_ib = (big_ia.len()..num_input_bits).collect::<Vec<usize>>();
         let public_parameter = PublicParameter::new::<GF2p256, GF2p8>(
             &bristol_fashion_adaptor,
             8,
             10,
             SeedU8x16::insecurely_random(),
-            (0..100).collect(),
-            (100..200).collect(),
+            big_ia,
+            big_ib,
             10,
             4,
         );
