@@ -17,6 +17,7 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
     pub r_prime_right_bit_vec: BitVec,
     pub r_prime_bit_vec: BitVec,
     pub r_trace_bit_vec: BitVec,
+    pub middle_r_and_output_bit_vec: Vec<[u8; 4]>,
     pub tilde_a_bit_vec_rep: Vec<BitVec>,
     pub tilde_b_bit_vec_rep: Vec<BitVec>,
     pub tilde_c_bit_vec_rep: Vec<BitVec>,
@@ -29,6 +30,7 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
     pub vole_mac_r_output_and_vec: GFVec<GFVOLE>,
     pub vole_mac_r_prime_vec: GFVec<GFVOLE>,
     pub vole_mac_r_trace_vec: GFVec<GFVOLE>,
+    pub middle_vole_mac_r_and_output_vec: Vec<[GFVOLE; 4]>,
     
     // vole keys
     pub other_vole_key_r_input_vec: GFVec<GFVOLE>,
@@ -41,7 +43,6 @@ pub struct ProverSecretState<GFVOLE, GFVOLEitH> {
     pub voleith_mac_r_output_and_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub voleith_mac_r_prime_left_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub voleith_mac_r_prime_right_vec_rep: Vec<GFVec<GFVOLEitH>>,
-    pub middle_vole_mac_r_and_output_vec: Vec<[GFVOLE; 4]>,
     pub voleith_mac_r_prime_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub voleith_mac_r_trace_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub voleith_mac_tilde_a_vec_rep: Vec<GFVec<GFVOLEitH>>,
@@ -85,6 +86,7 @@ where GFVOLE: Clone + Zero + Copy, GFVOLEitH: Clone + Zero {
             r_prime_right_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.big_iw_size]),
             r_prime_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.big_iw_size]),
             r_trace_bit_vec: BitVec::from_vec(vec![0u8; public_parameter.num_wires]),
+            middle_r_and_output_bit_vec: vec![[0u8; 4]; public_parameter.big_iw_size],
             tilde_a_bit_vec_rep: vec![BitVec::from_vec(vec![0u8; public_parameter.big_l]); public_parameter.kappa],
             tilde_b_bit_vec_rep: vec![BitVec::from_vec(vec![0u8; public_parameter.big_l]); public_parameter.kappa],
             tilde_c_bit_vec_rep: vec![BitVec::from_vec(vec![0u8; public_parameter.big_l]); public_parameter.kappa],
@@ -100,6 +102,7 @@ where GFVOLE: Clone + Zero + Copy, GFVOLEitH: Clone + Zero {
             vole_mac_r_output_and_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),
             vole_mac_r_prime_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),
             vole_mac_r_trace_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.num_wires),
+            middle_vole_mac_r_and_output_vec: vec![[GFVOLE::zero(); 4]; public_parameter.big_iw_size],
 
             other_vole_key_r_input_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.num_input_bits),
             other_vole_key_r_output_and_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_iw_size),
@@ -110,7 +113,6 @@ where GFVOLE: Clone + Zero + Copy, GFVOLEitH: Clone + Zero {
             voleith_mac_r_output_and_vec_rep: vec![GFVec::new(); public_parameter.kappa],
             voleith_mac_r_prime_left_vec_rep: vec![GFVec::zero_vec(public_parameter.big_iw_size); public_parameter.kappa],
             voleith_mac_r_prime_right_vec_rep: vec![GFVec::zero_vec(public_parameter.big_iw_size); public_parameter.kappa],
-            middle_vole_mac_r_and_output_vec: vec![[GFVOLE::zero(); 4]; public_parameter.big_iw_size],
             voleith_mac_r_prime_vec_rep: vec![GFVec::new(); public_parameter.kappa],
             voleith_mac_r_trace_vec_rep: vec![GFVec::zero_vec(public_parameter.num_wires); public_parameter.kappa],
             voleith_mac_tilde_a_vec_rep: vec![GFVec::new(); public_parameter.kappa],
