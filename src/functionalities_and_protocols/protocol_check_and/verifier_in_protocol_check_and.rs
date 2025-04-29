@@ -1,4 +1,5 @@
 use std::fmt::Debug;
+use crate::functionalities_and_protocols::protocol_check_and::check_and_transcript::CheckAndTranscript;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::util::verifier::Verifier;
 use crate::value_type::{CustomAddition, CustomMultiplyingBit, Zero};
@@ -12,17 +13,18 @@ impl VerifierInProtocolCheckAND {
 
     pub fn verify<GFVOLEitH: PartialEq + Clone + CustomAddition + CustomMultiplyingBit + Debug + Zero>(
         public_parameter: &PublicParameter,
-        pa_published_bit_and_voleith_mac_tuple_rep: &(
-            (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>),
-            (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>),
-            (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>)
-        ),
-        pb_published_bit_and_voleith_mac_tuple_rep: &(
-            (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>),
-            (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>),
-            (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>)
-        ),
-        public_d_sum_bit_vec_rep: &Vec<BitVec>, public_e_sum_bit_vec_rep: &Vec<BitVec>,
+        // pa_published_bit_and_voleith_mac_tuple_rep: &(
+        //     (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>),
+        //     (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>),
+        //     (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>)
+        // ),
+        // pb_published_bit_and_voleith_mac_tuple_rep: &(
+        //     (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>),
+        //     (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>),
+        //     (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>)
+        // ),
+        // public_d_sum_bit_vec_rep: &Vec<BitVec>, public_e_sum_bit_vec_rep: &Vec<BitVec>,
+        check_and_transcript: &CheckAndTranscript<GFVOLEitH>,
         nabla_a_rep: &Vec<GFVOLEitH>, nabla_b_rep: &Vec<GFVOLEitH>,
         pa_voleith_key_tuple_rep: &(
             (Vec<GFVec<GFVOLEitH>>, Vec<GFVec<GFVOLEitH>>, Vec<GFVec<GFVOLEitH>>),
@@ -37,12 +39,12 @@ impl VerifierInProtocolCheckAND {
             (pa_d_bit_vec_rep, pa_voleith_mac_d_vec_rep),
             (pa_e_bit_vec_rep, pa_voleith_mac_e_vec_rep),
             (pa_tilde_z_bit_vec_rep, pa_voleith_mac_tilde_z_vec_rep)
-        ) = pa_published_bit_and_voleith_mac_tuple_rep;
+        ) = &check_and_transcript.pa_published_bit_and_voleith_mac_tuple_rep;
         let (
             (pb_d_bit_vec_rep, pb_voleith_mac_d_vec_rep),
             (pb_e_bit_vec_rep, pb_voleith_mac_e_vec_rep), 
             (pb_tilde_z_bit_vec_rep, pb_voleith_mac_tilde_z_vec_rep)
-        ) = pb_published_bit_and_voleith_mac_tuple_rep;
+        ) = &check_and_transcript.pb_published_bit_and_voleith_mac_tuple_rep;
         let (
             (pa_voleith_key_x_vec_rep, pa_voleith_key_y_vec_rep, pa_voleith_key_z_vec_rep),
             (pa_voleith_key_a_vec_rep, pa_voleith_key_b_vec_rep, pa_voleith_key_c_vec_rep)
@@ -93,11 +95,11 @@ impl VerifierInProtocolCheckAND {
                     &pa_voleith_key_c_vec_rep[repetition_id]
                 ).vec_add(
                     &pa_voleith_key_b_vec_rep[repetition_id].entry_wise_multiply_bit_vec(
-                        &public_d_sum_bit_vec_rep[repetition_id]
+                        &check_and_transcript.public_d_sum_bit_vec_rep[repetition_id]
                     )
                 ).vec_add(
                     &pa_voleith_key_a_vec_rep[repetition_id].entry_wise_multiply_bit_vec(
-                        &public_e_sum_bit_vec_rep[repetition_id]
+                        &check_and_transcript.public_e_sum_bit_vec_rep[repetition_id]
                     )
                 );
                 Verifier::verify_vole_correlations(
@@ -112,11 +114,11 @@ impl VerifierInProtocolCheckAND {
                     &pb_voleith_key_c_vec_rep[repetition_id]
                 ).vec_add(
                     &pb_voleith_key_b_vec_rep[repetition_id].entry_wise_multiply_bit_vec(
-                        &public_d_sum_bit_vec_rep[repetition_id]
+                        &check_and_transcript.public_d_sum_bit_vec_rep[repetition_id]
                     )
                 ).vec_add(
                     &pb_voleith_key_a_vec_rep[repetition_id].entry_wise_multiply_bit_vec(
-                        &public_e_sum_bit_vec_rep[repetition_id]
+                        &check_and_transcript.public_e_sum_bit_vec_rep[repetition_id]
                     )
                 );
                 Verifier::verify_vole_correlations(

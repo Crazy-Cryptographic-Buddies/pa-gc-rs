@@ -6,6 +6,8 @@ use crate::vec_type::{BasicVecFunctions, Split, VecAppending, ZeroVec};
 mod test;
 mod prover_in_pa_2pc;
 mod verifier_in_pa_2pc;
+pub(crate) mod preprocessing_transcript;
+pub(crate) mod proof_transcript;
 
 fn permute<PrimitiveType, VecType>(
     public_parameter: &PublicParameter,
@@ -58,4 +60,24 @@ where PrimitiveType: Clone + Zero + Copy,
         to_be_written_trace[*wire] = output_and_vec[and_cursor].clone();
         and_cursor += 1;
     }
+}
+
+fn extract_block_vec_rep<PrimitiveType, VecType>(
+    public_parameter: &PublicParameter,
+    block_id: usize, vec_rep: &Vec<VecType>
+) -> Vec<VecType>
+where
+    PrimitiveType: Clone,
+    VecType: BasicVecFunctions<PrimitiveType> + Clone
+    + Index<usize, Output = PrimitiveType> + IndexMut<usize, Output = PrimitiveType>
+    + FromIterator<PrimitiveType> {
+    assert_eq!(vec_rep.len(), public_parameter.kappa);
+    (0..public_parameter.kappa).map(
+        |repetition_id|
+            VecType::from_vec(
+                vec_rep[repetition_id].as_slice()[
+                    public_parameter.big_iw_size * block_id..public_parameter.big_iw_size * (block_id + 1)
+                    ].to_vec()
+            )
+    ).collect::<Vec<VecType>>()
 }

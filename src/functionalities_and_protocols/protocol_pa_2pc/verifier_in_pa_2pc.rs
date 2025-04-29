@@ -3,8 +3,9 @@ use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdapt
 use crate::bristol_fashion_adaptor::GateType;
 use crate::functionalities_and_protocols::protocol_pa_2pc::{initialize_trace, permute, split_off_rm};
 use crate::functionalities_and_protocols::protocol_svole_2pc::verifier_in_protocol_svole_2pc::VerifierInProtocolSVOLE2PC;
-use crate::functionalities_and_protocols::states_and_parameters::preprocessing_transcript::PreprocessingTranscript;
-use crate::functionalities_and_protocols::states_and_parameters::proof_transcript::ProofTranscript;
+use crate::functionalities_and_protocols::protocol_pa_2pc::preprocessing_transcript::PreprocessingTranscript;
+use crate::functionalities_and_protocols::protocol_pa_2pc::proof_transcript::ProofTranscript;
+use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::util::verifier::Verifier;
 use crate::value_type::{CustomAddition, CustomMultiplyingBit, U8ForGF, Zero};
@@ -21,6 +22,7 @@ impl VerifierInPA2PC {
         nabla_a_rep: &Vec<GFVOLEitH>, nabla_b_rep: &Vec<GFVOLEitH>,
         preprocessing_transcript: &PreprocessingTranscript<GFVOLE, GFVOLEitH>,
         proof_transcript: &ProofTranscript<GFVOLE, GFVOLEitH>,
+        pa_secret_state_to_be_removed: &ProverSecretState<GFVOLE, GFVOLEitH>,
     )
     where GFVOLE: Clone,
           GFVOLEitH: Clone + CustomAddition + CustomMultiplyingBit + Zero + U8ForGF + PartialEq + Debug + Copy {
@@ -161,10 +163,9 @@ impl VerifierInPA2PC {
 
         // construct key trace
         let mut pa_voleith_key_r_trace_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.num_wires); public_parameter.kappa];
-        let mut pa_middle_voleith_key_r_and_output_vec_rep = vec![vec![[GFVOLEitH::zero(); 4]; public_parameter.big_iw_size]; public_parameter.kappa];
+        let mut pa_middle_voleith_key_r_and_output_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
         let mut pb_voleith_key_r_trace_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.num_wires); public_parameter.kappa];
-        let mut pb_middle_voleith_key_r_and_output_vec_rep = vec![vec![[GFVOLEitH::zero(); 4]; public_parameter.big_iw_size]; public_parameter.kappa];
-        let mut and_cursor = 0usize;
+        let mut pb_middle_voleith_key_r_and_output_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
         (0..public_parameter.kappa).for_each(
             |repetition_id| {
                 initialize_trace::<GFVOLEitH, GFVec<GFVOLEitH>>(
@@ -189,27 +190,74 @@ impl VerifierInPA2PC {
             &proof_transcript.published_middle_hat_z_bit_vec,
             &mut hat_z_bit_trace_vec,
         );
-        
-        todo!()
 
-        // // compute voleith keys following circuit
-        // for repetition_id in 0..public_parameter.kappa {
-        //     for gate in bristol_fashion_adaptor.get_gate_vec() {
-        //         match gate.gate_type {
-        //             GateType::XOR => {
-        //                 pa_voleith_key_r_trace_vec_rep[repetition_id][gate.output_wire] = pa_voleith_key_r_trace_vec_rep[repetition_id][gate.left_input_wire].custom_add(&pa_voleith_key_r_trace_vec_rep[repetition_id][gate.right_input_wire]);
-        //                 pb_voleith_key_r_trace_vec_rep[repetition_id][gate.output_wire] = pb_voleith_key_r_trace_vec_rep[repetition_id][gate.left_input_wire].custom_add(&pb_voleith_key_r_trace_vec_rep[repetition_id][gate.right_input_wire]);
-        //             }
-        //             GateType::NOT => {
-        //                 unimplemented!();
-        //             }
-        //             GateType::AND => {
-        //                 pa_middle_voleith_mac_r_and_output_vec_rep[repetition_id][and_cursor] =
-        //                 
-        //                 and_cursor += 1;
-        //             }
-        //         }
-        //     }
-        // }
+        // compute voleith keys following circuit
+        for repetition_id in 0..public_parameter.kappa {
+            let mut and_cursor = 0usize;
+            for gate in bristol_fashion_adaptor.get_gate_vec() {
+                // println!("Verifier in PA2PC computes voleith key for gate {:?}", gate);
+                match gate.gate_type {
+                    GateType::XOR => {
+                        hat_z_bit_trace_vec[gate.output_wire] = hat_z_bit_trace_vec[gate.left_input_wire] ^ hat_z_bit_trace_vec[gate.right_input_wire];
+                        pa_voleith_key_r_trace_vec_rep[repetition_id][gate.output_wire] = pa_voleith_key_r_trace_vec_rep[repetition_id][gate.left_input_wire].custom_add(&pa_voleith_key_r_trace_vec_rep[repetition_id][gate.right_input_wire]);
+                        pb_voleith_key_r_trace_vec_rep[repetition_id][gate.output_wire] = pb_voleith_key_r_trace_vec_rep[repetition_id][gate.left_input_wire].custom_add(&pb_voleith_key_r_trace_vec_rep[repetition_id][gate.right_input_wire]);
+                    }
+                    GateType::NOT => {
+                        unimplemented!();
+                    }
+                    GateType::AND => {
+                        // we do not need to compute hat_z_bit_trace_vec in this case
+                        
+                        // println!("{:?}", (repetition_id, and_cursor));
+                        pa_middle_voleith_key_r_and_output_vec_rep[repetition_id][and_cursor] = pa_voleith_key_r_prime_vec_rep[repetition_id][and_cursor].custom_add(
+                            &pa_voleith_key_r_trace_vec_rep[repetition_id][gate.output_wire]
+                        ).custom_add(
+                            &pa_voleith_key_r_trace_vec_rep[repetition_id][gate.right_input_wire].custom_multiply_bit(hat_z_bit_trace_vec[gate.left_input_wire])
+                        ).custom_add(
+                            &pa_voleith_key_r_trace_vec_rep[repetition_id][gate.left_input_wire].custom_multiply_bit(hat_z_bit_trace_vec[gate.right_input_wire])
+                        );
+
+                        pb_middle_voleith_key_r_and_output_vec_rep[repetition_id][and_cursor] = pb_voleith_key_r_prime_vec_rep[repetition_id][and_cursor].custom_add(
+                            &pb_voleith_key_r_trace_vec_rep[repetition_id][gate.output_wire]
+                        ).custom_add(
+                            &pb_voleith_key_r_trace_vec_rep[repetition_id][gate.right_input_wire].custom_multiply_bit(hat_z_bit_trace_vec[gate.left_input_wire])
+                        ).custom_add(
+                            &pb_voleith_key_r_trace_vec_rep[repetition_id][gate.left_input_wire].custom_multiply_bit(hat_z_bit_trace_vec[gate.right_input_wire])
+                        ).custom_add(
+                            &nabla_a_rep[repetition_id].custom_multiply_bit(
+                                hat_z_bit_trace_vec[gate.left_input_wire] & hat_z_bit_trace_vec[gate.right_input_wire]
+                            )
+                        );
+
+                        // print secret state of pa to see
+                        // println!("PA secret state with VOLEitH MAC: {:?}", pa_secret_state_to_be_removed.middle_voleith_mac_r_and_output_vec_rep[repetition_id][and_cursor][
+                        //     (hat_z_bit_trace_vec[gate.left_input_wire] + (hat_z_bit_trace_vec[gate.right_input_wire] << 1u8)) as usize
+                        //     ]);
+                        // println!("Decrypted VOLEitH MAC:            {:?}", proof_transcript.published_decrypted_garbled_row[and_cursor].voleith_mac_field[repetition_id]);
+
+                        assert_eq!(
+                            proof_transcript.published_decrypted_garbled_row[and_cursor].voleith_mac_field[repetition_id],
+                            pa_middle_voleith_key_r_and_output_vec_rep[repetition_id][and_cursor].custom_add(
+                                &nabla_b_rep[repetition_id].custom_multiply_bit(
+                                    proof_transcript.published_decrypted_garbled_row[and_cursor].first_u8
+                                )
+                            )
+                        );
+
+                        // let recovered_k = hat_z_bit_trace_vec[gate.left_input_wire] + (hat_z_bit_trace_vec[gate.right_input_wire] << 1);
+                        assert_eq!(
+                            proof_transcript.pb_published_middle_voleith_mac_r_vec_rep[repetition_id][and_cursor],
+                            pb_middle_voleith_key_r_and_output_vec_rep[repetition_id][and_cursor].custom_add(
+                                &nabla_a_rep[repetition_id].custom_multiply_bit(
+                                    proof_transcript.pb_published_middle_r_bit_vec[and_cursor]
+                                )
+                            )
+                        );
+
+                        and_cursor += 1;
+                    }
+                }
+            }
+        }
     }
 }

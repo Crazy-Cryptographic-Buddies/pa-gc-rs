@@ -5,11 +5,13 @@ use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdapt
 use crate::bristol_fashion_adaptor::{GateInfo, GateType};
 use crate::functionalities_and_protocols::hasher::hasher::Hasher;
 use crate::functionalities_and_protocols::insecure_functionality_pre::insecure_functionality_pre::InsecureFunctionalityPre;
+use crate::functionalities_and_protocols::protocol_check_and::check_and_transcript;
+use crate::functionalities_and_protocols::protocol_check_and::check_and_transcript::CheckAndTranscript;
 use crate::functionalities_and_protocols::protocol_check_and::prover_in_protocol_check_and::ProverInProtocolCheckAND;
-use crate::functionalities_and_protocols::protocol_pa_2pc::{initialize_trace, permute, split_off_rm};
+use crate::functionalities_and_protocols::protocol_pa_2pc::{extract_block_vec_rep, initialize_trace, permute, split_off_rm};
 use crate::functionalities_and_protocols::protocol_svole_2pc::prover_in_protocol_svole_2pc::ProverInProtocolSVOLE2PC;
-use crate::functionalities_and_protocols::states_and_parameters::preprocessing_transcript::PreprocessingTranscript;
-use crate::functionalities_and_protocols::states_and_parameters::proof_transcript::ProofTranscript;
+use crate::functionalities_and_protocols::protocol_pa_2pc::preprocessing_transcript::PreprocessingTranscript;
+use crate::functionalities_and_protocols::protocol_pa_2pc::proof_transcript::ProofTranscript;
 use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::util::parse_two_bits;
@@ -17,7 +19,7 @@ use crate::value_type::{ByteManipulation, CustomAddition, CustomMultiplyingBit, 
 use crate::value_type::garbled_row::GarbledRow;
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
-use crate::vec_type::{BasicVecFunctions, Split, VecAppending, ZeroVec};
+use crate::vec_type::{BasicVecFunctions, Split, VecAddition, VecAppending, ZeroVec};
 
 pub struct ProverInPA2PC;
 
@@ -327,7 +329,7 @@ impl ProverInPA2PC {
                     &public_parameter,
                     &pa_secret_state.voleith_mac_r_input_vec_rep[repetition_id],
                     &pa_secret_state.voleith_mac_r_output_and_vec_rep[repetition_id],
-                    & mut pa_secret_state.voleith_mac_r_trace_vec_rep[repetition_id]
+                    &mut pa_secret_state.voleith_mac_r_trace_vec_rep[repetition_id]
                 );
             }
         );
@@ -507,26 +509,6 @@ impl ProverInPA2PC {
     //
     // )
 
-    fn extract_block_vec_rep<PrimitiveType, VecType>(
-        public_parameter: &PublicParameter,
-        block_id: usize, vec_rep: &Vec<VecType>
-    ) -> Vec<VecType>
-    where
-        PrimitiveType: Clone,
-        VecType: BasicVecFunctions<PrimitiveType> + Clone
-            + Index<usize, Output = PrimitiveType> + IndexMut<usize, Output = PrimitiveType>
-            + FromIterator<PrimitiveType> {
-        assert_eq!(vec_rep.len(), public_parameter.kappa);
-        (0..public_parameter.kappa).map(
-            |repetition_id|
-                VecType::from_vec(
-                    vec_rep[repetition_id].as_slice()[
-                        public_parameter.big_iw_size * block_id..public_parameter.big_iw_size * (block_id + 1)
-                        ].to_vec()
-                )
-        ).collect::<Vec<VecType>>()
-    }
-
     fn extract_single_index_rep<PrimitiveType, VecType>(
         public_parameter: &PublicParameter,
         index: usize, vec_rep: &Vec<VecType>
@@ -587,31 +569,87 @@ impl ProverInPA2PC {
         let pb_published_rm_voleith_mac_b_vec_rep = split_off_rm(public_parameter, &mut pb_secret_state.voleith_mac_tilde_b_vec_rep);
         let pb_published_rm_voleith_mac_c_vec_rep = split_off_rm(public_parameter, &mut pb_secret_state.voleith_mac_tilde_c_vec_rep);
         
-        // PA starts running protocol checkAND
-        for block_id in 0..public_parameter.bs {
-            ProverInProtocolCheckAND::compute_masked_bits_and_voleith_macs(
-                public_parameter,
-                &pa_secret_state.r_prime_left_bit_vec, &pa_secret_state.voleith_mac_r_prime_left_vec_rep,
-                &pa_secret_state.r_prime_right_bit_vec, &pa_secret_state.voleith_mac_r_prime_right_vec_rep,
-                &Self::extract_block_vec_rep(&public_parameter, block_id, &pa_secret_state.tilde_a_bit_vec_rep),
-                &Self::extract_block_vec_rep(&public_parameter, block_id, &pa_secret_state.voleith_mac_tilde_a_vec_rep),
-                &Self::extract_block_vec_rep(&public_parameter, block_id, &pa_secret_state.tilde_b_bit_vec_rep),
-                &Self::extract_block_vec_rep(&public_parameter, block_id, &pa_secret_state.voleith_mac_tilde_b_vec_rep),
-            );
-        }
-
-        // PB starts running protocol checkAND
-        for block_id in 0..public_parameter.bs {
-            ProverInProtocolCheckAND::compute_masked_bits_and_voleith_macs(
-                public_parameter,
-                &pb_secret_state.r_prime_left_bit_vec, &pb_secret_state.voleith_mac_r_prime_left_vec_rep,
-                &pb_secret_state.r_prime_right_bit_vec, &pb_secret_state.voleith_mac_r_prime_right_vec_rep,
-                &Self::extract_block_vec_rep(&public_parameter, block_id, &pb_secret_state.tilde_a_bit_vec_rep),
-                &Self::extract_block_vec_rep(&public_parameter, block_id, &pb_secret_state.voleith_mac_tilde_a_vec_rep),
-                &Self::extract_block_vec_rep(&public_parameter, block_id, &pb_secret_state.tilde_b_bit_vec_rep),
-                &Self::extract_block_vec_rep(&public_parameter, block_id, &pb_secret_state.voleith_mac_tilde_b_vec_rep),
-            );
-        }
+        // PA and PB start running protocol checkAND
+        let check_and_transcript_vec = (0..public_parameter.bs).map(
+            |block_id| {
+                let pa_a_bit_vec_rep = extract_block_vec_rep(&public_parameter, block_id, &pa_secret_state.tilde_a_bit_vec_rep);
+                let pa_voleith_mac_a_vec_rep = extract_block_vec_rep(&public_parameter, block_id, &pa_secret_state.voleith_mac_tilde_a_vec_rep);
+                let pa_b_bit_vec_rep = extract_block_vec_rep(&public_parameter, block_id, &pa_secret_state.tilde_b_bit_vec_rep);
+                let pa_voleith_mac_b_vec_rep = extract_block_vec_rep(&public_parameter, block_id, &pa_secret_state.voleith_mac_tilde_b_vec_rep);
+                let pa_c_bit_vec_rep = extract_block_vec_rep(&public_parameter, block_id, &pa_secret_state.tilde_c_bit_vec_rep);
+                let pa_voleith_mac_c_vec_rep = extract_block_vec_rep(&public_parameter, block_id, &pa_secret_state.voleith_mac_tilde_c_vec_rep);
+                let (
+                    (pa_d_bit_vec_rep, pa_voleith_mac_d_vec_rep),
+                    (pa_e_bit_vec_rep, pa_voleith_mac_e_vec_rep)
+                ) = ProverInProtocolCheckAND::compute_masked_bits_and_voleith_macs(
+                    public_parameter,
+                    &pa_secret_state.r_prime_left_bit_vec, &pa_secret_state.voleith_mac_r_prime_left_vec_rep,
+                    &pa_secret_state.r_prime_right_bit_vec, &pa_secret_state.voleith_mac_r_prime_right_vec_rep,
+                    &pa_a_bit_vec_rep, &pa_voleith_mac_a_vec_rep,
+                    &pa_b_bit_vec_rep, &pa_voleith_mac_a_vec_rep,
+                );
+    
+                let pb_a_bit_vec_rep = extract_block_vec_rep(&public_parameter, block_id, &pb_secret_state.tilde_a_bit_vec_rep);
+                let pb_voleith_mac_a_vec_rep = extract_block_vec_rep(&public_parameter, block_id, &pb_secret_state.voleith_mac_tilde_a_vec_rep);
+                let pb_b_bit_vec_rep = extract_block_vec_rep(&public_parameter, block_id, &pb_secret_state.tilde_b_bit_vec_rep); 
+                let pb_voleith_mac_b_vec_rep = extract_block_vec_rep(&public_parameter, block_id, &pb_secret_state.voleith_mac_tilde_b_vec_rep);
+                let pb_c_bit_vec_rep = extract_block_vec_rep(&public_parameter, block_id, &pa_secret_state.tilde_b_bit_vec_rep);;
+                let pb_voleith_mac_c_vec_rep = extract_block_vec_rep(&public_parameter, block_id, &pa_secret_state.voleith_mac_tilde_b_vec_rep);
+                let (
+                    (pb_d_bit_vec_rep, pb_voleith_mac_d_vec_rep),
+                    (pb_e_bit_vec_rep, pb_voleith_mac_e_vec_rep)
+                ) = ProverInProtocolCheckAND::compute_masked_bits_and_voleith_macs(
+                    public_parameter,
+                    &pb_secret_state.r_prime_left_bit_vec, &pb_secret_state.voleith_mac_r_prime_left_vec_rep,
+                    &pb_secret_state.r_prime_right_bit_vec, &pb_secret_state.voleith_mac_r_prime_right_vec_rep,
+                    &pb_a_bit_vec_rep,
+                    &pb_voleith_mac_a_vec_rep,
+                    &pb_b_bit_vec_rep,
+                    &pb_voleith_mac_b_vec_rep,
+                );
+    
+                let public_d_sum_bit_vec_rep = pa_d_bit_vec_rep.iter().zip(pb_d_bit_vec_rep.iter()).map(
+                    |(pa_d_bit_vec, pb_d_bit_vec)| pa_d_bit_vec.vec_add(pb_d_bit_vec)
+                ).collect::<Vec<BitVec>>();
+    
+                let public_e_sum_bit_vec_rep = pa_e_bit_vec_rep.iter().zip(pb_e_bit_vec_rep.iter()).map(
+                    |(pa_e_bit_vec, pb_e_bit_vec)| pa_e_bit_vec.vec_add(pb_e_bit_vec)
+                ).collect::<Vec<BitVec>>();
+    
+                let (pa_tilde_z_bit_vec_rep, pa_voleith_mac_tilde_z_vec_rep) = ProverInProtocolCheckAND::compute_masked_cross_bits_and_voleith_macs(
+                    &public_parameter,
+                    &public_d_sum_bit_vec_rep, &public_e_sum_bit_vec_rep,
+                    &pa_secret_state.r_prime_bit_vec, &pa_secret_state.voleith_mac_r_prime_vec_rep,
+                    &pa_a_bit_vec_rep, &pa_voleith_mac_a_vec_rep,
+                    &pa_b_bit_vec_rep, &pa_voleith_mac_b_vec_rep,
+                    &pa_c_bit_vec_rep, &pa_voleith_mac_c_vec_rep,
+                );
+    
+                let (pb_tilde_z_bit_vec_rep, pb_voleith_mac_tilde_z_vec_rep) = ProverInProtocolCheckAND::compute_masked_cross_bits_and_voleith_macs(
+                    &public_parameter,
+                    &public_d_sum_bit_vec_rep, &public_e_sum_bit_vec_rep,
+                    &pb_secret_state.r_prime_bit_vec, &pb_secret_state.voleith_mac_r_prime_vec_rep,
+                    &pb_a_bit_vec_rep, &pb_voleith_mac_a_vec_rep,
+                    &pb_b_bit_vec_rep, &pb_voleith_mac_b_vec_rep,
+                    &pb_c_bit_vec_rep, &pb_voleith_mac_c_vec_rep,
+                );
+                
+                // collect all 
+                CheckAndTranscript::new(
+                    (
+                        (pa_d_bit_vec_rep, pa_voleith_mac_d_vec_rep),
+                        (pa_e_bit_vec_rep, pa_voleith_mac_e_vec_rep),
+                        (pa_tilde_z_bit_vec_rep, pa_voleith_mac_tilde_z_vec_rep)
+                    ),
+                    (
+                        (pb_d_bit_vec_rep, pb_voleith_mac_d_vec_rep),
+                        (pb_e_bit_vec_rep, pb_voleith_mac_e_vec_rep),
+                        (pb_tilde_z_bit_vec_rep, pb_voleith_mac_tilde_z_vec_rep)
+                    ),
+                    public_d_sum_bit_vec_rep, public_e_sum_bit_vec_rep,
+                )
+            }
+        ).collect();
 
         // Input processing phase by PA ------------------------------------------------------------------------------------------------------
         let pa_published_authenticated_input_vec = public_parameter.big_ib.iter().map(
@@ -710,7 +748,7 @@ impl ProverInPA2PC {
             pb_published_rm_voleith_mac_a_vec_rep,
             pb_published_rm_voleith_mac_b_vec_rep,
             pb_published_rm_voleith_mac_c_vec_rep,
-            
+            check_and_transcript_vec,
             pa_published_authenticated_input_vec,
             pb_published_authenticated_input_vec,
         );
@@ -803,6 +841,7 @@ impl ProverInPA2PC {
                         proof_transcript.pb_published_middle_voleith_mac_r_vec_rep[repetition_id][and_cursor] = pb_secret_state.middle_voleith_mac_r_and_output_vec_rep[repetition_id][and_cursor][recovered_k as usize].clone();
                     });
                     proof_transcript.pb_published_middle_randomness_vec[and_cursor] = pb_secret_state.commitment_randomness_vec_rep.as_ref().unwrap()[and_cursor][recovered_k as usize].clone();
+                    proof_transcript.published_decrypted_garbled_row[and_cursor] = decrypted_gabled_row;
                     and_cursor += 1;
                 }
             }

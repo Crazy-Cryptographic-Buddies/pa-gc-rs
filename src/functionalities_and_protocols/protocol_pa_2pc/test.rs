@@ -7,7 +7,7 @@ mod tests {
     use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_pa_2pc::prover_in_pa_2pc::ProverInPA2PC;
     use crate::functionalities_and_protocols::protocol_pa_2pc::verifier_in_pa_2pc::VerifierInPA2PC;
-    use crate::functionalities_and_protocols::states_and_parameters::proof_transcript;
+    use crate::functionalities_and_protocols::protocol_pa_2pc::proof_transcript;
     use crate::functionalities_and_protocols::util::verifier::Verifier;
     use crate::value_type::gf2p256::GF2p256;
     use crate::value_type::gf2p8::GF2p8;
@@ -117,7 +117,8 @@ mod tests {
             &permutation_rep,
             &nabla_a_rep, &nabla_b_rep,
             &preprocessing_transcript,
-            &proof_transcript
+            &proof_transcript,
+            &pa_secret_state, // to be removed later
         )
     }
 }

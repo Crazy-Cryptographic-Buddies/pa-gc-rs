@@ -2,6 +2,7 @@
 mod tests {
     use itertools::izip;
     use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
+    use crate::functionalities_and_protocols::protocol_check_and::check_and_transcript::CheckAndTranscript;
     use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_check_and::prover_in_protocol_check_and::ProverInProtocolCheckAND;
     use crate::functionalities_and_protocols::protocol_check_and::verifier_in_protocol_check_and::VerifierInProtocolCheckAND;
@@ -316,20 +317,24 @@ mod tests {
             &pb_b_bit_vec_rep, &pb_voleith_mac_b_vec_rep,
             &pb_c_bit_vec_rep, &pb_voleith_mac_c_vec_rep,
         );
-
-        VerifierInProtocolCheckAND::verify(
-            &public_parameter,
-            &(
+        
+        let check_and_transcript = CheckAndTranscript::new(
+            (
                 (pa_d_bit_vec_rep, pa_voleith_mac_d_vec_rep),
                 (pa_e_bit_vec_rep, pa_voleith_mac_e_vec_rep),
                 (pa_tilde_z_bit_vec_rep, pa_voleith_mac_tilde_z_vec_rep)
             ),
-            &(
+            (
                 (pb_d_bit_vec_rep, pb_voleith_mac_d_vec_rep),
                 (pb_e_bit_vec_rep, pb_voleith_mac_e_vec_rep),
                 (pb_tilde_z_bit_vec_rep, pb_voleith_mac_tilde_z_vec_rep)
             ),
-            &public_d_sum_bit_vec_rep, &public_e_sum_bit_vec_rep,
+            public_d_sum_bit_vec_rep, public_e_sum_bit_vec_rep,
+        );
+
+        VerifierInProtocolCheckAND::verify(
+            &public_parameter,
+            &check_and_transcript,
             &nabla_a_rep, &nabla_b_rep,
             &(
                 (pa_voleith_key_x_vec_rep, pa_voleith_key_y_vec_rep, pa_voleith_key_z_vec_rep),

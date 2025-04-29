@@ -1,5 +1,7 @@
 use blake3::Hash;
+use crate::functionalities_and_protocols::protocol_check_and::check_and_transcript::CheckAndTranscript;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
+use crate::value_type::garbled_row::GarbledRow;
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::value_type::Zero;
 use crate::vec_type::{BasicVecFunctions, ZeroVec};
@@ -7,7 +9,7 @@ use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 
 pub struct ProofTranscript<GFVOLE, GFVOLEitH> {
-
+    // before nabla
     pub pa_published_rm_a_vec_rep: Vec<BitVec>,
     pub pa_published_rm_b_vec_rep: Vec<BitVec>,
     pub pa_published_rm_c_vec_rep: Vec<BitVec>,
@@ -40,7 +42,11 @@ pub struct ProofTranscript<GFVOLE, GFVOLEitH> {
     pub pb_published_output_voleith_mac_r_vec_rep: Vec<GFVec<GFVOLEitH>>,
 
     pub published_output_bit_vec: BitVec,
+    pub published_decrypted_garbled_row: Vec<GarbledRow<GFVOLE, GFVOLEitH>>,
     
+    pub check_and_transcript_vec: Vec<CheckAndTranscript<GFVOLEitH>>,
+    
+    // after nabla
     pub pa_decom: Vec<(SeedU8x16, Vec<SeedU8x16>)>,
     pub pb_decom: Vec<(SeedU8x16, Vec<SeedU8x16>)>,
 }
@@ -67,6 +73,8 @@ where
         pb_published_rm_voleith_mac_a_vec_rep: Vec<GFVec<GFVOLEitH>>,
         pb_published_rm_voleith_mac_b_vec_rep: Vec<GFVec<GFVOLEitH>>,
         pb_published_rm_voleith_mac_c_vec_rep: Vec<GFVec<GFVOLEitH>>,
+        
+        check_and_transcript_vec: Vec<CheckAndTranscript<GFVOLEitH>>,
 
         pa_published_authenticated_input_vec: Vec<(u8, GFVOLE, Vec<GFVOLEitH>)>,
         pb_published_authenticated_input_vec: Vec<(u8, GFVOLE, Vec<GFVOLEitH>)>,
@@ -101,6 +109,8 @@ where
             pb_published_output_r_bit_vec: BitVec::zero_vec(public_parameter.big_io_size),
             pb_published_output_voleith_mac_r_vec_rep: vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_io_size); public_parameter.kappa],
             published_output_bit_vec: BitVec::zero_vec(public_parameter.big_io_size),
+            published_decrypted_garbled_row: vec![GarbledRow::zero(); public_parameter.big_iw_size],
+            check_and_transcript_vec,
             pa_decom: Vec::new(),
             pb_decom: Vec::new(),
         }
