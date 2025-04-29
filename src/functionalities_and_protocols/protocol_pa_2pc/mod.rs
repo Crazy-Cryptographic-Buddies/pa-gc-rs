@@ -1,7 +1,10 @@
 use std::ops::{Index, IndexMut};
+use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
+use crate::bristol_fashion_adaptor::GateType;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::value_type::Zero;
 use crate::vec_type::{BasicVecFunctions, Split, ZeroVec};
+use crate::vec_type::bit_vec::BitVec;
 
 mod test;
 mod prover_in_pa_2pc;
@@ -80,4 +83,23 @@ where
                     ].to_vec()
             )
     ).collect::<Vec<VecType>>()
+}
+
+fn determine_bit_trace_for_labels_in_garbling(
+    bristol_fashion_adaptor: &BristolFashionAdaptor,
+    public_parameter: &PublicParameter,
+) -> BitVec {
+    let mut bit_trace_vec = BitVec::zero_vec(public_parameter.num_wires);
+    for gate in bristol_fashion_adaptor.get_gate_vec() {
+        match gate.gate_type {
+            GateType::XOR => {
+                bit_trace_vec[gate.output_wire] = bit_trace_vec[gate.left_input_wire] ^ bit_trace_vec[gate.right_input_wire];
+            }
+            GateType::AND => {}
+            GateType::NOT => {
+                bit_trace_vec[gate.output_wire] = 1u8 ^ bit_trace_vec[gate.left_input_wire];
+            }
+        }
+    }
+    bit_trace_vec
 }

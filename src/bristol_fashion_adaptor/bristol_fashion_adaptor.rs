@@ -3,6 +3,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 use crate::bristol_fashion_adaptor::{GateInfo, GateType};
+use crate::vec_type::bit_vec::BitVec;
 
 pub struct BristolFashionAdaptor {
     num_wires: usize,
@@ -111,7 +112,7 @@ impl BristolFashionAdaptor {
         }
     }
 
-    fn compute_output_bits(&self, input_bit_vec: &Vec<u8>) -> Vec<u8> {
+    pub fn compute_output_bits(&self, input_bit_vec: &Vec<u8>) -> Vec<u8> {
         assert_eq!(input_bit_vec.len(), self.num_input_bits);
         // println!("input_bit_vec_len: {:?}", input_bit_vec.len());
         // println!("self.num_input_bits: {:?}", self.num_input_bits);

@@ -208,7 +208,9 @@ impl VerifierInPA2PC {
                         pb_voleith_key_r_trace_vec_rep[repetition_id][gate.output_wire] = pb_voleith_key_r_trace_vec_rep[repetition_id][gate.left_input_wire].custom_add(&pb_voleith_key_r_trace_vec_rep[repetition_id][gate.right_input_wire]);
                     }
                     GateType::NOT => {
-                        unimplemented!();
+                        hat_z_bit_trace_vec[gate.output_wire] = hat_z_bit_trace_vec[gate.left_input_wire] ^ 1u8;
+                        pa_voleith_key_r_trace_vec_rep[repetition_id][gate.output_wire] = pa_voleith_key_r_trace_vec_rep[repetition_id][gate.left_input_wire];
+                        pb_voleith_key_r_trace_vec_rep[repetition_id][gate.output_wire] = pb_voleith_key_r_trace_vec_rep[repetition_id][gate.left_input_wire];
                     }
                     GateType::AND => {
                         // we do not need to compute hat_z_bit_trace_vec in this case

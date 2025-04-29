@@ -2,6 +2,7 @@
 mod tests {
     use rand::Rng;
     use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
+    use crate::functionalities_and_protocols::protocol_pa_2pc::determine_bit_trace_for_labels_in_garbling;
     use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
     use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_pa_2pc::prover_in_pa_2pc::ProverInPA2PC;
@@ -10,7 +11,9 @@ mod tests {
     use crate::value_type::gf2p8::GF2p8;
     use crate::value_type::seed_u8x16::SeedU8x16;
     use crate::value_type::{InsecureRandom, U8ForGF};
-
+    use crate::vec_type::bit_vec::BitVec;
+    use crate::vec_type::BasicVecFunctions;
+    
     fn insecurely_generate_random_permutation(len: usize) -> Vec<usize> {
         let mut random_permutation = (0..len).collect::<Vec<usize>>();
         let mut rng = rand::rng();
@@ -20,13 +23,38 @@ mod tests {
         }
         random_permutation
     }
+
+    fn determine_full_input_bit_vec(
+        public_parameter: &PublicParameter,
+        pa_input_bit_vec: &Vec<u8>,
+        pb_input_bit_vec: &Vec<u8>,
+    ) -> Vec<u8> {
+        let mut full_input_bit_vec = vec![0u8; public_parameter.num_input_bits];
+        let mut input_cursor = 0usize;
+        public_parameter.big_ia.iter().for_each(
+            |&input_wire| {
+                full_input_bit_vec[input_wire] = pa_input_bit_vec[input_cursor];
+                input_cursor += 1;
+            }
+        );
+
+        input_cursor = 0usize;
+        public_parameter.big_ib.iter().for_each(
+            |&input_wire| {
+                full_input_bit_vec[input_wire] = pb_input_bit_vec[input_cursor];
+                input_cursor += 1;
+            }
+        );
+
+        full_input_bit_vec
+    }
     
     #[test]
-    fn test_pa_2pc_for_addition() {
+    fn test_pa_2pc_for_sub64() {
         type GFVOLE = GF2p256;
         type GFVOLEitH = GF2p8;
         let bristol_fashion_adaptor = BristolFashionAdaptor::new(
-            &"adder64.txt".to_string()
+            &"sub64.txt".to_string()
         );
         let mut rng = rand::rng();
         // println!("Num AND gates: {:?}", bristol_fashion_adaptor.get_and_gate_output_wire_vec().len());
@@ -64,9 +92,15 @@ mod tests {
             SeedU8x16::insecurely_random(),
             false
         );
+
+        let bit_trace_vec_for_labels_in_garbling = determine_bit_trace_for_labels_in_garbling(
+            &bristol_fashion_adaptor,
+            &public_parameter,
+        );
         
         let preprocessing_transcript = ProverInPA2PC::preprocess(
-            &bristol_fashion_adaptor, 
+            &bristol_fashion_adaptor,
+            &bit_trace_vec_for_labels_in_garbling,
             &public_parameter, 
             &mut pa_secret_state, 
             &mut pb_secret_state,
@@ -106,7 +140,16 @@ mod tests {
             &nabla_a_rep, &nabla_b_rep,
             &preprocessing_transcript,
             &proof_transcript,
-            // &pa_secret_state, // to be removed later
-        )
+        );
+
+        println!("{:?}", proof_transcript.published_output_bit_vec);
+        let full_input_bit_vec = determine_full_input_bit_vec(
+            &public_parameter,
+            &pa_input_bit_vec,
+            &pb_input_bit_vec,
+        );
+        let expected_output_bit_vec = BitVec::from_vec(bristol_fashion_adaptor.compute_output_bits(&full_input_bit_vec));
+        println!("{:?}", expected_output_bit_vec);
+        assert_eq!(proof_transcript.published_output_bit_vec, expected_output_bit_vec);
     }
 }

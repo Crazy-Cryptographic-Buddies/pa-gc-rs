@@ -62,6 +62,7 @@ impl ProverInPA2PC {
 
     pub fn preprocess<GFVOLE, GFVOLEitH>(
         bristol_fashion_adaptor: &BristolFashionAdaptor,
+        bit_trace_vec_for_labels_in_garbling: &BitVec,
         public_parameter: &PublicParameter,
         pa_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>,
         pb_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>,
@@ -230,17 +231,17 @@ impl ProverInPA2PC {
                     pb_secret_state.other_vole_key_r_trace_vec[gate.output_wire] = pb_secret_state.other_vole_key_r_trace_vec[gate.left_input_wire].custom_add(&pb_secret_state.other_vole_key_r_trace_vec[gate.right_input_wire]);
                 },
                 GateType::NOT => {
-                    unimplemented!();
-                    // // compute for pa
-                    // pa_secret_state.r_trace_bit_vec[gate.output_wire] = pa_secret_state.r_trace_bit_vec[gate.left_input_wire];
-                    // pa_secret_state.vole_mac_r_trace_vec[gate.output_wire] = pa_secret_state.vole_mac_r_trace_vec[gate.left_input_wire];
-                    // pa_secret_state.other_vole_key_r_trace_vec[gate.output_wire] = pa_secret_state.other_vole_key_r_trace_vec[gate.left_input_wire];
-                    // pa_secret_state.label_zero_vec.as_mut().unwrap()[gate.output_wire] = pa_secret_state.label_zero_vec.as_ref().unwrap()[gate.left_input_wire];
-                    //
-                    // // compute for pb
-                    // pb_secret_state.r_trace_bit_vec[gate.output_wire] = pb_secret_state.r_trace_bit_vec[gate.left_input_wire];
-                    // pb_secret_state.vole_mac_r_trace_vec[gate.output_wire] = pb_secret_state.vole_mac_r_trace_vec[gate.left_input_wire];
-                    // pb_secret_state.other_vole_key_r_trace_vec[gate.output_wire] = pb_secret_state.other_vole_key_r_trace_vec[gate.left_input_wire];
+                    // unimplemented!();
+                    // compute for pa
+                    pa_secret_state.r_trace_bit_vec[gate.output_wire] = pa_secret_state.r_trace_bit_vec[gate.left_input_wire];
+                    pa_secret_state.vole_mac_r_trace_vec[gate.output_wire] = pa_secret_state.vole_mac_r_trace_vec[gate.left_input_wire];
+                    pa_secret_state.other_vole_key_r_trace_vec[gate.output_wire] = pa_secret_state.other_vole_key_r_trace_vec[gate.left_input_wire];
+                    pa_secret_state.label_zero_vec.as_mut().unwrap()[gate.output_wire] = pa_secret_state.label_zero_vec.as_ref().unwrap()[gate.left_input_wire];
+                    
+                    // compute for pb
+                    pb_secret_state.r_trace_bit_vec[gate.output_wire] = pb_secret_state.r_trace_bit_vec[gate.left_input_wire];
+                    pb_secret_state.vole_mac_r_trace_vec[gate.output_wire] = pb_secret_state.vole_mac_r_trace_vec[gate.left_input_wire];
+                    pb_secret_state.other_vole_key_r_trace_vec[gate.output_wire] = pb_secret_state.other_vole_key_r_trace_vec[gate.left_input_wire];
                 },
                 GateType::AND => {
                     InsecureFunctionalityPre::generate_random_authenticated_and_tuples(
@@ -363,16 +364,16 @@ impl ProverInPA2PC {
                     }
                 },
                 GateType::NOT => {
-                    unimplemented!();
-                    // // compute for pa
-                    // for repetition_id in 0..public_parameter.kappa {
-                    //     pa_secret_state.voleith_mac_r_trace_vec_rep[repetition_id][gate.output_wire] = pa_secret_state.voleith_mac_r_trace_vec_rep[repetition_id][gate.left_input_wire];
-                    // }
-                    //
-                    // // compute for pb
-                    // for repetition_id in 0..public_parameter.kappa {
-                    //     pb_secret_state.voleith_mac_r_trace_vec_rep[repetition_id][gate.output_wire] = pb_secret_state.voleith_mac_r_trace_vec_rep[repetition_id][gate.left_input_wire];
-                    // }
+                    // unimplemented!();
+                    // compute for pa
+                    for repetition_id in 0..public_parameter.kappa {
+                        pa_secret_state.voleith_mac_r_trace_vec_rep[repetition_id][gate.output_wire] = pa_secret_state.voleith_mac_r_trace_vec_rep[repetition_id][gate.left_input_wire];
+                    }
+                    
+                    // compute for pb
+                    for repetition_id in 0..public_parameter.kappa {
+                        pb_secret_state.voleith_mac_r_trace_vec_rep[repetition_id][gate.output_wire] = pb_secret_state.voleith_mac_r_trace_vec_rep[repetition_id][gate.left_input_wire];
+                    }
                 },
                 GateType::AND => {
 
@@ -415,10 +416,10 @@ impl ProverInPA2PC {
         for and_gate_id in bristol_fashion_adaptor.get_and_gate_id_vec() {
             let gate = &bristol_fashion_adaptor.get_gate_vec()[*and_gate_id];
             let mut pa_label = [[GFVOLE::zero(); 2]; 2];
-            pa_label[0][0] = pa_secret_state.label_zero_vec.as_ref().unwrap()[gate.left_input_wire];
-            pa_label[1][0] = pa_secret_state.label_zero_vec.as_ref().unwrap()[gate.right_input_wire];
-            pa_label[0][1] = pa_secret_state.delta.as_ref().unwrap().custom_add(&pa_label[0][0]);
-            pa_label[1][1] = pa_secret_state.delta.as_ref().unwrap().custom_add(&pa_label[1][0]);
+            pa_label[0][bit_trace_vec_for_labels_in_garbling[gate.left_input_wire] as usize] = pa_secret_state.label_zero_vec.as_ref().unwrap()[gate.left_input_wire];
+            pa_label[1][bit_trace_vec_for_labels_in_garbling[gate.right_input_wire] as usize] = pa_secret_state.label_zero_vec.as_ref().unwrap()[gate.right_input_wire];
+            pa_label[0][(1u8 ^ bit_trace_vec_for_labels_in_garbling[gate.left_input_wire]) as usize] = pa_secret_state.delta.as_ref().unwrap().custom_add(&pa_label[0][bit_trace_vec_for_labels_in_garbling[gate.left_input_wire] as usize]);
+            pa_label[1][(1u8 ^ bit_trace_vec_for_labels_in_garbling[gate.right_input_wire]) as usize] = pa_secret_state.delta.as_ref().unwrap().custom_add(&pa_label[1][bit_trace_vec_for_labels_in_garbling[gate.right_input_wire] as usize]);
             for k in 0..4 {
                 let (k0, k1) = parse_two_bits(k);
                 garbled_table[and_cursor][k as usize] = hasher::hash_for_garbling(
@@ -826,9 +827,9 @@ impl ProverInPA2PC {
                     recovered_label_vec[gate.output_wire] = recovered_label_vec[gate.left_input_wire].custom_add(&recovered_label_vec[gate.right_input_wire]);
                 }
                 GateType::NOT => {
-                    unimplemented!();
-                    // recovered_hat_z_bit_vec[gate.output_wire] = recovered_hat_z_bit_vec[gate.left_input_wire] ^ 1u8;
-                    // recovered_label_vec[gate.output_wire] = recovered_label_vec[gate.left_input_wire].clone();
+                    // unimplemented!();
+                    recovered_hat_z_bit_vec[gate.output_wire] = recovered_hat_z_bit_vec[gate.left_input_wire] ^ 1u8;
+                    recovered_label_vec[gate.output_wire] = recovered_label_vec[gate.left_input_wire].clone();
                 }
                 GateType::AND => {
                     let recovered_k =  recovered_hat_z_bit_vec[gate.left_input_wire] + (recovered_hat_z_bit_vec[gate.right_input_wire] << 1);
