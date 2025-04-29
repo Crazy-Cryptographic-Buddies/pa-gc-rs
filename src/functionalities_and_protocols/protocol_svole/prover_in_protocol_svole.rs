@@ -1,10 +1,7 @@
-use blake3::Hash;
 use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::value_type::seed_u8x16::SeedU8x16;
-use crate::value_type::{CustomAddition, U8ForGF, Zero};
-use crate::vec_type::bit_vec::BitVec;
-use crate::vec_type::gf_vec::GFVec;
+use crate::value_type::U8ForGF;
 
 pub(crate) struct ProverInProtocolSVOLE {
 }

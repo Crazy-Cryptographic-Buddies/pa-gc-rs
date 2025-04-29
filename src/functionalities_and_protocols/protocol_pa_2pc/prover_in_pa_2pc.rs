@@ -15,6 +15,7 @@ use crate::functionalities_and_protocols::states_and_parameters::public_paramete
 use crate::functionalities_and_protocols::util::parse_two_bits;
 use crate::value_type::{ByteManipulation, CustomAddition, CustomMultiplyingBit, InsecureRandom, U8ForGF, Zero};
 use crate::value_type::garbled_row::GarbledRow;
+use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 use crate::vec_type::{
@@ -61,6 +62,7 @@ impl ProverInPA2PC {
     }
 
     pub fn preprocess<GFVOLE, GFVOLEitH>(
+        process_printing: bool,
         bristol_fashion_adaptor: &BristolFashionAdaptor,
         bit_trace_vec_for_labels_in_garbling: &BitVec,
         public_parameter: &PublicParameter,
@@ -71,14 +73,22 @@ impl ProverInPA2PC {
         GFVOLE: Clone + CustomAddition + CustomMultiplyingBit + InsecureRandom + Zero + Copy + PartialEq + Debug + ByteManipulation + Sync + Send,
         GFVOLEitH: Clone + Zero + CustomAddition + U8ForGF + Copy + CustomMultiplyingBit + ByteManipulation + Sync + Send
     {
-        println!("+ Preprocessing...");
-        println!("  PA obtains delta from FPre");
+        if process_printing {
+            println!("+ Preprocessing...");
+        }
+        if process_printing {
+            println!("  PA obtains delta from FPre");
+        }
         InsecureFunctionalityPre::generate_delta(&mut pa_secret_state.delta);
 
-        println!("  PB obtains delta from FPre");
+        if process_printing {
+            println!("  PB obtains delta from FPre");
+        }
         InsecureFunctionalityPre::generate_delta(&mut pb_secret_state.delta);
 
-        println!("  PA obtains vole-authenticated bits");
+        if process_printing {
+            println!("  PA obtains vole-authenticated bits");
+        }
         InsecureFunctionalityPre::generate_random_tuples::<GFVOLE, GFVOLEitH>(
             public_parameter.num_input_bits,
             &pb_secret_state.delta.as_ref().unwrap(),
@@ -100,7 +110,9 @@ impl ProverInPA2PC {
         assert_eq!(pa_secret_state.vole_mac_r_output_and_vec.len(), public_parameter.big_iw_size);
         assert_eq!(pb_secret_state.other_vole_key_r_output_and_vec.len(), public_parameter.big_iw_size);
 
-        println!("  PB obtains vole-authenticated bits");
+        if process_printing {
+            println!("  PB obtains vole-authenticated bits");
+        }
         InsecureFunctionalityPre::generate_random_tuples::<GFVOLE, GFVOLEitH>(
             public_parameter.num_input_bits,
             &pa_secret_state.delta.as_ref().unwrap(),
@@ -123,7 +135,9 @@ impl ProverInPA2PC {
         assert_eq!(pb_secret_state.vole_mac_r_output_and_vec.len(), public_parameter.big_iw_size);
         assert_eq!(pa_secret_state.other_vole_key_r_output_and_vec.len(), public_parameter.big_iw_size);
 
-        println!("  PA initializes labels");
+        if process_printing {
+            println!("  PA initializes labels");
+        }
         let pa_label_zero_input_vec = (0..public_parameter.num_input_bits).map(
             |_| GFVOLE::insecurely_random()
         ).collect::<GFVec<GFVOLE>>();
@@ -133,7 +147,9 @@ impl ProverInPA2PC {
         assert_eq!(pa_label_zero_input_vec.len(), public_parameter.num_input_bits);
         assert_eq!(pa_label_zero_output_and_vec.len(), public_parameter.big_iw_size);
 
-        println!("  PA initializes traces");
+        if process_printing {
+            println!("  PA initializes traces");
+        }
         initialize_trace::<u8, BitVec>(
             public_parameter,
             &pa_secret_state.r_input_bit_vec,
@@ -163,7 +179,9 @@ impl ProverInPA2PC {
         );
         assert_eq!(pa_secret_state.label_zero_vec.as_ref().unwrap().len(), public_parameter.num_wires);
 
-        println!("  PB initializes traces");
+        if process_printing {
+            println!("  PB initializes traces");
+        }
         initialize_trace::<u8, BitVec>(
             public_parameter,
             &pb_secret_state.r_input_bit_vec,
@@ -186,7 +204,9 @@ impl ProverInPA2PC {
         );
         assert_eq!(pb_secret_state.other_vole_key_r_trace_vec.len(), public_parameter.num_wires);
 
-        println!("  Both parties obtain multiplication AND triples");
+        if process_printing {
+            println!("  Both parties obtain multiplication AND triples");
+        }
         InsecureFunctionalityPre::generate_random_and_tuples(
             public_parameter.kappa,
             public_parameter.big_l,
@@ -212,7 +232,9 @@ impl ProverInPA2PC {
         // let mut pb_middle_vole_mac_r_and_output_vec = vec![[GFVOLE::zero(); 4]; public_parameter.big_iw_size];
         // let mut pb_other_middle_vole_key_r_and_output_vec = vec![[GFVOLE::zero(); 4]; public_parameter.big_iw_size];
 
-        println!("  Compute VOLE MACs and keys following circuit's topological order");
+        if process_printing {
+            println!("  Compute VOLE MACs and keys following circuit's topological order");
+        }
         let mut and_cursor = 0usize;
         for gate in bristol_fashion_adaptor.get_gate_vec() {
             match gate.gate_type {
@@ -306,21 +328,27 @@ impl ProverInPA2PC {
             }
         }
 
-        println!("  PA obtains VOLEitH MACs from PiSVOLE2PC");
+        if process_printing {
+            println!("  PA obtains VOLEitH MACs from PiSVOLE2PC");
+        }
         let (
             pa_com_hash_rep, pa_masked_bit_tuple_rep
         ) = ProverInProtocolSVOLE2PC::commit_and_fix_bit_vec_and_mac_vec::<GFVOLE, GFVOLEitH>(
-            &public_parameter, pa_secret_state,
+            process_printing, &public_parameter, pa_secret_state,
         );
 
-        println!("  PB obtains VOLEitH MACs from PiSVOLE2PC");
+        if process_printing {
+            println!("  PB obtains VOLEitH MACs from PiSVOLE2PC");
+        }
         let (
             pb_com_hash_rep, pb_masked_bit_tuple_rep
         ) = ProverInProtocolSVOLE2PC::commit_and_fix_bit_vec_and_mac_vec::<GFVOLE, GFVOLEitH>(
-            &public_parameter, pb_secret_state,
+            process_printing, &public_parameter, pb_secret_state,
         );
 
-        println!("  PA initializes traces for computing VOLEitH MACs following circuit's topological order");
+        if process_printing {
+            println!("  PA initializes traces for computing VOLEitH MACs following circuit's topological order");
+        }
         (0..public_parameter.kappa).for_each(
             |repetition_id| {
                 initialize_trace::<GFVOLEitH, GFVec<GFVOLEitH>>(
@@ -331,7 +359,9 @@ impl ProverInPA2PC {
                 );
             }
         );
-        println!("  PB initializes traces for computing VOLEitH MACs following circuit's topological order");
+        if process_printing {
+            println!("  PB initializes traces for computing VOLEitH MACs following circuit's topological order");
+        }
         (0..public_parameter.kappa).for_each(
             |repetition_id| {
                 initialize_trace::<GFVOLEitH, GFVec<GFVOLEitH>>(
@@ -343,7 +373,9 @@ impl ProverInPA2PC {
             }
         );
 
-        println!("  Both parties compute VOLEitH MACs following circuit's topological order");
+        if process_printing {
+            println!("  Both parties compute VOLEitH MACs following circuit's topological order");
+        }
         and_cursor = 0usize;
         for gate in bristol_fashion_adaptor.get_gate_vec() {
             match gate.gate_type {
@@ -407,7 +439,9 @@ impl ProverInPA2PC {
             }
         }
 
-        println!("  PA encrypts for garbling");
+        if process_printing {
+            println!("  PA encrypts for garbling");
+        }
         and_cursor = 0usize;
         let mut garbled_table: Vec<Vec<GarbledRow<GFVOLE, GFVOLEitH>>> = vec![vec![GarbledRow::zero(); 4]; public_parameter.big_iw_size];
         // println!("pa_middle_r: {:?}", pa_secret_state.middle_r_and_output_bit_vec);
@@ -449,7 +483,9 @@ impl ProverInPA2PC {
             and_cursor += 1;
         }
 
-        println!("  PB commits intermediate messages");
+        if process_printing {
+            println!("  PB commits intermediate messages");
+        }
         and_cursor = 0usize;
         let mut pb_middle_commitment_vec = vec![[Hash::from_bytes([0u8; 32]); 4]; public_parameter.big_iw_size];
         let (mut current_seed, _) = public_parameter.one_to_two_prg.generate_double(&pb_secret_state.seed_for_commitment_randomness);
@@ -469,7 +505,9 @@ impl ProverInPA2PC {
             and_cursor += 1;
         }
 
-        println!("  PA records auxiliary components to her state");
+        if process_printing {
+            println!("  PA records auxiliary components to her state");
+        }
         and_cursor = 0usize;
         for and_gate_id in bristol_fashion_adaptor.get_and_gate_id_vec() {
             let gate = &bristol_fashion_adaptor.get_gate_vec()[*and_gate_id];
@@ -483,7 +521,9 @@ impl ProverInPA2PC {
             and_cursor += 1;
         }
 
-        println!("  PB records auxiliary components to her state");
+        if process_printing {
+            println!("  PB records auxiliary components to her state");
+        }
         and_cursor = 0usize;
         for and_gate_id in bristol_fashion_adaptor.get_and_gate_id_vec() {
             let gate = &bristol_fashion_adaptor.get_gate_vec()[*and_gate_id];
@@ -522,6 +562,7 @@ impl ProverInPA2PC {
     // }
 
     pub fn prove<GFVOLE, GFVOLEitH>(
+        process_printing: bool,
         bristol_fashion_adaptor: &BristolFashionAdaptor,
         public_parameter: &PublicParameter,
         preprocessing_transcript: &PreprocessingTranscript<GFVOLE, GFVOLEitH>,
@@ -531,13 +572,17 @@ impl ProverInPA2PC {
         pa_input_bits: &Vec<u8>,
         pb_input_bits: &Vec<u8>,
         nabla_a_rep: &Vec<GFVOLEitH>, nabla_b_rep: &Vec<GFVOLEitH>,
-    ) -> ProofTranscript<GFVOLE, GFVOLEitH>
+    ) -> (ProofTranscript<GFVOLE, GFVOLEitH>, Vec<(SeedU8x16, Vec<SeedU8x16>)>, Vec<(SeedU8x16, Vec<SeedU8x16>)>)
     where
         GFVOLE: Clone + Zero + CustomAddition + CustomMultiplyingBit + PartialEq + Debug + ByteManipulation + Debug,
         GFVOLEitH: Clone + Zero + CustomAddition + ByteManipulation + Debug + U8ForGF {
-        println!("+ Proving...");
+        if process_printing {
+            println!("+ Proving...");
+        }
 
-        println!("  PA permutes");
+        if process_printing {
+            println!("  PA permutes");
+        }
         permute(public_parameter, &permutation_rep, &mut pa_secret_state.tilde_a_bit_vec_rep);
         permute(public_parameter, &permutation_rep, &mut pa_secret_state.tilde_b_bit_vec_rep);
         permute(public_parameter, &permutation_rep, &mut pa_secret_state.tilde_c_bit_vec_rep);
@@ -545,7 +590,9 @@ impl ProverInPA2PC {
         permute(public_parameter, &permutation_rep, &mut pa_secret_state.voleith_mac_tilde_b_vec_rep);
         permute(public_parameter, &permutation_rep, &mut pa_secret_state.voleith_mac_tilde_c_vec_rep);
 
-        println!("  PB permutes");
+        if process_printing {
+            println!("  PB permutes");
+        }
         permute(public_parameter, &permutation_rep, &mut pb_secret_state.tilde_a_bit_vec_rep);
         permute(public_parameter, &permutation_rep, &mut pb_secret_state.tilde_b_bit_vec_rep);
         permute(public_parameter, &permutation_rep, &mut pb_secret_state.tilde_c_bit_vec_rep);
@@ -553,7 +600,9 @@ impl ProverInPA2PC {
         permute(public_parameter, &permutation_rep, &mut pb_secret_state.voleith_mac_tilde_b_vec_rep);
         permute(public_parameter, &permutation_rep, &mut pb_secret_state.voleith_mac_tilde_c_vec_rep);
 
-        println!("  PA determines published components");
+        if process_printing {
+            println!("  PA determines published components");
+        }
         let pa_published_rm_a_vec_rep = split_off_rm(public_parameter, &mut pa_secret_state.tilde_a_bit_vec_rep);
         let pa_published_rm_b_vec_rep = split_off_rm(public_parameter, &mut pa_secret_state.tilde_b_bit_vec_rep);
         let pa_published_rm_c_vec_rep = split_off_rm(public_parameter, &mut pa_secret_state.tilde_c_bit_vec_rep);
@@ -561,15 +610,19 @@ impl ProverInPA2PC {
         let pa_published_rm_voleith_mac_b_vec_rep = split_off_rm(public_parameter, &mut pa_secret_state.voleith_mac_tilde_b_vec_rep);
         let pa_published_rm_voleith_mac_c_vec_rep = split_off_rm(public_parameter, &mut pa_secret_state.voleith_mac_tilde_c_vec_rep);
 
-        println!("  PB determines published components");
+        if process_printing {
+            println!("  PB determines published components");
+        }
         let pb_published_rm_a_vec_rep = split_off_rm(public_parameter, &mut pb_secret_state.tilde_a_bit_vec_rep);
         let pb_published_rm_b_vec_rep = split_off_rm(public_parameter, &mut pb_secret_state.tilde_b_bit_vec_rep);
         let pb_published_rm_c_vec_rep = split_off_rm(public_parameter, &mut pb_secret_state.tilde_c_bit_vec_rep);
         let pb_published_rm_voleith_mac_a_vec_rep = split_off_rm(public_parameter, &mut pb_secret_state.voleith_mac_tilde_a_vec_rep);
         let pb_published_rm_voleith_mac_b_vec_rep = split_off_rm(public_parameter, &mut pb_secret_state.voleith_mac_tilde_b_vec_rep);
         let pb_published_rm_voleith_mac_c_vec_rep = split_off_rm(public_parameter, &mut pb_secret_state.voleith_mac_tilde_c_vec_rep);
-        
-        println!("  Both parties run PiCheckAND");
+
+        if process_printing {
+            println!("  Both parties run PiCheckAND");
+        }
         let check_and_transcript_vec = (0..public_parameter.bs).map(
             |block_id| {
                 let pa_a_bit_vec_rep = extract_block_vec_rep(&public_parameter, block_id, &pa_secret_state.tilde_a_bit_vec_rep);
@@ -650,7 +703,9 @@ impl ProverInPA2PC {
             }
         ).collect();
 
-        println!("  PA processes inputs");
+        if process_printing {
+            println!("  PA processes inputs");
+        }
         // let pa_published_authenticated_input_vec = public_parameter.big_ib.iter().map(
         //     |input_wire| (
         //         pa_secret_state.r_trace_bit_vec[*input_wire],
@@ -675,7 +730,9 @@ impl ProverInPA2PC {
             )
         ).collect();
 
-        println!("  PB checks what PA just published and partially computes hat_z at inputs");
+        if process_printing {
+            println!("  PB checks what PA just published and partially computes hat_z at inputs");
+        }
         let mut input_cursor = 0usize;
         let mut pb_published_hat_z_input_vec_with_ib = vec![0u8; public_parameter.big_ib.len()];
         public_parameter.big_ib.iter().for_each(|input_wire| {
@@ -691,7 +748,9 @@ impl ProverInPA2PC {
             input_cursor += 1;
         });
 
-        println!("  PA publishes labels");
+        if process_printing {
+            println!("  PA publishes labels");
+        }
         input_cursor = 0usize;
         let pa_published_label_with_ib = public_parameter.big_ib.iter().map(
             |input_wire| {
@@ -703,7 +762,9 @@ impl ProverInPA2PC {
             }
         ).collect::<Vec<GFVOLE>>();
 
-        println!("  PB processes inputs");
+        if process_printing {
+            println!("  PB processes inputs");
+        }
         // let pb_published_authenticated_input_vec = public_parameter.big_ia.iter().map(
         //     |input_wire| (
         //         pb_secret_state.r_trace_bit_vec[*input_wire],
@@ -729,7 +790,9 @@ impl ProverInPA2PC {
             )
         ).collect();
 
-        println!("  PA checks what PB just published and partially computes hat_z at inputs");
+        if process_printing {
+            println!("  PA checks what PB just published and partially computes hat_z at inputs");
+        }
         input_cursor = 0usize;
         let mut pa_published_hat_z_input_vec_with_ia = vec![0u8; public_parameter.big_ia.len()];
         public_parameter.big_ia.iter().for_each(|input_wire| {
@@ -745,7 +808,9 @@ impl ProverInPA2PC {
             input_cursor += 1;
         });
 
-        println!("  PA publishes labels");
+        if process_printing {
+            println!("  PA publishes labels");
+        }
         input_cursor = 0usize;
         let pa_published_label_with_ia = public_parameter.big_ia.iter().map(
             |input_wire| {
@@ -757,7 +822,9 @@ impl ProverInPA2PC {
             }
         ).collect::<Vec<GFVOLE>>();
 
-        println!("  Initialize proof transcript");
+        if process_printing {
+            println!("  Initialize proof transcript");
+        }
         let mut proof_transcript = ProofTranscript::new(
             public_parameter,
             pa_published_rm_a_vec_rep,
@@ -780,8 +847,10 @@ impl ProverInPA2PC {
             // pb_published_input_vole_mac_r_vec,
             pb_published_input_voleith_mac_r_vec_rep,
         );
-        
-        println!("  Filling hat_z at inputs");
+
+        if process_printing {
+            println!("  Filling hat_z at inputs");
+        }
         input_cursor = 0usize;
         for input_wire in &public_parameter.big_ia {
             proof_transcript.published_hat_z_input_bit_vec[*input_wire] = pa_published_hat_z_input_vec_with_ia[input_cursor];
@@ -793,7 +862,9 @@ impl ProverInPA2PC {
             input_cursor += 1;
         }
 
-        println!("  PB evaluates circuit following circuit's topological order");
+        if process_printing {
+            println!("  PB evaluates circuit following circuit's topological order");
+        }
         let mut recovered_label_vec = vec![GFVOLE::zero(); public_parameter.num_wires];
         let mut recovered_hat_z_bit_vec = vec![0u8; public_parameter.num_wires];
         input_cursor = 0usize;
@@ -878,7 +949,9 @@ impl ProverInPA2PC {
             // assert_eq!((recovered_hat_z_vec[gate.output_wire], recovered_label_vec[gate.output_wire].clone()), (recovered_hat_z_vec[gate.output_wire], pa_secret_state.label_zero_vec.as_ref().unwrap()[gate.output_wire].clone().custom_add(&pa_secret_state.delta.as_ref().unwrap().custom_multiply_bit(recovered_hat_z_vec[gate.output_wire]))));
         }
 
-        println!("  PA determines her outputs");
+        if process_printing {
+            println!("  PA determines her outputs");
+        }
         let mut output_cursor = 0usize;
         for output_wire in &public_parameter.big_io {
             proof_transcript.pa_published_output_r_bit_vec[output_cursor] = pa_secret_state.r_trace_bit_vec[*output_wire];
@@ -888,8 +961,10 @@ impl ProverInPA2PC {
             }
             output_cursor += 1;
         }
-        
-        println!("  PB checks PA's outputs and computes remaining things");
+
+        if process_printing {
+            println!("  PB checks PA's outputs and computes remaining things");
+        }
         output_cursor = 0usize;
         for output_wire in &public_parameter.big_io {
             assert_eq!(
@@ -906,11 +981,16 @@ impl ProverInPA2PC {
             output_cursor += 1;
         }
 
-        println!("  PA computes decom after knowing nabla_b_rep");
-        proof_transcript.pa_decom = ProverInProtocolSVOLE2PC::open(public_parameter, pa_secret_state, &nabla_b_rep);
-        println!("  PB computes decom after knowing nabla_a_rep");
-        proof_transcript.pb_decom = ProverInProtocolSVOLE2PC::open(public_parameter, pb_secret_state, &nabla_a_rep);
+        if process_printing {
+            println!("  PA computes decom after knowing nabla_b_rep");
+        }
+        let pa_decom_rep = ProverInProtocolSVOLE2PC::open(public_parameter, pa_secret_state, &nabla_b_rep);
 
-        proof_transcript
+        if process_printing {
+            println!("  PB computes decom after knowing nabla_a_rep");
+        }
+        let pb_decom_rep = ProverInProtocolSVOLE2PC::open(public_parameter, pb_secret_state, &nabla_a_rep);
+
+        (proof_transcript, pa_decom_rep, pb_decom_rep)
     }
 }

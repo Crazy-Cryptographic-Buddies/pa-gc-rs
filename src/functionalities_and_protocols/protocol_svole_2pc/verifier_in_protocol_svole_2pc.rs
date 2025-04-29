@@ -1,6 +1,5 @@
 use std::time::Instant;
 use blake3::Hash;
-use rayon::iter::IndexedParallelIterator;
 use rayon::iter::ParallelIterator;
 use rayon::iter::IntoParallelIterator;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
@@ -98,6 +97,7 @@ impl VerifierInProtocolSVOLE2PC {
         (voleith_key_r_input_vec, voleith_key_r_output_and_vec, voleith_key_r_prime_vec, voleith_key_tilde_a_vec, voleith_key_tilde_b_vec, voleith_key_tilde_c_vec)
     }
     pub fn reconstruct_and_fix_voleith_key_vec<GFVOLEitH>(
+        process_printing: bool,
         public_parameter: &PublicParameter, 
         prover_com_hash_rep: &Vec<Hash>,
         prover_masked_bit_tuple_rep: &Vec<(BitVec, BitVec, BitVec, BitVec, BitVec, BitVec)>,
@@ -108,7 +108,9 @@ impl VerifierInProtocolSVOLE2PC {
         let mut voleith_key_tuple_rep = vec![(GFVec::<GFVOLEitH>::new(), GFVec::<GFVOLEitH>::new(), GFVec::<GFVOLEitH>::new(), GFVec::<GFVOLEitH>::new(), GFVec::<GFVOLEitH>::new(), GFVec::<GFVOLEitH>::new()); public_parameter.kappa];
         let mut public_voleith_key_vec_rep = vec![GFVec::<GFVOLEitH>::new(); public_parameter.kappa];
 
-        println!("  Verifier reconstructs");
+        if process_printing {
+            println!("  Verifier reconstructs");
+        }
         let start_reconstructing = Instant::now();
         (&mut public_voleith_key_vec_rep, prover_com_hash_rep, nabla_rep, decom_rep).into_par_iter().for_each(
             |(public_voleith_key_vec, prover_com_hash, nabla, decom)| {
@@ -120,9 +122,13 @@ impl VerifierInProtocolSVOLE2PC {
                 );
             }
         );
-        println!("  Time elapsed: {:?}", start_reconstructing.elapsed());
+        if process_printing {
+            println!("  Time elapsed: {:?}", start_reconstructing.elapsed());
+        }
 
-        println!("  Distribute VOLEitH keys after reconstructing into corresponding components");
+        if process_printing {
+            println!("  Distribute VOLEitH keys after reconstructing into corresponding components");
+        }
         for repetition_id in 0..public_parameter.kappa {
             voleith_key_tuple_rep[repetition_id] = Self::distribute_bits_and_voleith_macs_to_state(
                 public_parameter,

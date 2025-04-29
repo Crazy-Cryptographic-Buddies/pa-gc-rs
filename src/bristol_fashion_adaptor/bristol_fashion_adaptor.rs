@@ -3,7 +3,6 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 use crate::bristol_fashion_adaptor::{GateInfo, GateType};
-use crate::vec_type::bit_vec::BitVec;
 
 pub struct BristolFashionAdaptor {
     num_wires: usize,
@@ -218,7 +217,6 @@ impl BristolFashionAdaptor {
 mod tests {
     use rand::Rng;
     use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
-    use crate::util::conversion::Conversion;
 
     // pub fn compute_output_hex_string_from_input_hex_string(input_hex_string: String)
     //                                                        -> String {
@@ -228,6 +226,14 @@ mod tests {
     //     output_hex_string
     // }
 
+    pub fn u64_to_bit_vec(u64_value: u64) -> Vec<u8> {
+        let mut bit_vec: Vec<u8> = Vec::new();
+        for i in 0..64 {
+            bit_vec.push(((u64_value >> i) & 1) as u8);
+        }
+        bit_vec   
+    }
+
     #[test]
     pub fn adder64_test_compute_output_hex_string_from_input_hex_string() {
         let mut rng = rand::rng();
@@ -235,9 +241,9 @@ mod tests {
         let b: u64 = rng.random::<u64>();
         let sum =  a.wrapping_add(b);
         // println!("a: {:?}, b: {:?}, sum: {:?}", a, b, sum);
-        let expected_output_bit_vec = Conversion::u64_to_bit_vec(sum);
-        let mut input_bit_vec = Conversion::u64_to_bit_vec(a);
-        input_bit_vec.append(&mut Conversion::u64_to_bit_vec(b));
+        let expected_output_bit_vec = u64_to_bit_vec(sum);
+        let mut input_bit_vec = u64_to_bit_vec(a);
+        input_bit_vec.append(&mut u64_to_bit_vec(b));
         let bristol_fashion_adaptor = BristolFashionAdaptor::new(&"adder64.txt".to_string());
         let output_bit_vec = bristol_fashion_adaptor.compute_output_bits(&input_bit_vec);
         // println!("         output_bit_vec: {:?}", output_bit_vec);
@@ -253,9 +259,9 @@ mod tests {
         let b: u64 = rng.random::<u64>();
         let sum =  a.wrapping_sub(b);
         // println!("a: {:?}, b: {:?}, sum: {:?}", a, b, sum);
-        let expected_output_bit_vec = Conversion::u64_to_bit_vec(sum);
-        let mut input_bit_vec = Conversion::u64_to_bit_vec(a);
-        input_bit_vec.append(&mut Conversion::u64_to_bit_vec(b));
+        let expected_output_bit_vec = u64_to_bit_vec(sum);
+        let mut input_bit_vec = u64_to_bit_vec(a);
+        input_bit_vec.append(&mut u64_to_bit_vec(b));
         let bristol_fashion_adaptor = BristolFashionAdaptor::new(&"sub64.txt".to_string());
         let output_bit_vec = bristol_fashion_adaptor.compute_output_bits(&input_bit_vec);
         // println!("         output_bit_vec: {:?}", output_bit_vec);

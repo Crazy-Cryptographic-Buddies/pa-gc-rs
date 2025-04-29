@@ -49,9 +49,9 @@ pub struct ProofTranscript<GFVOLE, GFVOLEitH> {
     
     pub check_and_transcript_vec: Vec<CheckAndTranscript<GFVOLEitH>>,
     
-    // after nabla
-    pub pa_decom: Vec<(SeedU8x16, Vec<SeedU8x16>)>,
-    pub pb_decom: Vec<(SeedU8x16, Vec<SeedU8x16>)>,
+    // // after nabla
+    // pub pa_decom: Vec<(SeedU8x16, Vec<SeedU8x16>)>,
+    // pub pb_decom: Vec<(SeedU8x16, Vec<SeedU8x16>)>,
 }
 
 impl<GFVOLE, GFVOLEitH> ProofTranscript<GFVOLE, GFVOLEitH>
@@ -122,8 +122,8 @@ where
             published_output_bit_vec: BitVec::zero_vec(public_parameter.big_io_size),
             published_decrypted_garbled_row: vec![GarbledRow::zero(); public_parameter.big_iw_size],
             check_and_transcript_vec,
-            pa_decom: Vec::new(),
-            pb_decom: Vec::new(),
+            // pa_decom: Vec::new(),
+            // pb_decom: Vec::new(),
         }
     }
 

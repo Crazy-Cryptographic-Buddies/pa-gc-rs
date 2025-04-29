@@ -47,6 +47,7 @@ mod tests {
 
     #[test]
     fn try_commit_and_fix_protocol_svole_2pc_test_case_1() {
+        let process_printing = true;
         let bristol_fashion_adaptor = BristolFashionAdaptor::new(
             &"adder64.txt".to_string()
         );
@@ -77,14 +78,14 @@ mod tests {
         let (
             pa_com_hash_rep, pa_masked_bit_tuple_rep
         ) = ProverInProtocolSVOLE2PC::commit_and_fix_bit_vec_and_mac_vec(
-            &public_parameter, &mut pa_secret_state
+            process_printing, &public_parameter, &mut pa_secret_state
         );
         
         // pb commits and fixes voleith-authenticated bits
         let (
             pb_com_hash_rep, pb_masked_bit_tuple_rep
         ) = ProverInProtocolSVOLE2PC::commit_and_fix_bit_vec_and_mac_vec(
-            &public_parameter, &mut pb_secret_state
+            process_printing, &public_parameter, &mut pb_secret_state
         );
         
         // sample nablas
@@ -101,10 +102,10 @@ mod tests {
         
         // reconstruct
         let pa_voleith_key_tuple_rep = VerifierInProtocolSVOLE2PC::reconstruct_and_fix_voleith_key_vec(
-            &public_parameter, &pa_com_hash_rep, &pa_masked_bit_tuple_rep, &nabla_b_rep, &pa_decom_rep
+            process_printing, &public_parameter, &pa_com_hash_rep, &pa_masked_bit_tuple_rep, &nabla_b_rep, &pa_decom_rep
         );
         let pb_voleith_key_tuple_rep = VerifierInProtocolSVOLE2PC::reconstruct_and_fix_voleith_key_vec(
-            &public_parameter, &pb_com_hash_rep, &pb_masked_bit_tuple_rep, &nabla_a_rep, &pb_decom_rep
+            process_printing, &public_parameter, &pb_com_hash_rep, &pb_masked_bit_tuple_rep, &nabla_a_rep, &pb_decom_rep
         );
         
         // test voleith correlations in the pa side

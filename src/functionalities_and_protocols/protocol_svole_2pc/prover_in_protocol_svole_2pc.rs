@@ -1,5 +1,4 @@
 use std::time::Instant;
-use rayon::iter::IndexedParallelIterator;
 use rayon::iter::ParallelIterator;
 use blake3::Hash;
 use rayon::iter::IntoParallelIterator;
@@ -65,6 +64,7 @@ impl ProverInProtocolSVOLE2PC {
     }
 
     pub fn commit_and_fix_bit_vec_and_mac_vec<GFVOLE, GFVOLEitH>(
+        process_printing: bool,
         public_parameter: &PublicParameter, 
         prover_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>
     ) -> (Vec<Hash>, Vec<(BitVec, BitVec, BitVec, BitVec, BitVec, BitVec)>) 
@@ -79,7 +79,9 @@ impl ProverInProtocolSVOLE2PC {
             secret_bit_vec_rep[repetition_id] = BitVec::zero_vec(public_parameter.big_n);
             secret_voleith_mac_vec_rep[repetition_id] = GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_n);
         }
-        println!("  Commit and obtain VOLEitH MACs by GGM tree");
+        if process_printing {
+            println!("  Commit and obtain VOLEitH MACs by GGM tree");
+        }
         let start_committing = Instant::now();
         (
             &prover_secret_state.seed_for_generating_ggm_tree_rep, 
@@ -93,8 +95,12 @@ impl ProverInProtocolSVOLE2PC {
                     public_parameter, seed_for_generating_ggm_tree, secret_bit_vec, secret_voleith_mac_vec
                 );
         });
-        println!("    Time elapsed: {:?}", start_committing.elapsed());
-        println!("  Distribute VOLEitH MACs after committing into corresponding components");
+        if process_printing {
+            println!("    Time elapsed: {:?}", start_committing.elapsed());
+        }
+        if process_printing {
+            println!("  Distribute VOLEitH MACs after committing into corresponding components");
+        }
         for repetition_id in 0..public_parameter.kappa {
             let masked_bit_tuple = Self::distribute_bits_and_voleith_macs_to_state(
                 public_parameter, repetition_id, prover_secret_state,

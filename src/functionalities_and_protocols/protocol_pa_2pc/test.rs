@@ -51,10 +51,11 @@ mod tests {
     
     #[test]
     fn test_pa_2pc_for_sub64() {
+        let processing_printing = true;
         type GFVOLE = GF2p256;
         type GFVOLEitH = GF2p8;
         let bristol_fashion_adaptor = BristolFashionAdaptor::new(
-            &"mult64.txt".to_string()
+            &"sub64.txt".to_string()
         );
         let mut rng = rand::rng();
         // println!("Num AND gates: {:?}", bristol_fashion_adaptor.get_and_gate_output_wire_vec().len());
@@ -99,6 +100,7 @@ mod tests {
         );
         
         let preprocessing_transcript = ProverInPA2PC::preprocess(
+            processing_printing,
             &bristol_fashion_adaptor,
             &bit_trace_vec_for_labels_in_garbling,
             &public_parameter, 
@@ -120,7 +122,8 @@ mod tests {
         // println!("nabla_a_rep {:?}", nabla_a_rep);
         // println!("nabla_b_rep {:?}", nabla_b_rep);
 
-        let proof_transcript = ProverInPA2PC::prove(
+        let (proof_transcript, pa_decom_rep, pb_decom_rep) = ProverInPA2PC::prove(
+            processing_printing,
             &bristol_fashion_adaptor,
             &public_parameter,
             &preprocessing_transcript,
@@ -134,12 +137,15 @@ mod tests {
         );
         
         VerifierInPA2PC::verify::<GFVOLE, GFVOLEitH>(
+            processing_printing,
             &bristol_fashion_adaptor,
             &public_parameter,
             &permutation_rep,
             &nabla_a_rep, &nabla_b_rep,
             &preprocessing_transcript,
             &proof_transcript,
+            &pa_decom_rep,
+            &pb_decom_rep
         );
 
         println!("{:?}", proof_transcript.published_output_bit_vec);
