@@ -7,8 +7,8 @@ use crate::vec_type::{BasicVecFunctions, Split, ZeroVec};
 use crate::vec_type::bit_vec::BitVec;
 
 mod test;
-mod prover_in_pa_2pc;
-mod verifier_in_pa_2pc;
+pub mod prover_in_pa_2pc;
+pub mod verifier_in_pa_2pc;
 pub(crate) mod preprocessing_transcript;
 pub(crate) mod proof_transcript;
 
@@ -85,7 +85,7 @@ where
     ).collect::<Vec<VecType>>()
 }
 
-fn determine_bit_trace_for_labels_in_garbling(
+pub fn determine_bit_trace_for_labels_in_garbling(
     bristol_fashion_adaptor: &BristolFashionAdaptor,
     public_parameter: &PublicParameter,
 ) -> BitVec {

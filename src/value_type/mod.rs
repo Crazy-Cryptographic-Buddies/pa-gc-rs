@@ -1,6 +1,6 @@
 use blake3::Hash;
 
-pub(crate) mod gf2p256;
+pub mod gf2p256;
 pub mod gf2p8;
 pub mod seed_u8x16;
 pub(crate) mod garbled_row;

@@ -1,4 +1,4 @@
-pub(crate) mod bristol_fashion_adaptor;
+pub mod bristol_fashion_adaptor;
 
 #[derive(PartialEq, Debug, Clone)]
 pub enum GateType {

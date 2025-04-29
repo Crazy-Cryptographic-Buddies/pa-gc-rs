@@ -1,2 +1,2 @@
-pub(crate) mod public_parameter;
-pub(crate) mod prover_secret_state;
+pub mod public_parameter;
+pub mod prover_secret_state;

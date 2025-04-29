@@ -54,7 +54,7 @@ mod tests {
         type GFVOLE = GF2p256;
         type GFVOLEitH = GF2p8;
         let bristol_fashion_adaptor = BristolFashionAdaptor::new(
-            &"sub64.txt".to_string()
+            &"mult64.txt".to_string()
         );
         let mut rng = rand::rng();
         // println!("Num AND gates: {:?}", bristol_fashion_adaptor.get_and_gate_output_wire_vec().len());
