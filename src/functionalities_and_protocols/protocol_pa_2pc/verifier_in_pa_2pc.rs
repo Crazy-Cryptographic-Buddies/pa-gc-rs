@@ -27,7 +27,9 @@ impl VerifierInPA2PC {
     )
     where GFVOLE: Clone,
           GFVOLEitH: Clone + CustomAddition + CustomMultiplyingBit + Zero + U8ForGF + PartialEq + Debug + Copy + ByteManipulation {
-        // form the voleith key vectors
+        println!("+ Verifying ...");
+
+        println!("  Verifier determines VOLEitH keys from PiSVOLE2PC");
         let mut pa_voleith_key_r_input_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.num_input_bits); public_parameter.kappa];
         let mut pa_voleith_key_r_output_and_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
         let mut pa_voleith_key_r_prime_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
@@ -79,17 +81,17 @@ impl VerifierInPA2PC {
             }
         );
 
-        // permute PA's voleith key vectors
+        println!("  Verifier permutes PA's VOLEitH key vectors");
         permute(public_parameter, permutation_rep, &mut pa_voleith_key_tilde_a_vec_rep);
         permute(public_parameter, permutation_rep, &mut pa_voleith_key_tilde_b_vec_rep);
         permute(public_parameter, permutation_rep, &mut pa_voleith_key_tilde_c_vec_rep);
 
-        // permute PB's voleith key vectors
+        println!("  Verifier permutes PB's VOLEitH key vectors");
         permute(public_parameter, permutation_rep, &mut pb_voleith_key_tilde_a_vec_rep);
         permute(public_parameter, permutation_rep, &mut pb_voleith_key_tilde_b_vec_rep);
         permute(public_parameter, permutation_rep, &mut pb_voleith_key_tilde_c_vec_rep);
 
-        // split off PA's voleith key vectors
+        println!("  Verifier splits off PA's voleith key vectors");
         let pa_rm_voleith_key_tilde_a_vec_rep = split_off_rm(public_parameter, &mut pa_voleith_key_tilde_a_vec_rep);
         let pa_rm_voleith_key_tilde_b_vec_rep = split_off_rm(public_parameter, &mut pa_voleith_key_tilde_b_vec_rep);
         let pa_rm_voleith_key_tilde_c_vec_rep = split_off_rm(public_parameter, &mut pa_voleith_key_tilde_c_vec_rep);
@@ -98,14 +100,15 @@ impl VerifierInPA2PC {
         assert_eq!(pa_rm_voleith_key_tilde_c_vec_rep.len(), public_parameter.kappa);
         // println!("Verifier in PA2PC verifies split off VOLEitH correlations of PA rm");
 
-        // split off PB's voleith key vectors
+        println!("  Verifier splits off PB's voleith key vectors");
         let pb_rm_voleith_key_tilde_a_vec_rep = split_off_rm(public_parameter, &mut pb_voleith_key_tilde_a_vec_rep);
         let pb_rm_voleith_key_tilde_b_vec_rep = split_off_rm(public_parameter, &mut pb_voleith_key_tilde_b_vec_rep);
         let pb_rm_voleith_key_tilde_c_vec_rep = split_off_rm(public_parameter, &mut pb_voleith_key_tilde_c_vec_rep);
         assert_eq!(pb_rm_voleith_key_tilde_a_vec_rep.len(), public_parameter.kappa);
         assert_eq!(pb_rm_voleith_key_tilde_b_vec_rep.len(), public_parameter.kappa);
         assert_eq!(pb_rm_voleith_key_tilde_c_vec_rep.len(), public_parameter.kappa);
-        // println!("Verifier in PA2PC verifies split off VOLEitH correlations of PB rm");
+
+        println!("  Verifier verifies split off rm VOLEitH correlations of PB");
         for repetition_id in 0..public_parameter.kappa {
             // check PA's side
             Verifier::verify_vole_correlations(
@@ -162,7 +165,7 @@ impl VerifierInPA2PC {
             );
         }
 
-        // construct key trace
+        println!("  Verifier constructs key traces for voleith keys");
         let mut pa_voleith_key_r_trace_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.num_wires); public_parameter.kappa];
         let mut pa_middle_voleith_key_r_and_output_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
         let mut pb_voleith_key_r_trace_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.num_wires); public_parameter.kappa];
@@ -192,7 +195,7 @@ impl VerifierInPA2PC {
             &mut hat_z_bit_trace_vec,
         );
 
-        // compute voleith keys following circuit
+        println!("  Verifier computes voleith keys following circtuit's topological order");
         let mut pa_voleith_key_r_prime_left_vec_rep = vec![GFVec::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
         let mut pa_voleith_key_r_prime_right_vec_rep = vec![GFVec::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
         let mut pb_voleith_key_r_prime_left_vec_rep = vec![GFVec::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
@@ -270,6 +273,8 @@ impl VerifierInPA2PC {
                 }
             }
         }
+
+        println!("  Verifier verifies voleith correlations with PiCheckAND");
         (0..public_parameter.bs).for_each(
             |block_id| {
                 // println!("block_id {:?}", block_id);
@@ -349,6 +354,7 @@ impl VerifierInPA2PC {
             }
         );
 
+        println!("  Verifier verifies remaining things");
         let mut and_cursor = 0usize;
         for and_gate_id in bristol_fashion_adaptor.get_and_gate_id_vec() {
             let gate = &bristol_fashion_adaptor.get_gate_vec()[*and_gate_id];
