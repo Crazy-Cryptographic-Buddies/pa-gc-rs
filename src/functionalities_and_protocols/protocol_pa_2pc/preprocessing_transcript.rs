@@ -1,8 +1,6 @@
 use blake3::Hash;
 use crate::value_type::garbled_row::GarbledRow;
-use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::bit_vec::BitVec;
-use crate::vec_type::gf_vec::GFVec;
 
 pub struct PreprocessingTranscript<GFVOLE, GFVOLEitH> {
     pub pa_com_hash_rep: Vec<Hash>,

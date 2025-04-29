@@ -1,27 +1,15 @@
 #[cfg(test)]
 mod tests {
-    use std::fmt::Debug;
     use rand::Rng;
     use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
     use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
     use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
     use crate::functionalities_and_protocols::protocol_pa_2pc::prover_in_pa_2pc::ProverInPA2PC;
     use crate::functionalities_and_protocols::protocol_pa_2pc::verifier_in_pa_2pc::VerifierInPA2PC;
-    use crate::functionalities_and_protocols::protocol_pa_2pc::proof_transcript;
-    use crate::functionalities_and_protocols::util::verifier::Verifier;
     use crate::value_type::gf2p256::GF2p256;
     use crate::value_type::gf2p8::GF2p8;
     use crate::value_type::seed_u8x16::SeedU8x16;
-    use crate::value_type::{ByteManipulation, InsecureRandom, U8ForGF};
-    use crate::vec_type::{BasicVecFunctions};
-    
-    // fn verify<GFVOLE, GFVOLEitH>(
-    //     bristol_fashion_adaptor: &BristolFashionAdaptor,
-    //     public_parameter: &PublicParameter,
-    //     nabla_a_rep: Vec<GFVOLEitH>, nabla_b_rep: Vec<GFVOLEitH>,
-    // ) {
-    //
-    // }
+    use crate::value_type::{InsecureRandom, U8ForGF};
 
     fn insecurely_generate_random_permutation(len: usize) -> Vec<usize> {
         let mut random_permutation = (0..len).collect::<Vec<usize>>();
@@ -47,10 +35,10 @@ mod tests {
         let big_ib = (big_ia.len()..num_input_bits).collect::<Vec<usize>>();
         // let big_io = (bristol_fashion_adaptor.get_num_wires() - bristol_fashion_adaptor.get_num_output_bits()..bristol_fashion_adaptor.get_num_wires()).collect::<Vec<usize>>();
         let pa_input_bit_vec = big_ia.iter().map(
-            |i| rng.random::<u8>() & 1
+            |_| rng.random::<u8>() & 1
         ).collect();
         let pb_input_bit_vec = big_ib.iter().map(
-            |i| rng.random::<u8>() & 1
+            |_| rng.random::<u8>() & 1
         ).collect();
         let bs = 1;
         let rm = bristol_fashion_adaptor.get_and_gate_output_wire_vec().len();
@@ -85,7 +73,7 @@ mod tests {
         );
 
         let permutation_rep = (0..public_parameter.kappa).map(
-            |i| insecurely_generate_random_permutation(public_parameter.big_l)
+            |_| insecurely_generate_random_permutation(public_parameter.big_l)
         ).collect::<Vec<Vec<usize>>>();
         
         let nabla_a_rep = (0..public_parameter.kappa).map(|_|

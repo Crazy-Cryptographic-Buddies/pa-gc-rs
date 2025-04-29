@@ -1,7 +1,7 @@
 use std::ops::{Index, IndexMut};
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::value_type::Zero;
-use crate::vec_type::{BasicVecFunctions, Split, VecAppending, ZeroVec};
+use crate::vec_type::{BasicVecFunctions, Split, ZeroVec};
 
 mod test;
 mod prover_in_pa_2pc;
@@ -49,7 +49,7 @@ fn initialize_trace<PrimitiveType, VecType>(
     to_be_written_trace: &mut VecType,
 )
 where PrimitiveType: Clone + Zero + Copy,
-      VecType: Clone + VecAppending + ZeroVec + BasicVecFunctions<PrimitiveType>
+      VecType: Clone + ZeroVec + BasicVecFunctions<PrimitiveType>
       + Index<usize, Output = PrimitiveType> + IndexMut<usize, Output = PrimitiveType> {
 
     // let mut res = vec![PrimitiveType::zero(); circuit_num_wires];

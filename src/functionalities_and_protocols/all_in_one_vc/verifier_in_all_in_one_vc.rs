@@ -1,6 +1,6 @@
 use blake3::Hash;
 use crate::functionalities_and_protocols::all_in_one_vc::generating_bit_and_com_prg::GeneratingBitAndComPRG;
-use crate::functionalities_and_protocols::hasher::hasher::Hasher;
+use crate::functionalities_and_protocols::hasher;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::value_type::{CustomAddition, U8ForGF, Zero};
 use crate::value_type::seed_u8x16::SeedU8x16;
@@ -47,7 +47,7 @@ impl VerifierInAllInOneVC {
                 index_in_subtree_leaves += 1;
             }
         }
-        let reconstructed_com_hash = Hasher::hash_all_coms(&coms_at_leaves);
+        let reconstructed_com_hash = hasher::hash_all_coms(&coms_at_leaves);
 
         // now recover the key
         let mut voleith_key_vec = GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_n);

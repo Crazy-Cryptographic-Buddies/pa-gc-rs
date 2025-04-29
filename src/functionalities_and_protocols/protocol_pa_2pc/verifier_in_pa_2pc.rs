@@ -1,13 +1,12 @@
 use std::fmt::Debug;
 use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
 use crate::bristol_fashion_adaptor::GateType;
-use crate::functionalities_and_protocols::hasher::hasher::Hasher;
+use crate::functionalities_and_protocols::hasher;
 use crate::functionalities_and_protocols::protocol_check_and::verifier_in_protocol_check_and::VerifierInProtocolCheckAND;
 use crate::functionalities_and_protocols::protocol_pa_2pc::{extract_block_vec_rep, initialize_trace, permute, split_off_rm};
 use crate::functionalities_and_protocols::protocol_svole_2pc::verifier_in_protocol_svole_2pc::VerifierInProtocolSVOLE2PC;
 use crate::functionalities_and_protocols::protocol_pa_2pc::preprocessing_transcript::PreprocessingTranscript;
 use crate::functionalities_and_protocols::protocol_pa_2pc::proof_transcript::ProofTranscript;
-use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::util::verifier::Verifier;
 use crate::value_type::{ByteManipulation, CustomAddition, CustomMultiplyingBit, U8ForGF, Zero};
@@ -354,7 +353,7 @@ impl VerifierInPA2PC {
             let recovered_k = hat_z_bit_trace_vec[gate.left_input_wire] + (hat_z_bit_trace_vec[gate.right_input_wire] << 1);
             assert_eq!(
                 preprocessing_transcript.commitment_vec[and_cursor][recovered_k as usize],
-                Hasher::commit_pb_secret(
+                hasher::commit_pb_secret(
                     proof_transcript.pb_published_middle_r_bit_vec[and_cursor],
                     &(0..public_parameter.kappa).map(
                         |repetition_id|

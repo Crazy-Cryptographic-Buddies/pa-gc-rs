@@ -72,7 +72,7 @@ where GFVOLE: Clone + Zero + Copy, GFVOLEitH: Clone + Zero + Copy {
         is_pa: bool,
     ) -> Self {
         let mut seed_for_generating_ggm_tree_rep =  vec![SeedU8x16::zero(); public_parameter.kappa];
-        let mut prover_in_all_in_one_vc_rep = (0..public_parameter.kappa).map(
+        let prover_in_all_in_one_vc_rep = (0..public_parameter.kappa).map(
             |_| ProverInAllInOneVC::new(&public_parameter)
         ).collect();
         let mut current_seed = master_seed;

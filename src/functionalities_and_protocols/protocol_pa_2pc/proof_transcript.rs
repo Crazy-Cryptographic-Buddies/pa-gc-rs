@@ -1,10 +1,9 @@
-use blake3::Hash;
 use crate::functionalities_and_protocols::protocol_check_and::check_and_transcript::CheckAndTranscript;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::value_type::garbled_row::GarbledRow;
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::value_type::Zero;
-use crate::vec_type::{BasicVecFunctions, ZeroVec};
+use crate::vec_type::ZeroVec;
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 
@@ -25,10 +24,10 @@ pub struct ProofTranscript<GFVOLE, GFVOLEitH> {
     pub pb_published_rm_voleith_mac_c_vec_rep: Vec<GFVec<GFVOLEitH>>,
 
     pub pa_published_input_r_bit_vec: BitVec,
-    pub pa_published_input_vole_mac_r_vec: GFVec<GFVOLE>,
+    // pub pa_published_input_vole_mac_r_vec: GFVec<GFVOLE>,
     pub pa_published_input_voleith_mac_r_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub pb_published_input_r_bit_vec: BitVec,
-    pub pb_published_input_vole_mac_r_vec: GFVec<GFVOLE>,
+    // pub pb_published_input_vole_mac_r_vec: GFVec<GFVOLE>,
     pub pb_published_input_voleith_mac_r_vec_rep: Vec<GFVec<GFVOLEitH>>,
     
     pub pa_published_output_r_bit_vec: BitVec,
@@ -81,10 +80,10 @@ where
         check_and_transcript_vec: Vec<CheckAndTranscript<GFVOLEitH>>,
 
         pa_published_input_r_bit_vec: BitVec,
-        pa_published_input_vole_mac_r_vec: GFVec<GFVOLE>,
+        // pa_published_input_vole_mac_r_vec: GFVec<GFVOLE>,
         pa_published_input_voleith_mac_r_vec_rep: Vec<GFVec<GFVOLEitH>>,
         pb_published_input_r_bit_vec: BitVec,
-        pb_published_input_vole_mac_r_vec: GFVec<GFVOLE>,
+        // pb_published_input_vole_mac_r_vec: GFVec<GFVOLE>,
         pb_published_input_voleith_mac_r_vec_rep: Vec<GFVec<GFVOLEitH>>,
     ) -> Self {
         Self {
@@ -103,10 +102,10 @@ where
             pb_published_rm_voleith_mac_b_vec_rep,
 
             pa_published_input_r_bit_vec,
-            pa_published_input_vole_mac_r_vec,
+            // pa_published_input_vole_mac_r_vec,
             pa_published_input_voleith_mac_r_vec_rep,
             pb_published_input_r_bit_vec,
-            pb_published_input_vole_mac_r_vec,
+            // pb_published_input_vole_mac_r_vec,
             pb_published_input_voleith_mac_r_vec_rep,
             
             pa_published_output_r_bit_vec: BitVec::zero_vec(public_parameter.big_io_size),

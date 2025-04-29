@@ -1,7 +1,12 @@
-use std::iter::FusedIterator;
 use std::ops::{Index, IndexMut};
 use crate::value_type::{CustomAddition, Zero};
-use crate::vec_type::{BasicVecFunctions, Split, VecAddition, VecAppending, ZeroVec};
+use crate::vec_type::{
+    BasicVecFunctions, 
+    Split, 
+    VecAddition, 
+    // VecAppending, 
+    ZeroVec
+};
 use crate::vec_type::bit_vec::BitVec;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -83,11 +88,11 @@ impl<GF> Split for GFVec<GF> {
     }
 }
 
-impl<GF> VecAppending for GFVec<GF> {
-    fn append(&mut self, other: &mut Self) {
-        self.val.append(&mut other.val);
-    }
-}
+// impl<GF> VecAppending for GFVec<GF> {
+//     fn append(&mut self, other: &mut Self) {
+//         self.val.append(&mut other.val);
+//     }
+// }
 
 impl<GF> FromIterator<GF> for GFVec<GF> {
     fn from_iter<T: IntoIterator<Item = GF>>(iter: T) -> Self {

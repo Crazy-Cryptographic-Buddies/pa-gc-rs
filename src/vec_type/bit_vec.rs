@@ -1,6 +1,5 @@
 use std::ops::{Index, IndexMut};
-use crate::vec_type::{BasicVecFunctions, Split, VecAddition, VecAppending, ZeroVec};
-use crate::vec_type::gf_vec::GFVec;
+use crate::vec_type::{BasicVecFunctions, Split, VecAddition, ZeroVec};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct BitVec {
@@ -78,11 +77,11 @@ impl Split for BitVec {
     }
 }
 
-impl VecAppending for BitVec {
-    fn append(&mut self, other: &mut Self) {
-        self.val.append(&mut other.val);
-    }
-}
+// impl VecAppending for BitVec {
+//     fn append(&mut self, other: &mut Self) {
+//         self.val.append(&mut other.val);
+//     }
+// }
 
 impl BasicVecFunctions<u8> for BitVec {
     fn len(&self) -> usize {
