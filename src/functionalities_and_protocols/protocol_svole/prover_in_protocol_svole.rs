@@ -11,21 +11,21 @@ pub(crate) struct ProverInProtocolSVOLE {
 
 impl ProverInProtocolSVOLE {
 
-    pub fn commit<GFVOLE, GFVOLEitH>(
-        public_parameter: &PublicParameter,
-        repetition_id: usize,
-        prover_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>,
-        output_secret_bit_vec: &mut BitVec,
-        output_secret_voleith_mac_vec: &mut GFVec<GFVOLEitH>
-    ) -> Hash
-    where GFVOLEitH: Clone + CustomAddition + U8ForGF + Zero {
-        // println!("Prover secret state random seed: {:?}", prover_secret_state.seed_for_generating_ggm_tree_rep[repetition_id]);
-        prover_secret_state.prover_in_all_in_one_vc_rep[repetition_id].commit(
-            public_parameter, 
-            &prover_secret_state.seed_for_generating_ggm_tree_rep[repetition_id],
-            output_secret_bit_vec, output_secret_voleith_mac_vec
-        )
-    }
+    // pub fn commit<GFVOLE, GFVOLEitH>(
+    //     public_parameter: &PublicParameter,
+    //     repetition_id: usize,
+    //     prover_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>,
+    //     output_secret_bit_vec: &mut BitVec,
+    //     output_secret_voleith_mac_vec: &mut GFVec<GFVOLEitH>
+    // ) -> Hash
+    // where GFVOLEitH: Clone + CustomAddition + U8ForGF + Zero {
+    //     // println!("Prover secret state random seed: {:?}", prover_secret_state.seed_for_generating_ggm_tree_rep[repetition_id]);
+    //     prover_secret_state.prover_in_all_in_one_vc_rep[repetition_id].commit(
+    //         public_parameter, 
+    //         &prover_secret_state.seed_for_generating_ggm_tree_rep[repetition_id],
+    //         output_secret_bit_vec, output_secret_voleith_mac_vec
+    //     )
+    // }
 
     pub fn open<GFVOLE, GFVOLEitH>(
         public_parameter: &PublicParameter,

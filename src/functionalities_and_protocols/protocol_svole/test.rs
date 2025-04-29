@@ -42,14 +42,14 @@ mod tests {
             // let prover_in_all_in_one_vc = &mut prover_secret_state.prover_in_all_in_one_vc_rep[repetition_id];
             let mut secret_bit_vec = BitVec::zero_vec(public_parameter.big_n);
             let mut secret_voleith_mac_vec = GFVec::<GF2p8>::zero_vec(public_parameter.big_n);
-            let prover_com_hash = ProverInProtocolSVOLE::commit(
-                &public_parameter, repetition_id, &mut prover_secret_state,
+            let prover_com_hash = prover_secret_state.prover_in_all_in_one_vc_rep[repetition_id].commit(
+                &public_parameter, &prover_secret_state.seed_for_generating_ggm_tree_rep[repetition_id],
                 &mut secret_bit_vec, &mut secret_voleith_mac_vec
             );
             let nabla = GF2p8::insecurely_random();
             let decom = ProverInProtocolSVOLE::open(
-                &public_parameter, 
-                repetition_id, 
+                &public_parameter,
+                repetition_id,
                 &mut prover_secret_state, &nabla
             );
             let public_voleith_key_vec = VerifierInProtocolSVOLE::reconstruct(
@@ -76,5 +76,5 @@ mod tests {
         }
 
         println!("voleith correlation checking passed!");
-    }    
+    }
 }

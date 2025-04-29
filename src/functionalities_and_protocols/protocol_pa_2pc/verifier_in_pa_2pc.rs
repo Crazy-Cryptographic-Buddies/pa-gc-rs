@@ -26,16 +26,17 @@ impl VerifierInPA2PC {
         // pa_secret_state_to_be_removed: &ProverSecretState<GFVOLE, GFVOLEitH>,
     )
     where GFVOLE: Clone,
-          GFVOLEitH: Clone + CustomAddition + CustomMultiplyingBit + Zero + U8ForGF + PartialEq + Debug + Copy + ByteManipulation {
+          GFVOLEitH: Clone + CustomAddition + CustomMultiplyingBit + Zero + U8ForGF + PartialEq + Debug + Copy + ByteManipulation + Send + Sync {
         println!("+ Verifying ...");
 
-        println!("  Verifier determines VOLEitH keys from PiSVOLE2PC");
+        println!("  Verifier determines PA's VOLEitH keys from PiSVOLE2PC");
         let mut pa_voleith_key_r_input_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.num_input_bits); public_parameter.kappa];
         let mut pa_voleith_key_r_output_and_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
         let mut pa_voleith_key_r_prime_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
         let mut pa_voleith_key_tilde_a_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_l); public_parameter.kappa];
         let mut pa_voleith_key_tilde_b_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_l); public_parameter.kappa];
         let mut pa_voleith_key_tilde_c_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_l); public_parameter.kappa];
+        
         let mut pa_voleith_key_tuple_rep = VerifierInProtocolSVOLE2PC::reconstruct_and_fix_voleith_key_vec(
             public_parameter,
             &preprocessing_transcript.pa_com_hash_rep,
@@ -55,6 +56,7 @@ impl VerifierInPA2PC {
                 ) = pa_voleith_key_tuple_rep.pop().unwrap();
             }
         );
+        println!("  Verifier determines PB's VOLEitH keys from PiSVOLE2PC");
         let mut pb_voleith_key_r_input_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.num_input_bits); public_parameter.kappa];
         let mut pb_voleith_key_r_output_and_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
         let mut pb_voleith_key_r_prime_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];

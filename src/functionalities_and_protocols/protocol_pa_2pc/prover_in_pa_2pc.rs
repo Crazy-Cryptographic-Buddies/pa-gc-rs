@@ -68,8 +68,8 @@ impl ProverInPA2PC {
         pb_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>,
     ) -> PreprocessingTranscript<GFVOLE, GFVOLEitH>
     where
-        GFVOLE: Clone + CustomAddition + CustomMultiplyingBit + InsecureRandom + Zero + Copy + PartialEq + Debug + ByteManipulation,
-        GFVOLEitH: Clone + Zero + CustomAddition + U8ForGF + Copy + CustomMultiplyingBit + ByteManipulation
+        GFVOLE: Clone + CustomAddition + CustomMultiplyingBit + InsecureRandom + Zero + Copy + PartialEq + Debug + ByteManipulation + Sync + Send,
+        GFVOLEitH: Clone + Zero + CustomAddition + U8ForGF + Copy + CustomMultiplyingBit + ByteManipulation + Sync + Send
     {
         println!("+ Preprocessing...");
         println!("  PA obtains delta from FPre");

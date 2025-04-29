@@ -1,4 +1,9 @@
+use std::time::Instant;
+use rayon::iter::IndexedParallelIterator;
+use rayon::iter::ParallelIterator;
 use blake3::Hash;
+use rayon::iter::IntoParallelIterator;
+use crate::comm_types_and_constants::BLAKE3_HASH_DIGEST_NUM_BYTES;
 use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::protocol_svole::prover_in_protocol_svole::ProverInProtocolSVOLE;
@@ -63,27 +68,39 @@ impl ProverInProtocolSVOLE2PC {
         public_parameter: &PublicParameter, 
         prover_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>
     ) -> (Vec<Hash>, Vec<(BitVec, BitVec, BitVec, BitVec, BitVec, BitVec)>) 
-    where GFVOLE: Clone + CustomAddition + Zero, GFVOLEitH: Clone + Zero + CustomAddition + U8ForGF {
-        let mut com_hash_rep: Vec<Hash> = Vec::new();
-        let mut masked_bit_tuple_rep: Vec<(BitVec, BitVec, BitVec, BitVec, BitVec, BitVec)> = Vec::new();
+    where GFVOLE: Clone + CustomAddition + Zero + Sync + Send, 
+          GFVOLEitH: Clone + Zero + CustomAddition + U8ForGF + Sync + Send {
+        let mut com_hash_rep: Vec<Hash> = vec![Hash::from_bytes([0u8; BLAKE3_HASH_DIGEST_NUM_BYTES]); public_parameter.kappa];
+        let mut masked_bit_tuple_rep: Vec<(BitVec, BitVec, BitVec, BitVec, BitVec, BitVec)> =
+            vec![(BitVec::new(), BitVec::new(), BitVec::new(), BitVec::new(), BitVec::new(), BitVec::new()); public_parameter.kappa];
+        let mut secret_bit_vec_rep = vec![BitVec::new(); public_parameter.kappa];
+        let mut secret_voleith_mac_vec_rep = vec![GFVec::<GFVOLEitH>::new(); public_parameter.kappa];
         for repetition_id in 0..public_parameter.kappa {
-            let mut secret_bit_vec = BitVec::zero_vec(
-                public_parameter.big_n
-            );
-            let mut secret_voleith_mac_vec = GFVec::<GFVOLEitH>::zero_vec(
-                public_parameter.big_n
-            );
-            let com_hash = ProverInProtocolSVOLE::commit(
-                public_parameter, repetition_id,
-                prover_secret_state, &mut secret_bit_vec, &mut secret_voleith_mac_vec
-            );
-            // println!("{:?}", com_hash);
-            com_hash_rep.push(com_hash);
+            secret_bit_vec_rep[repetition_id] = BitVec::zero_vec(public_parameter.big_n);
+            secret_voleith_mac_vec_rep[repetition_id] = GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_n);
+        }
+        println!("  Commit and obtain VOLEitH MACs by GGM tree");
+        let start_committing = Instant::now();
+        (
+            &prover_secret_state.seed_for_generating_ggm_tree_rep, 
+            &mut prover_secret_state.prover_in_all_in_one_vc_rep, 
+            &mut com_hash_rep, 
+            &mut secret_bit_vec_rep, 
+            &mut secret_voleith_mac_vec_rep
+        ).into_par_iter().for_each(
+            |(seed_for_generating_ggm_tree, prover_in_all_in_one_vc, com_hash, secret_bit_vec, secret_voleith_mac_vec)| {
+                *com_hash = prover_in_all_in_one_vc.commit(
+                    public_parameter, seed_for_generating_ggm_tree, secret_bit_vec, secret_voleith_mac_vec
+                );
+        });
+        println!("    Time elapsed: {:?}", start_committing.elapsed());
+        println!("  Distribute VOLEitH MACs after committing into corresponding components");
+        for repetition_id in 0..public_parameter.kappa {
             let masked_bit_tuple = Self::distribute_bits_and_voleith_macs_to_state(
-                public_parameter, repetition_id, prover_secret_state, 
-                &mut secret_bit_vec, &mut secret_voleith_mac_vec
+                public_parameter, repetition_id, prover_secret_state,
+                &mut secret_bit_vec_rep[repetition_id], &mut secret_voleith_mac_vec_rep[repetition_id]   
             );
-            masked_bit_tuple_rep.push(masked_bit_tuple);
+            masked_bit_tuple_rep[repetition_id] = masked_bit_tuple;
         }
         (com_hash_rep, masked_bit_tuple_rep)
     }
