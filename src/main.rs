@@ -1,3 +1,5 @@
+use std::any::type_name;
+use std::fmt::Debug;
 use std::time::Instant;
 use rand::Rng;
 use pa_gc_rs::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
@@ -9,7 +11,7 @@ use pa_gc_rs::functionalities_and_protocols::states_and_parameters::public_param
 use pa_gc_rs::value_type::gf2p256::GF2p256;
 use pa_gc_rs::value_type::gf2p8::GF2p8;
 use pa_gc_rs::value_type::seed_u8x16::SeedU8x16;
-use pa_gc_rs::value_type::InsecureRandom;
+use pa_gc_rs::value_type::{ByteManipulation, CustomAddition, CustomMultiplyingBit, InsecureRandom, Zero};
 use pa_gc_rs::vec_type::bit_vec::BitVec;
 use pa_gc_rs::vec_type::BasicVecFunctions;
 use pa_gc_rs::value_type::U8ForGF;
@@ -49,12 +51,20 @@ fn determine_full_input_bit_vec(
     full_input_bit_vec
 }
 
-fn test_pa_2pc_for_sub64(process_printing: bool) {
+fn benchmark<GFVOLE, GFVOLEitH>(process_printing: bool, circuit_string_file_name: &str, num_threads: usize, tau: u8, kappa: usize, bs: usize)
+where
+    GFVOLE: ByteManipulation + Copy + Zero + PartialEq + CustomAddition + CustomMultiplyingBit + InsecureRandom + Send + Sync + Debug,
+    GFVOLEitH: ByteManipulation + Clone + Zero + CustomMultiplyingBit + Copy + CustomAddition + U8ForGF + Send + Sync + Debug + PartialEq {
+    println!("GFVOLE: {:?}, GFVOLEitH: {:?}, Circuit_string_file_name: {:?}, num_threads: {:?}, tau: {:?}, kappa: {:?}, bs: {:?}", 
+             type_name::<GFVOLE>(), type_name::<GFVOLEitH>(), circuit_string_file_name, num_threads, tau, kappa, bs
+    );
+    rayon::ThreadPoolBuilder::new()
+        .num_threads(num_threads)
+        .build_global()
+        .unwrap();
     let start_total = Instant::now();
-    type GFVOLE = GF2p256;
-    type GFVOLEitH = GF2p8;
     let bristol_fashion_adaptor = BristolFashionAdaptor::new(
-        &"aes_128.txt".to_string()
+        &circuit_string_file_name.to_string()
     );
     let mut rng = rand::rng();
     // println!("Num AND gates: {:?}", bristol_fashion_adaptor.get_and_gate_output_wire_vec().len());
@@ -68,12 +78,11 @@ fn test_pa_2pc_for_sub64(process_printing: bool) {
     let pb_input_bit_vec = big_ib.iter().map(
         |_| rng.random::<u8>() & 1
     ).collect();
-    let bs = 1;
     let rm = bristol_fashion_adaptor.get_and_gate_output_wire_vec().len();
     let public_parameter = PublicParameter::new::<GFVOLE, GFVOLEitH>(
         &bristol_fashion_adaptor,
-        8,
-        32,
+        tau,
+        kappa,
         SeedU8x16::insecurely_random(),
         big_ia,
         big_ib,
@@ -143,7 +152,7 @@ fn test_pa_2pc_for_sub64(process_printing: bool) {
         &nabla_a_rep, &nabla_b_rep,
         &preprocessing_transcript,
         &proof_transcript,
-        &pa_decom_rep, 
+        &pa_decom_rep,
         &pb_decom_rep,
     );
 
@@ -156,13 +165,12 @@ fn test_pa_2pc_for_sub64(process_printing: bool) {
     let expected_output_bit_vec = BitVec::from_vec(bristol_fashion_adaptor.compute_output_bits(&full_input_bit_vec));
     // println!("{:?}", expected_output_bit_vec);
     assert_eq!(proof_transcript.published_output_bit_vec, expected_output_bit_vec);
-    println!("+ Total running time: {:?}", start_total.elapsed());
+    println!("+ Total running time: {:?}", start_total.elapsed().as_secs_f32());
 }
 
 fn main() {
-    rayon::ThreadPoolBuilder::new()
-        .num_threads(8)
-        .build_global()
-        .unwrap();
-    test_pa_2pc_for_sub64(false);
+    // benchmark::<GF2p256, GF2p8>(false, "sub64.txt", 1, 8, 32, 1);
+    // benchmark::<GF2p256, GF2p8>(false, "sub64.txt", 2, 8, 32, 1);
+    // benchmark::<GF2p256, GF2p8>(false, "sub64.txt", 4, 8, 32, 1);
+    // benchmark::<GF2p256, GF2p8>(false, "sub64.txt", 8, 8, 32, 1);
 }
