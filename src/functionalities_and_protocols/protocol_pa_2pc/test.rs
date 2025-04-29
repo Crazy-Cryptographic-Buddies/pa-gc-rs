@@ -41,9 +41,9 @@ mod tests {
             &"adder64.txt".to_string()
         );
         let mut rng = rand::rng();
-        println!("Num AND gates: {:?}", bristol_fashion_adaptor.get_and_gate_output_wire_vec().len());
+        // println!("Num AND gates: {:?}", bristol_fashion_adaptor.get_and_gate_output_wire_vec().len());
         let num_input_bits = bristol_fashion_adaptor.get_num_input_bits();
-        let big_ia = (0..num_input_bits >> 1).collect::<Vec<usize>>();
+        let big_ia = (0..(num_input_bits >> 1) - 3).collect::<Vec<usize>>();
         let big_ib = (big_ia.len()..num_input_bits).collect::<Vec<usize>>();
         // let big_io = (bristol_fashion_adaptor.get_num_wires() - bristol_fashion_adaptor.get_num_output_bits()..bristol_fashion_adaptor.get_num_wires()).collect::<Vec<usize>>();
         let pa_input_bit_vec = big_ia.iter().map(
@@ -95,8 +95,8 @@ mod tests {
             GFVOLEitH::from_u8(rng.random::<u8>())
         ).collect::<Vec<GFVOLEitH>>();
         
-        println!("nabla_a_rep {:?}", nabla_a_rep);
-        println!("nabla_b_rep {:?}", nabla_b_rep);
+        // println!("nabla_a_rep {:?}", nabla_a_rep);
+        // println!("nabla_b_rep {:?}", nabla_b_rep);
 
         let proof_transcript = ProverInPA2PC::prove(
             &bristol_fashion_adaptor,
@@ -118,7 +118,7 @@ mod tests {
             &nabla_a_rep, &nabla_b_rep,
             &preprocessing_transcript,
             &proof_transcript,
-            &pa_secret_state, // to be removed later
+            // &pa_secret_state, // to be removed later
         )
     }
 }

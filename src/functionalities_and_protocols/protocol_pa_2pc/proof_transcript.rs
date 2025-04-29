@@ -23,9 +23,13 @@ pub struct ProofTranscript<GFVOLE, GFVOLEitH> {
     pub pb_published_rm_voleith_mac_a_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub pb_published_rm_voleith_mac_b_vec_rep: Vec<GFVec<GFVOLEitH>>,
     pub pb_published_rm_voleith_mac_c_vec_rep: Vec<GFVec<GFVOLEitH>>,
-    
-    pub pa_published_authenticated_input_vec: Vec<(u8, GFVOLE, Vec<GFVOLEitH>)>,
-    pub pb_published_authenticated_input_vec: Vec<(u8, GFVOLE, Vec<GFVOLEitH>)>,
+
+    pub pa_published_input_r_bit_vec: BitVec,
+    pub pa_published_input_vole_mac_r_vec: GFVec<GFVOLE>,
+    pub pa_published_input_voleith_mac_r_vec_rep: Vec<GFVec<GFVOLEitH>>,
+    pub pb_published_input_r_bit_vec: BitVec,
+    pub pb_published_input_vole_mac_r_vec: GFVec<GFVOLE>,
+    pub pb_published_input_voleith_mac_r_vec_rep: Vec<GFVec<GFVOLEitH>>,
     
     pub pa_published_output_r_bit_vec: BitVec,
     pub pa_published_output_vole_mac_r_vec: GFVec<GFVOLE>,
@@ -76,8 +80,12 @@ where
         
         check_and_transcript_vec: Vec<CheckAndTranscript<GFVOLEitH>>,
 
-        pa_published_authenticated_input_vec: Vec<(u8, GFVOLE, Vec<GFVOLEitH>)>,
-        pb_published_authenticated_input_vec: Vec<(u8, GFVOLE, Vec<GFVOLEitH>)>,
+        pa_published_input_r_bit_vec: BitVec,
+        pa_published_input_vole_mac_r_vec: GFVec<GFVOLE>,
+        pa_published_input_voleith_mac_r_vec_rep: Vec<GFVec<GFVOLEitH>>,
+        pb_published_input_r_bit_vec: BitVec,
+        pb_published_input_vole_mac_r_vec: GFVec<GFVOLE>,
+        pb_published_input_voleith_mac_r_vec_rep: Vec<GFVec<GFVOLEitH>>,
     ) -> Self {
         Self {
             pa_published_rm_a_vec_rep,
@@ -93,9 +101,13 @@ where
             pb_published_rm_voleith_mac_a_vec_rep,
             pb_published_rm_voleith_mac_c_vec_rep,
             pb_published_rm_voleith_mac_b_vec_rep,
-            
-            pa_published_authenticated_input_vec,
-            pb_published_authenticated_input_vec,
+
+            pa_published_input_r_bit_vec,
+            pa_published_input_vole_mac_r_vec,
+            pa_published_input_voleith_mac_r_vec_rep,
+            pb_published_input_r_bit_vec,
+            pb_published_input_vole_mac_r_vec,
+            pb_published_input_voleith_mac_r_vec_rep,
             
             pa_published_output_r_bit_vec: BitVec::zero_vec(public_parameter.big_io_size),
             pa_published_output_vole_mac_r_vec: GFVec::<GFVOLE>::zero_vec(public_parameter.big_io_size),

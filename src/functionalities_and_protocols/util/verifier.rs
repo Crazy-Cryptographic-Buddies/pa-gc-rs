@@ -13,17 +13,17 @@ impl Verifier {
         delta: &GFVOLE,
         voleith_key_vec: &GFVec<GFVOLE>,
     ) {
-        println!("Verifying Voleith Correlations");
-        println!("bit_vec:           {:?}", bit_vec.iter());
-        println!("voleith_key_vec:   {:?}", voleith_key_vec.iter());
-        println!("voleith_mac_vec:   {:?}", voleith_mac_vec.iter());
-        println!("bit * nabla + key: {:?}", voleith_key_vec.vec_add(
-            &GFVec::<GFVOLE>::from_vec(
-                bit_vec.iter().map(
-                    |bit| delta.custom_multiply_bit(*bit)
-                ).collect::<Vec<GFVOLE>>()
-            )
-        ).iter());
+        // println!("Verifying Voleith Correlations");
+        // println!("bit_vec:           {:?}", bit_vec.iter());
+        // println!("voleith_key_vec:   {:?}", voleith_key_vec.iter());
+        // println!("voleith_mac_vec:   {:?}", voleith_mac_vec.iter());
+        // println!("bit * nabla + key: {:?}", voleith_key_vec.vec_add(
+        //     &GFVec::<GFVOLE>::from_vec(
+        //         bit_vec.iter().map(
+        //             |bit| delta.custom_multiply_bit(*bit)
+        //         ).collect::<Vec<GFVOLE>>()
+        //     )
+        // ).iter());
         assert_eq!(
             *voleith_mac_vec,
             voleith_key_vec.vec_add(

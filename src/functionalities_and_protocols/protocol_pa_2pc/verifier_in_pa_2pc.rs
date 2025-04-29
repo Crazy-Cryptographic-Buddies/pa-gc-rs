@@ -1,14 +1,16 @@
 use std::fmt::Debug;
 use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
 use crate::bristol_fashion_adaptor::GateType;
-use crate::functionalities_and_protocols::protocol_pa_2pc::{initialize_trace, permute, split_off_rm};
+use crate::functionalities_and_protocols::hasher::hasher::Hasher;
+use crate::functionalities_and_protocols::protocol_check_and::verifier_in_protocol_check_and::VerifierInProtocolCheckAND;
+use crate::functionalities_and_protocols::protocol_pa_2pc::{extract_block_vec_rep, initialize_trace, permute, split_off_rm};
 use crate::functionalities_and_protocols::protocol_svole_2pc::verifier_in_protocol_svole_2pc::VerifierInProtocolSVOLE2PC;
 use crate::functionalities_and_protocols::protocol_pa_2pc::preprocessing_transcript::PreprocessingTranscript;
 use crate::functionalities_and_protocols::protocol_pa_2pc::proof_transcript::ProofTranscript;
 use crate::functionalities_and_protocols::states_and_parameters::prover_secret_state::ProverSecretState;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::util::verifier::Verifier;
-use crate::value_type::{CustomAddition, CustomMultiplyingBit, U8ForGF, Zero};
+use crate::value_type::{ByteManipulation, CustomAddition, CustomMultiplyingBit, U8ForGF, Zero};
 use crate::vec_type::{gf_vec::GFVec, BasicVecFunctions, VecAddition, ZeroVec};
 use crate::vec_type::bit_vec::BitVec;
 
@@ -22,10 +24,10 @@ impl VerifierInPA2PC {
         nabla_a_rep: &Vec<GFVOLEitH>, nabla_b_rep: &Vec<GFVOLEitH>,
         preprocessing_transcript: &PreprocessingTranscript<GFVOLE, GFVOLEitH>,
         proof_transcript: &ProofTranscript<GFVOLE, GFVOLEitH>,
-        pa_secret_state_to_be_removed: &ProverSecretState<GFVOLE, GFVOLEitH>,
+        // pa_secret_state_to_be_removed: &ProverSecretState<GFVOLE, GFVOLEitH>,
     )
     where GFVOLE: Clone,
-          GFVOLEitH: Clone + CustomAddition + CustomMultiplyingBit + Zero + U8ForGF + PartialEq + Debug + Copy {
+          GFVOLEitH: Clone + CustomAddition + CustomMultiplyingBit + Zero + U8ForGF + PartialEq + Debug + Copy + ByteManipulation {
         // form the voleith key vectors
         let mut pa_voleith_key_r_input_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.num_input_bits); public_parameter.kappa];
         let mut pa_voleith_key_r_output_and_vec_rep = vec![GFVec::<GFVOLEitH>::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
@@ -95,7 +97,7 @@ impl VerifierInPA2PC {
         assert_eq!(pa_rm_voleith_key_tilde_a_vec_rep.len(), public_parameter.kappa);
         assert_eq!(pa_rm_voleith_key_tilde_b_vec_rep.len(), public_parameter.kappa);
         assert_eq!(pa_rm_voleith_key_tilde_c_vec_rep.len(), public_parameter.kappa);
-        println!("Verifier in PA2PC verifies split off VOLEitH correlations of PA rm");
+        // println!("Verifier in PA2PC verifies split off VOLEitH correlations of PA rm");
 
         // split off PB's voleith key vectors
         let pb_rm_voleith_key_tilde_a_vec_rep = split_off_rm(public_parameter, &mut pb_voleith_key_tilde_a_vec_rep);
@@ -104,7 +106,7 @@ impl VerifierInPA2PC {
         assert_eq!(pb_rm_voleith_key_tilde_a_vec_rep.len(), public_parameter.kappa);
         assert_eq!(pb_rm_voleith_key_tilde_b_vec_rep.len(), public_parameter.kappa);
         assert_eq!(pb_rm_voleith_key_tilde_c_vec_rep.len(), public_parameter.kappa);
-        println!("Verifier in PA2PC verifies split off VOLEitH correlations of PB rm");
+        // println!("Verifier in PA2PC verifies split off VOLEitH correlations of PB rm");
         for repetition_id in 0..public_parameter.kappa {
             // check PA's side
             Verifier::verify_vole_correlations(
@@ -192,6 +194,10 @@ impl VerifierInPA2PC {
         );
 
         // compute voleith keys following circuit
+        let mut pa_voleith_key_r_prime_left_vec_rep = vec![GFVec::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
+        let mut pa_voleith_key_r_prime_right_vec_rep = vec![GFVec::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
+        let mut pb_voleith_key_r_prime_left_vec_rep = vec![GFVec::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
+        let mut pb_voleith_key_r_prime_right_vec_rep = vec![GFVec::zero_vec(public_parameter.big_iw_size); public_parameter.kappa];
         for repetition_id in 0..public_parameter.kappa {
             let mut and_cursor = 0usize;
             for gate in bristol_fashion_adaptor.get_gate_vec() {
@@ -207,7 +213,7 @@ impl VerifierInPA2PC {
                     }
                     GateType::AND => {
                         // we do not need to compute hat_z_bit_trace_vec in this case
-                        
+
                         // println!("{:?}", (repetition_id, and_cursor));
                         pa_middle_voleith_key_r_and_output_vec_rep[repetition_id][and_cursor] = pa_voleith_key_r_prime_vec_rep[repetition_id][and_cursor].custom_add(
                             &pa_voleith_key_r_trace_vec_rep[repetition_id][gate.output_wire]
@@ -229,6 +235,11 @@ impl VerifierInPA2PC {
                             )
                         );
 
+                        pa_voleith_key_r_prime_left_vec_rep[repetition_id][and_cursor] = pa_voleith_key_r_trace_vec_rep[repetition_id][gate.left_input_wire];
+                        pa_voleith_key_r_prime_right_vec_rep[repetition_id][and_cursor] = pa_voleith_key_r_trace_vec_rep[repetition_id][gate.right_input_wire];
+                        pb_voleith_key_r_prime_left_vec_rep[repetition_id][and_cursor] = pb_voleith_key_r_trace_vec_rep[repetition_id][gate.left_input_wire];
+                        pb_voleith_key_r_prime_right_vec_rep[repetition_id][and_cursor] = pb_voleith_key_r_trace_vec_rep[repetition_id][gate.right_input_wire];
+
                         // print secret state of pa to see
                         // println!("PA secret state with VOLEitH MAC: {:?}", pa_secret_state_to_be_removed.middle_voleith_mac_r_and_output_vec_rep[repetition_id][and_cursor][
                         //     (hat_z_bit_trace_vec[gate.left_input_wire] + (hat_z_bit_trace_vec[gate.right_input_wire] << 1u8)) as usize
@@ -244,7 +255,6 @@ impl VerifierInPA2PC {
                             )
                         );
 
-                        // let recovered_k = hat_z_bit_trace_vec[gate.left_input_wire] + (hat_z_bit_trace_vec[gate.right_input_wire] << 1);
                         assert_eq!(
                             proof_transcript.pb_published_middle_voleith_mac_r_vec_rep[repetition_id][and_cursor],
                             pb_middle_voleith_key_r_and_output_vec_rep[repetition_id][and_cursor].custom_add(
@@ -259,5 +269,113 @@ impl VerifierInPA2PC {
                 }
             }
         }
+        (0..public_parameter.bs).for_each(
+            |block_id| {
+                // println!("block_id {:?}", block_id);
+                VerifierInProtocolCheckAND::verify(
+                    public_parameter,
+                    &proof_transcript.check_and_transcript_vec[block_id],
+                    &nabla_a_rep, &nabla_b_rep,
+                    (
+                        (
+                            &pa_voleith_key_r_prime_left_vec_rep,
+                            &pa_voleith_key_r_prime_right_vec_rep,
+                            &pa_voleith_key_r_prime_vec_rep,
+                        ),
+                        (
+                            &extract_block_vec_rep(public_parameter, block_id, &pa_voleith_key_tilde_a_vec_rep),
+                            &extract_block_vec_rep(public_parameter, block_id, &pa_voleith_key_tilde_b_vec_rep),
+                            &extract_block_vec_rep(public_parameter, block_id, &pa_voleith_key_tilde_c_vec_rep),
+                        )
+                    ),
+                    (
+                        (
+                            &pb_voleith_key_r_prime_left_vec_rep,
+                            &pb_voleith_key_r_prime_right_vec_rep,
+                            &pb_voleith_key_r_prime_vec_rep,
+                        ),
+                        (
+                            &extract_block_vec_rep(public_parameter, block_id, &pb_voleith_key_tilde_a_vec_rep),
+                            &extract_block_vec_rep(public_parameter, block_id, &pb_voleith_key_tilde_b_vec_rep),
+                            &extract_block_vec_rep(public_parameter, block_id, &pb_voleith_key_tilde_c_vec_rep),
+                        )
+                    ),
+                )
+            }
+        );
+        (0..public_parameter.kappa).for_each(
+            |repetition_id| {
+                Verifier::verify_vole_correlations(
+                    &proof_transcript.pa_published_input_r_bit_vec,
+                    &proof_transcript.pa_published_input_voleith_mac_r_vec_rep[repetition_id],
+                    &nabla_b_rep[repetition_id],
+                    &GFVec::<GFVOLEitH>::from_vec(
+                        public_parameter.big_ib.iter().map(
+                            |input_wire| pa_voleith_key_r_trace_vec_rep[repetition_id][*input_wire]
+                        ).collect()
+                    )
+                );
+                Verifier::verify_vole_correlations(
+                    &proof_transcript.pb_published_input_r_bit_vec,
+                    &proof_transcript.pb_published_input_voleith_mac_r_vec_rep[repetition_id],
+                    &nabla_a_rep[repetition_id],
+                    &GFVec::<GFVOLEitH>::from_vec(
+                        public_parameter.big_ia.iter().map(
+                            |input_wire| pb_voleith_key_r_trace_vec_rep[repetition_id][*input_wire]
+                        ).collect()
+                    )
+                );
+                Verifier::verify_vole_correlations(
+                    &proof_transcript.pa_published_output_r_bit_vec,
+                    &proof_transcript.pa_published_output_voleith_mac_r_vec_rep[repetition_id],
+                    &nabla_b_rep[repetition_id],
+                    &GFVec::<GFVOLEitH>::from_vec(
+                        public_parameter.big_io.iter().map(
+                            |input_wire| pa_voleith_key_r_trace_vec_rep[repetition_id][*input_wire]
+                        ).collect()
+                    )
+                );
+                Verifier::verify_vole_correlations(
+                    &proof_transcript.pb_published_output_r_bit_vec,
+                    &proof_transcript.pb_published_output_voleith_mac_r_vec_rep[repetition_id],
+                    &nabla_a_rep[repetition_id],
+                    &GFVec::<GFVOLEitH>::from_vec(
+                        public_parameter.big_io.iter().map(
+                            |input_wire| pb_voleith_key_r_trace_vec_rep[repetition_id][*input_wire]
+                        ).collect()
+                    )
+                );
+            }
+        );
+
+        let mut and_cursor = 0usize;
+        for and_gate_id in bristol_fashion_adaptor.get_and_gate_id_vec() {
+            let gate = &bristol_fashion_adaptor.get_gate_vec()[*and_gate_id];
+            let recovered_k = hat_z_bit_trace_vec[gate.left_input_wire] + (hat_z_bit_trace_vec[gate.right_input_wire] << 1);
+            assert_eq!(
+                preprocessing_transcript.commitment_vec[and_cursor][recovered_k as usize],
+                Hasher::commit_pb_secret(
+                    proof_transcript.pb_published_middle_r_bit_vec[and_cursor],
+                    &(0..public_parameter.kappa).map(
+                        |repetition_id|
+                            proof_transcript.pb_published_middle_voleith_mac_r_vec_rep[repetition_id][and_cursor]
+                    ).collect::<Vec<GFVOLEitH>>(),
+                    &proof_transcript.pb_published_middle_randomness_vec[and_cursor]
+                )
+            );
+            and_cursor += 1;
+        }
+        let mut output_cursor = 0usize;
+        public_parameter.big_io.iter().for_each(
+            |output_wire| {
+                assert_eq!(
+                    proof_transcript.published_output_bit_vec[output_cursor],
+                    hat_z_bit_trace_vec[*output_wire] 
+                        ^ proof_transcript.pa_published_output_r_bit_vec[output_cursor] 
+                        ^ proof_transcript.pb_published_output_r_bit_vec[output_cursor]
+                );
+                output_cursor += 1;
+            }
+        );
     }
 }

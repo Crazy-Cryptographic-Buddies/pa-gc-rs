@@ -1,5 +1,6 @@
 use blake3::Hash;
 use crate::value_type::garbled_row::GarbledRow;
+use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 
@@ -10,6 +11,7 @@ pub struct PreprocessingTranscript<GFVOLE, GFVOLEitH> {
     pub pb_masked_bit_tuple_rep: Vec<(BitVec, BitVec, BitVec, BitVec, BitVec, BitVec)>,
     
     pub garbled_table: Vec<Vec<GarbledRow<GFVOLE, GFVOLEitH>>>,
+    pub commitment_vec: Vec<[Hash; 4]>
 }
 
 impl<GFVOLE, GFVOLEitH> PreprocessingTranscript<GFVOLE, GFVOLEitH> {
@@ -19,7 +21,8 @@ impl<GFVOLE, GFVOLEitH> PreprocessingTranscript<GFVOLE, GFVOLEitH> {
         pb_com_hash_rep: Vec<Hash>,
         
         pb_masked_bit_tuple_rep: Vec<(BitVec, BitVec, BitVec, BitVec, BitVec, BitVec)>,
-        garbled_table: Vec<Vec<GarbledRow<GFVOLE, GFVOLEitH>>>
+        garbled_table: Vec<Vec<GarbledRow<GFVOLE, GFVOLEitH>>>,
+        commitment_vec: Vec<[Hash; 4]>
     ) -> Self {
         Self {
             pa_com_hash_rep,
@@ -28,6 +31,7 @@ impl<GFVOLE, GFVOLEitH> PreprocessingTranscript<GFVOLE, GFVOLEitH> {
             pb_masked_bit_tuple_rep,
             
             garbled_table,
+            commitment_vec,
         }    
     }
 }

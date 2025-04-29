@@ -329,20 +329,20 @@ mod tests {
                 (pb_e_bit_vec_rep, pb_voleith_mac_e_vec_rep),
                 (pb_tilde_z_bit_vec_rep, pb_voleith_mac_tilde_z_vec_rep)
             ),
-            public_d_sum_bit_vec_rep, public_e_sum_bit_vec_rep,
+            // public_d_sum_bit_vec_rep, public_e_sum_bit_vec_rep,
         );
 
         VerifierInProtocolCheckAND::verify(
             &public_parameter,
             &check_and_transcript,
             &nabla_a_rep, &nabla_b_rep,
-            &(
-                (pa_voleith_key_x_vec_rep, pa_voleith_key_y_vec_rep, pa_voleith_key_z_vec_rep),
-                (pa_voleith_key_a_vec_rep, pa_voleith_key_b_vec_rep, pa_voleith_key_c_vec_rep)
+            (
+                (&pa_voleith_key_x_vec_rep, &pa_voleith_key_y_vec_rep, &pa_voleith_key_z_vec_rep),
+                (&pa_voleith_key_a_vec_rep, &pa_voleith_key_b_vec_rep, &pa_voleith_key_c_vec_rep)
             ),
-            &(
-                (pb_voleith_key_x_vec_rep, pb_voleith_key_y_vec_rep, pb_voleith_key_z_vec_rep),
-                (pb_voleith_key_a_vec_rep, pb_voleith_key_b_vec_rep, pb_voleith_key_c_vec_rep)
+            (
+                (&pb_voleith_key_x_vec_rep, &pb_voleith_key_y_vec_rep, &pb_voleith_key_z_vec_rep),
+                (&pb_voleith_key_a_vec_rep, &pb_voleith_key_b_vec_rep, &pb_voleith_key_c_vec_rep)
             )
         );
     }

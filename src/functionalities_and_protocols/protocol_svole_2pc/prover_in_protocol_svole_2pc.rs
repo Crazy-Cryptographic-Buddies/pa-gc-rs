@@ -77,7 +77,7 @@ impl ProverInProtocolSVOLE2PC {
                 public_parameter, repetition_id,
                 prover_secret_state, &mut secret_bit_vec, &mut secret_voleith_mac_vec
             );
-            println!("{:?}", com_hash);
+            // println!("{:?}", com_hash);
             com_hash_rep.push(com_hash);
             let masked_bit_tuple = Self::distribute_bits_and_voleith_macs_to_state(
                 public_parameter, repetition_id, prover_secret_state, 

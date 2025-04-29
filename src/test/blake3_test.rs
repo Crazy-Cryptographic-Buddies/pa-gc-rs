@@ -20,5 +20,5 @@ fn blake3_test() {
     assert_eq!(hash1, output[..32]);
 
     // Print a hash as hex.
-    println!("{}", hash1);
+    // println!("{}", hash1);
 }

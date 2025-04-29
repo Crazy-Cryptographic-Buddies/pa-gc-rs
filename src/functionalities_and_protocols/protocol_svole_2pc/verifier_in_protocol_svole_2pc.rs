@@ -102,7 +102,7 @@ impl VerifierInProtocolSVOLE2PC {
     ) -> Vec<(GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>)> {
         let mut voleith_key_tuple_rep: Vec<(GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>, GFVec<GFVOLEitH>)> = Vec::new();
         for repetition_id in 0..public_parameter.kappa {
-            println!("repetition_id: {}", repetition_id);
+            // println!("repetition_id: {}", repetition_id);
             let mut public_voleith_key_vec = VerifierInProtocolSVOLE::reconstruct(
                 public_parameter, 
                 &prover_com_hash_rep[repetition_id], 

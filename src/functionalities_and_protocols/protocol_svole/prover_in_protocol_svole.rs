@@ -19,7 +19,7 @@ impl ProverInProtocolSVOLE {
         output_secret_voleith_mac_vec: &mut GFVec<GFVOLEitH>
     ) -> Hash
     where GFVOLEitH: Clone + CustomAddition + U8ForGF + Zero {
-        println!("Prover secret state random seed: {:?}", prover_secret_state.seed_for_generating_ggm_tree_rep[repetition_id]);
+        // println!("Prover secret state random seed: {:?}", prover_secret_state.seed_for_generating_ggm_tree_rep[repetition_id]);
         prover_secret_state.prover_in_all_in_one_vc_rep[repetition_id].commit(
             public_parameter, 
             &prover_secret_state.seed_for_generating_ggm_tree_rep[repetition_id],
