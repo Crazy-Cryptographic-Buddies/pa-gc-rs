@@ -62,3 +62,11 @@ pub fn commit_pb_secret<GFVOLEitH: ByteManipulation>(
     hasher.update(randomness);
     hasher.finalize()
 }
+
+// pub fn hash_to_determine_permutation<GFVOLE, GFVOLEitH>(
+//     public_parameter: &PublicParameter,
+//     proof_transcript: ProofTranscript<GFVOLE, GFVOLEitH>,
+// ) -> (Vec<usize>, Hash) {
+//     let config = config::standard();
+//     let encoded_byte_vec = encode_to_vec(&public_parameter, config).unwrap();
+// }

@@ -55,7 +55,7 @@ fn benchmark<GFVOLE, GFVOLEitH>(process_printing: bool, circuit_string_file_name
 where
     GFVOLE: ByteManipulation + Copy + Zero + PartialEq + CustomAddition + CustomMultiplyingBit + InsecureRandom + Send + Sync + Debug,
     GFVOLEitH: ByteManipulation + Clone + Zero + CustomMultiplyingBit + Copy + CustomAddition + U8ForGF + Send + Sync + Debug + PartialEq {
-    println!("GFVOLE: {:?}, GFVOLEitH: {:?}, Circuit_string_file_name: {:?}, num_threads: {:?}, tau: {:?}, kappa: {:?}, bs: {:?}", 
+    println!("GFVOLE: {:?}, GFVOLEitH: {:?}, Circuit_string_file_name: {:?}, num_threads: {:?}, tau: {:?}, kappa: {:?}, bs: {:?}",
              type_name::<GFVOLE>(), type_name::<GFVOLEitH>(), circuit_string_file_name, num_threads, tau, kappa, bs
     );
     rayon::ThreadPoolBuilder::new()
@@ -172,5 +172,5 @@ fn main() {
     // benchmark::<GF2p256, GF2p8>(false, "sub64.txt", 1, 8, 32, 1);
     // benchmark::<GF2p256, GF2p8>(false, "sub64.txt", 2, 8, 32, 1);
     // benchmark::<GF2p256, GF2p8>(false, "sub64.txt", 4, 8, 32, 1);
-    // benchmark::<GF2p256, GF2p8>(false, "sub64.txt", 8, 8, 32, 1);
+    benchmark::<GF2p256, GF2p8>(false, "sub64.txt", 8, 8, 32, 1);
 }

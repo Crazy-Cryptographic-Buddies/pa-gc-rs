@@ -1,7 +1,8 @@
 use std::ops::{Index, IndexMut};
+use bincode::Encode;
 use crate::vec_type::{BasicVecFunctions, Split, VecAddition, ZeroVec};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Encode)]
 pub struct BitVec {
     val: Vec<u8>
 }
