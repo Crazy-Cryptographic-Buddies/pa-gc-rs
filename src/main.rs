@@ -117,16 +117,16 @@ where
         &mut pb_secret_state,
     );
 
-    let permutation_rep = (0..public_parameter.kappa).map(
-        |_| insecurely_generate_random_permutation(public_parameter.big_l)
-    ).collect::<Vec<Vec<usize>>>();
-
-    let nabla_a_rep = (0..public_parameter.kappa).map(|_|
-        GFVOLEitH::from_u8(rng.random::<u8>())
-    ).collect::<Vec<GFVOLEitH>>();
-    let nabla_b_rep = (0..public_parameter.kappa).map(|_|
-        GFVOLEitH::from_u8(rng.random::<u8>())
-    ).collect::<Vec<GFVOLEitH>>();
+    // let permutation_rep = (0..public_parameter.kappa).map(
+    //     |_| insecurely_generate_random_permutation(public_parameter.big_l)
+    // ).collect::<Vec<Vec<usize>>>();
+    // 
+    // let nabla_a_rep = (0..public_parameter.kappa).map(|_|
+    //     GFVOLEitH::from_u8(rng.random::<u8>())
+    // ).collect::<Vec<GFVOLEitH>>();
+    // let nabla_b_rep = (0..public_parameter.kappa).map(|_|
+    //     GFVOLEitH::from_u8(rng.random::<u8>())
+    // ).collect::<Vec<GFVOLEitH>>();
 
     // println!("nabla_a_rep {:?}", nabla_a_rep);
     // println!("nabla_b_rep {:?}", nabla_b_rep);
@@ -136,21 +136,21 @@ where
         &bristol_fashion_adaptor,
         &public_parameter,
         &preprocessing_transcript,
-        &permutation_rep,
+        // &permutation_rep,
         &mut pa_secret_state,
         &mut pb_secret_state,
         &pa_input_bit_vec,
         &pb_input_bit_vec,
-        &nabla_a_rep,
-        &nabla_b_rep
+        // &nabla_a_rep,
+        // &nabla_b_rep
     );
 
     VerifierInPA2PC::verify::<GFVOLE, GFVOLEitH>(
         process_printing,
         &bristol_fashion_adaptor,
         &public_parameter,
-        &permutation_rep,
-        &nabla_a_rep, &nabla_b_rep,
+        // &permutation_rep,
+        // &nabla_a_rep, &nabla_b_rep,
         &preprocessing_transcript,
         &proof_transcript,
         &pa_decom_rep,

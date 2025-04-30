@@ -3,6 +3,7 @@ use bincode::Encode;
 use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
 use crate::bristol_fashion_adaptor::GateType;
 use crate::functionalities_and_protocols::hasher;
+use crate::functionalities_and_protocols::hasher::{hash_to_determine_nabla_rep, hash_to_determine_permutation_rep};
 use crate::functionalities_and_protocols::protocol_check_and::verifier_in_protocol_check_and::VerifierInProtocolCheckAND;
 use crate::functionalities_and_protocols::protocol_pa_2pc::{extract_block_vec_rep, initialize_trace, permute, split_off_rm};
 use crate::functionalities_and_protocols::protocol_svole_2pc::verifier_in_protocol_svole_2pc::VerifierInProtocolSVOLE2PC;
@@ -22,19 +23,33 @@ impl VerifierInPA2PC {
         process_printing: bool,
         bristol_fashion_adaptor: &BristolFashionAdaptor,
         public_parameter: &PublicParameter,
-        permutation_rep: &Vec<Vec<usize>>,
-        nabla_a_rep: &Vec<GFVOLEitH>, nabla_b_rep: &Vec<GFVOLEitH>,
+        // permutation_rep: &Vec<Vec<usize>>,
+        // nabla_a_rep: &Vec<GFVOLEitH>, nabla_b_rep: &Vec<GFVOLEitH>,
         preprocessing_transcript: &PreprocessingTranscript<GFVOLE, GFVOLEitH>,
         proof_transcript: &ProofTranscript<GFVOLE, GFVOLEitH>,
         pa_decom_rep: &Vec<(SeedU8x16, Vec<SeedU8x16>)>,
         pb_decom_rep: &Vec<(SeedU8x16, Vec<SeedU8x16>)>,
         // pa_secret_state_to_be_removed: &ProverSecretState<GFVOLE, GFVOLEitH>,
     )
-    where GFVOLE: Clone + Encode,
+    where GFVOLE: Clone + Encode + Zero,
           GFVOLEitH: Clone + CustomAddition + CustomMultiplyingBit + Zero + U8ForGF + PartialEq + Debug + Copy + ByteManipulation + Send + Sync + Encode {
         if process_printing {
             println!("+ Verifying ...");
         }
+
+        if process_printing {
+            println!("  Determine permutation_rep via Fiat-Shamir");
+        }
+        let (permutation_rep, auxiliary_input) = hash_to_determine_permutation_rep(
+            public_parameter, preprocessing_transcript
+        );
+
+        if process_printing {
+            println!("  Determine nabla_a_rep and nabla_b_rep via Fiat-Shamir");
+        }
+        let (nabla_a_rep, nabla_b_rep) = hash_to_determine_nabla_rep(
+            public_parameter, &auxiliary_input, proof_transcript
+        );
 
         if process_printing {
             println!("  Verifier determines PA's VOLEitH keys from PiSVOLE2PC");
@@ -99,16 +114,16 @@ impl VerifierInPA2PC {
         if process_printing {
             println!("  Verifier permutes PA's VOLEitH key vectors");
         }
-        permute(public_parameter, permutation_rep, &mut pa_voleith_key_tilde_a_vec_rep);
-        permute(public_parameter, permutation_rep, &mut pa_voleith_key_tilde_b_vec_rep);
-        permute(public_parameter, permutation_rep, &mut pa_voleith_key_tilde_c_vec_rep);
+        permute(public_parameter, &permutation_rep, &mut pa_voleith_key_tilde_a_vec_rep);
+        permute(public_parameter, &permutation_rep, &mut pa_voleith_key_tilde_b_vec_rep);
+        permute(public_parameter, &permutation_rep, &mut pa_voleith_key_tilde_c_vec_rep);
 
         if process_printing {
             println!("  Verifier permutes PB's VOLEitH key vectors");
         }
-        permute(public_parameter, permutation_rep, &mut pb_voleith_key_tilde_a_vec_rep);
-        permute(public_parameter, permutation_rep, &mut pb_voleith_key_tilde_b_vec_rep);
-        permute(public_parameter, permutation_rep, &mut pb_voleith_key_tilde_c_vec_rep);
+        permute(public_parameter, &permutation_rep, &mut pb_voleith_key_tilde_a_vec_rep);
+        permute(public_parameter, &permutation_rep, &mut pb_voleith_key_tilde_b_vec_rep);
+        permute(public_parameter, &permutation_rep, &mut pb_voleith_key_tilde_c_vec_rep);
 
         if process_printing {
             println!("  Verifier splits off PA's voleith key vectors");

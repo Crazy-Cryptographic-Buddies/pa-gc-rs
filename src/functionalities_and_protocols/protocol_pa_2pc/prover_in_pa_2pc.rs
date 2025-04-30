@@ -4,6 +4,7 @@ use blake3::Hash;
 use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
 use crate::bristol_fashion_adaptor::{GateType};
 use crate::functionalities_and_protocols::hasher;
+use crate::functionalities_and_protocols::hasher::{hash_to_determine_nabla_rep, hash_to_determine_permutation_rep};
 use crate::functionalities_and_protocols::insecure_functionality_pre::insecure_functionality_pre::InsecureFunctionalityPre;
 use crate::functionalities_and_protocols::protocol_check_and::check_and_transcript::CheckAndTranscript;
 use crate::functionalities_and_protocols::protocol_check_and::prover_in_protocol_check_and::ProverInProtocolCheckAND;
@@ -567,12 +568,12 @@ impl ProverInPA2PC {
         bristol_fashion_adaptor: &BristolFashionAdaptor,
         public_parameter: &PublicParameter,
         preprocessing_transcript: &PreprocessingTranscript<GFVOLE, GFVOLEitH>,
-        permutation_rep: &Vec<Vec<usize>>,
+        // permutation_rep: &Vec<Vec<usize>>,
         pa_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>,
         pb_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>,
         pa_input_bits: &Vec<u8>,
         pb_input_bits: &Vec<u8>,
-        nabla_a_rep: &Vec<GFVOLEitH>, nabla_b_rep: &Vec<GFVOLEitH>,
+        // nabla_a_rep: &Vec<GFVOLEitH>, nabla_b_rep: &Vec<GFVOLEitH>,
     ) -> (ProofTranscript<GFVOLE, GFVOLEitH>, Vec<(SeedU8x16, Vec<SeedU8x16>)>, Vec<(SeedU8x16, Vec<SeedU8x16>)>)
     where
         GFVOLE: Clone + Zero + CustomAddition + CustomMultiplyingBit + PartialEq + Debug + ByteManipulation + Debug + Encode,
@@ -580,6 +581,13 @@ impl ProverInPA2PC {
         if process_printing {
             println!("+ Proving...");
         }
+        
+        if process_printing {
+            println!("  Determine permutation_rep via Fiat-Shamir");
+        }
+        let (permutation_rep, auxiliary_input) = hash_to_determine_permutation_rep(
+            public_parameter, preprocessing_transcript
+        );
 
         if process_printing {
             println!("  PA permutes");
@@ -981,6 +989,13 @@ impl ProverInPA2PC {
             proof_transcript.published_output_bit_vec[output_cursor] = recovered_hat_z_bit_vec[*output_wire] ^ proof_transcript.pa_published_output_r_bit_vec[output_cursor] ^ proof_transcript.pb_published_output_r_bit_vec[output_cursor];
             output_cursor += 1;
         }
+
+        if process_printing {
+            println!("  Determine nabla_a_rep and nabla_b_rep via Fiat-Shamir");
+        }
+        let (nabla_a_rep, nabla_b_rep) = hash_to_determine_nabla_rep(
+            public_parameter, &auxiliary_input, &proof_transcript
+        );
 
         if process_printing {
             println!("  PA computes decom after knowing nabla_b_rep");

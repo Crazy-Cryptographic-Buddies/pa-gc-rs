@@ -127,21 +127,21 @@ mod tests {
             &bristol_fashion_adaptor,
             &public_parameter,
             &preprocessing_transcript,
-            &permutation_rep,
+            // &permutation_rep,
             &mut pa_secret_state,
             &mut pb_secret_state,
             &pa_input_bit_vec,
             &pb_input_bit_vec,
-            &nabla_a_rep,
-            &nabla_b_rep
+            // &nabla_a_rep,
+            // &nabla_b_rep
         );
         
         VerifierInPA2PC::verify::<GFVOLE, GFVOLEitH>(
             processing_printing,
             &bristol_fashion_adaptor,
             &public_parameter,
-            &permutation_rep,
-            &nabla_a_rep, &nabla_b_rep,
+            // &permutation_rep,
+            // &nabla_a_rep, &nabla_b_rep,
             &preprocessing_transcript,
             &proof_transcript,
             &pa_decom_rep,

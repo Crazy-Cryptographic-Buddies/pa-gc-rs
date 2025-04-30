@@ -11,14 +11,6 @@ impl GF2p256 {
     // pub fn new(val: &(u64, u64, u64, u64)) -> Self {
     //     Self { val: *val }
     // }
-
-    fn eight_bytes_to_u64(bytes: &[u8]) -> u64 {
-        let mut res = 0;
-        for i in 0..4 {
-            res = (res << 8) | (bytes[i] as u64);
-        }
-        res
-    }
 }
 
 impl Zero for GF2p256 {
@@ -67,14 +59,10 @@ impl InsecureRandom for GF2p256 {
 
 impl ByteManipulation for GF2p256 {
     fn from_bytes(bytes: &[u8], cursor: &mut usize) -> Self {
-        let v0 = Self::eight_bytes_to_u64(&bytes[*cursor..]);
-        *cursor += 8;
-        let v1 = Self::eight_bytes_to_u64(&bytes[*cursor..]);
-        *cursor += 8;
-        let v2 = Self::eight_bytes_to_u64(&bytes[*cursor..]);
-        *cursor += 8;
-        let v3 = Self::eight_bytes_to_u64(&bytes[*cursor..]);
-        *cursor += 8;
+        let v0 = u64::from_bytes(&bytes, cursor);
+        let v1 = u64::from_bytes(&bytes, cursor);
+        let v2 = u64::from_bytes(&bytes, cursor);
+        let v3 = u64::from_bytes(&bytes, cursor);
         Self {
             val: (v0, v1, v2, v3)
         }
