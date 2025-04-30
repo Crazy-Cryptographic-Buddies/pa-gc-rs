@@ -1,6 +1,6 @@
 # Benchmarking for Publicly Auditable Garbled Circuits
 
-This is the PoC implementation of the paper **Publicly Auditable Garbled Circuit** *(eprint link pending, with authors San Ling, Khai Hanh Tang, Chan Nam Ngo, and Huaxiong Wang)*.
+This is the PoC implementation of the paper **Publicly Auditable Garbled Circuit** *(eprint link pending, with authors San Ling, Chan Nam Ngo, Khai Hanh Tang, and Huaxiong Wang)*.
 
 **TL;DR.** We picked the basic blueprint of the actively secure Garbled Circuit protocol, namely, WRK17, which relies on V-MAC. We then adopted VOLEitH (with SoftSpokenOT) to make the utilized V-MAC public auditable. We obtained a Constant Round Publicly Auditable Garbled Circuit Protocol with inherited security and efficiency from both WRK17 and VOLEitH.
 
