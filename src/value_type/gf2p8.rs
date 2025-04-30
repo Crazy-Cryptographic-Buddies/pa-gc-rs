@@ -1,8 +1,9 @@
+use bincode::Encode;
 use blake3::Hash;
 use rand::Rng;
 use crate::value_type::{ByteManipulation, CustomAddition, CustomMultiplyingBit, HashDigestToGF, InsecureRandom, U8ForGF, Zero};
 
-#[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy, Encode)]
 pub struct GF2p8 {
     val: u8
 }

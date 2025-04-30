@@ -1,4 +1,5 @@
 use std::fmt::Debug;
+use bincode::Encode;
 use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
 use crate::bristol_fashion_adaptor::GateType;
 use crate::functionalities_and_protocols::hasher;
@@ -29,8 +30,8 @@ impl VerifierInPA2PC {
         pb_decom_rep: &Vec<(SeedU8x16, Vec<SeedU8x16>)>,
         // pa_secret_state_to_be_removed: &ProverSecretState<GFVOLE, GFVOLEitH>,
     )
-    where GFVOLE: Clone,
-          GFVOLEitH: Clone + CustomAddition + CustomMultiplyingBit + Zero + U8ForGF + PartialEq + Debug + Copy + ByteManipulation + Send + Sync {
+    where GFVOLE: Clone + Encode,
+          GFVOLEitH: Clone + CustomAddition + CustomMultiplyingBit + Zero + U8ForGF + PartialEq + Debug + Copy + ByteManipulation + Send + Sync + Encode {
         if process_printing {
             println!("+ Verifying ...");
         }

@@ -1,7 +1,8 @@
+use bincode::Encode;
 use rand::Rng;
 use crate::value_type::{ByteManipulation, CustomAddition, CustomMultiplyingBit, InsecureRandom, Zero};
 
-#[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy, Encode)]
 pub struct GF2p256 {
     val: (u64, u64, u64, u64)
 }

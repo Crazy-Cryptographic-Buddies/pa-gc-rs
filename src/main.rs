@@ -1,6 +1,7 @@
 use std::any::type_name;
 use std::fmt::Debug;
 use std::time::Instant;
+use bincode::Encode;
 use rand::Rng;
 use pa_gc_rs::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
 use pa_gc_rs::functionalities_and_protocols::protocol_pa_2pc::determine_bit_trace_for_labels_in_garbling;
@@ -53,10 +54,10 @@ fn determine_full_input_bit_vec(
 
 fn benchmark<GFVOLE, GFVOLEitH>(process_printing: bool, circuit_string_file_name: &str, num_threads: usize, tau: u8, kappa: usize, bs: usize)
 where
-    GFVOLE: ByteManipulation + Copy + Zero + PartialEq + CustomAddition + CustomMultiplyingBit + InsecureRandom + Send + Sync + Debug,
-    GFVOLEitH: ByteManipulation + Clone + Zero + CustomMultiplyingBit + Copy + CustomAddition + U8ForGF + Send + Sync + Debug + PartialEq {
-    println!("GFVOLE: {:?}, GFVOLEitH: {:?}, Circuit_string_file_name: {:?}, num_threads: {:?}, tau: {:?}, kappa: {:?}, bs: {:?}",
-             type_name::<GFVOLE>(), type_name::<GFVOLEitH>(), circuit_string_file_name, num_threads, tau, kappa, bs
+    GFVOLE: ByteManipulation + Copy + Zero + PartialEq + CustomAddition + CustomMultiplyingBit + InsecureRandom + Send + Sync + Debug + Encode,
+    GFVOLEitH: ByteManipulation + Clone + Zero + CustomMultiplyingBit + Copy + CustomAddition + U8ForGF + Send + Sync + Debug + PartialEq + Encode {
+    println!("Circuit_string_file_name: {:?}, GFVOLE: {:?}, GFVOLEitH: {:?}, num_threads: {:?}, tau: {:?}, kappa: {:?}, bs: {:?}",
+             circuit_string_file_name, type_name::<GFVOLE>(), type_name::<GFVOLEitH>(), num_threads, tau, kappa, bs
     );
     rayon::ThreadPoolBuilder::new()
         .num_threads(num_threads)
@@ -169,8 +170,16 @@ where
 }
 
 fn main() {
-    // benchmark::<GF2p256, GF2p8>(false, "sub64.txt", 1, 8, 32, 1);
-    // benchmark::<GF2p256, GF2p8>(false, "sub64.txt", 2, 8, 32, 1);
-    // benchmark::<GF2p256, GF2p8>(false, "sub64.txt", 4, 8, 32, 1);
-    benchmark::<GF2p256, GF2p8>(false, "sub64.txt", 8, 8, 32, 1);
+    let print_process = true;
+    let circuit_sub64 = "sub64.txt";
+    // benchmark::<GF2p256, GF2p8>(print_process, circuit_sub64, 1, 8, 32, 1);
+    // benchmark::<GF2p256, GF2p8>(print_process, circuit_sub64, 2, 8, 32, 1);
+    // benchmark::<GF2p256, GF2p8>(print_process, circuit_sub64, 4, 8, 32, 1);
+    // benchmark::<GF2p256, GF2p8>(print_process, circuit_sub64, 8, 8, 32, 1);
+
+    let circuit_aes_128 = "aes_128.txt";
+    // benchmark::<GF2p256, GF2p8>(print_process, circuit_aes_128, 1, 8, 32, 1);
+    // benchmark::<GF2p256, GF2p8>(print_process, circuit_aes_128, 2, 8, 32, 1);
+    benchmark::<GF2p256, GF2p8>(print_process, circuit_aes_128, 4, 8, 32, 1);
+    // benchmark::<GF2p256, GF2p8>(print_process, circuit_aes_128, 8, 8, 32, 1);
 }

@@ -1,3 +1,4 @@
+use bincode::{config, encode_to_vec, Encode};
 use crate::functionalities_and_protocols::protocol_check_and::check_and_transcript::CheckAndTranscript;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::value_type::garbled_row::GarbledRow;
@@ -7,7 +8,9 @@ use crate::vec_type::ZeroVec;
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 
-pub struct ProofTranscript<GFVOLE, GFVOLEitH> {
+#[derive(Encode)]
+pub struct ProofTranscript<GFVOLE, GFVOLEitH>
+where GFVOLE: Encode, GFVOLEitH: Encode {
     // before nabla
     pub pa_published_rm_a_vec_rep: Vec<BitVec>,
     pub pa_published_rm_b_vec_rep: Vec<BitVec>,
@@ -56,8 +59,8 @@ pub struct ProofTranscript<GFVOLE, GFVOLEitH> {
 
 impl<GFVOLE, GFVOLEitH> ProofTranscript<GFVOLE, GFVOLEitH>
 where
-    GFVOLE: Zero + Clone,
-    GFVOLEitH: Zero + Clone
+    GFVOLE: Zero + Clone + Encode,
+    GFVOLEitH: Zero + Clone + Encode
 {
 
     pub fn new(
@@ -125,6 +128,12 @@ where
             // pa_decom: Vec::new(),
             // pb_decom: Vec::new(),
         }
+    }
+
+    pub fn to_byte_vec(&self) -> Vec<u8> {
+        let config = config::standard();
+
+        encode_to_vec(self, config).unwrap()
     }
 
 }

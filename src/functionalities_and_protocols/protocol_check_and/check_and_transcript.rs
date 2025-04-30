@@ -1,7 +1,10 @@
+use bincode::Encode;
 use crate::vec_type::bit_vec::BitVec;
 use crate::vec_type::gf_vec::GFVec;
 
-pub struct CheckAndTranscript<GFVOLEitH> {
+#[derive(Encode)]
+pub struct CheckAndTranscript<GFVOLEitH>
+where GFVOLEitH: Encode {
 
     pub pa_published_bit_and_voleith_mac_tuple_rep: (
         (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>),
@@ -17,7 +20,8 @@ pub struct CheckAndTranscript<GFVOLEitH> {
     // pub public_e_sum_bit_vec_rep: Vec<BitVec>,
 }
 
-impl<GFVOLEitH> CheckAndTranscript<GFVOLEitH> {
+impl<GFVOLEitH> CheckAndTranscript<GFVOLEitH>
+where GFVOLEitH: Encode {
     pub fn new(
         pa_published_bit_and_voleith_mac_tuple_rep: (
             (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>),

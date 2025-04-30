@@ -1,4 +1,5 @@
 use std::ops::{Index, IndexMut};
+use bincode::Encode;
 use crate::value_type::{CustomAddition, Zero};
 use crate::vec_type::{
     BasicVecFunctions, 
@@ -9,7 +10,7 @@ use crate::vec_type::{
 };
 use crate::vec_type::bit_vec::BitVec;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Encode)]
 pub struct GFVec<GF> {
     val: Vec<GF>
 }

@@ -1,6 +1,7 @@
+use bincode::Encode;
 use crate::value_type::{CustomAddition, Zero};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Encode)]
 pub struct GarbledRow<GFVOLE, GFVOLEitH> {
     pub first_u8: u8,
     pub vole_mac_field: GFVOLE,

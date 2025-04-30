@@ -1,4 +1,5 @@
 use std::fmt::Debug;
+use bincode::Encode;
 use blake3::Hash;
 use crate::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
 use crate::bristol_fashion_adaptor::{GateType};
@@ -70,8 +71,8 @@ impl ProverInPA2PC {
         pb_secret_state: &mut ProverSecretState<GFVOLE, GFVOLEitH>,
     ) -> PreprocessingTranscript<GFVOLE, GFVOLEitH>
     where
-        GFVOLE: Clone + CustomAddition + CustomMultiplyingBit + InsecureRandom + Zero + Copy + PartialEq + Debug + ByteManipulation + Sync + Send,
-        GFVOLEitH: Clone + Zero + CustomAddition + U8ForGF + Copy + CustomMultiplyingBit + ByteManipulation + Sync + Send
+        GFVOLE: Clone + CustomAddition + CustomMultiplyingBit + InsecureRandom + Zero + Copy + PartialEq + Debug + ByteManipulation + Sync + Send + Encode,
+        GFVOLEitH: Clone + Zero + CustomAddition + U8ForGF + Copy + CustomMultiplyingBit + ByteManipulation + Sync + Send + Encode
     {
         if process_printing {
             println!("+ Preprocessing...");
@@ -574,8 +575,8 @@ impl ProverInPA2PC {
         nabla_a_rep: &Vec<GFVOLEitH>, nabla_b_rep: &Vec<GFVOLEitH>,
     ) -> (ProofTranscript<GFVOLE, GFVOLEitH>, Vec<(SeedU8x16, Vec<SeedU8x16>)>, Vec<(SeedU8x16, Vec<SeedU8x16>)>)
     where
-        GFVOLE: Clone + Zero + CustomAddition + CustomMultiplyingBit + PartialEq + Debug + ByteManipulation + Debug,
-        GFVOLEitH: Clone + Zero + CustomAddition + ByteManipulation + Debug + U8ForGF {
+        GFVOLE: Clone + Zero + CustomAddition + CustomMultiplyingBit + PartialEq + Debug + ByteManipulation + Debug + Encode,
+        GFVOLEitH: Clone + Zero + CustomAddition + ByteManipulation + Debug + U8ForGF + Encode {
         if process_printing {
             println!("+ Proving...");
         }

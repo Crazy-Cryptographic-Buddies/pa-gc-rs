@@ -1,4 +1,5 @@
 use std::fmt::Debug;
+use bincode::Encode;
 use crate::functionalities_and_protocols::protocol_check_and::check_and_transcript::CheckAndTranscript;
 use crate::functionalities_and_protocols::states_and_parameters::public_parameter::PublicParameter;
 use crate::functionalities_and_protocols::util::verifier::Verifier;
@@ -11,7 +12,7 @@ pub struct VerifierInProtocolCheckAND;
 
 impl VerifierInProtocolCheckAND {
 
-    pub fn verify<GFVOLEitH: PartialEq + Clone + CustomAddition + CustomMultiplyingBit + Debug + Zero>(
+    pub fn verify<GFVOLEitH>(
         public_parameter: &PublicParameter,
         // pa_published_bit_and_voleith_mac_tuple_rep: &(
         //     (Vec<BitVec>, Vec<GFVec<GFVOLEitH>>),
@@ -34,7 +35,8 @@ impl VerifierInProtocolCheckAND {
             (&Vec<GFVec<GFVOLEitH>>, &Vec<GFVec<GFVOLEitH>>, &Vec<GFVec<GFVOLEitH>>),
             (&Vec<GFVec<GFVOLEitH>>, &Vec<GFVec<GFVOLEitH>>, &Vec<GFVec<GFVOLEitH>>)
         ),
-    ) {
+    )
+    where GFVOLEitH: PartialEq + Clone + CustomAddition + CustomMultiplyingBit + Debug + Zero + Encode {
         let (
             (pa_d_bit_vec_rep, pa_voleith_mac_d_vec_rep),
             (pa_e_bit_vec_rep, pa_voleith_mac_e_vec_rep),
