@@ -189,13 +189,16 @@ where
     println!("    Verifying time: {:?}", verifying_time);
     println!("    ==> Total running time: {:?}", total_time);
     println!("  Communication");
-    println!("    precessesing_transcript size: {:?} KB", (preprocessing_transcript.to_byte_vec().len() as f64) / 1024f64);
-    println!("    proof_transcript size: {:?} KB", (proof_transcript.to_byte_vec().len() as f64) / 1024f64);
+    println!("    preproccesing_transcript size: {:?} MB", (preprocessing_transcript.to_byte_vec().len() as f64) / 1048576f64);
+    println!("    proof_transcript size: {:?} MB", (proof_transcript.to_byte_vec().len() as f64) / 1048576f64);
     let config = config::standard();
     let pa_decom_bytes = encode_to_vec(&pa_decom_rep, config).unwrap();
     let pb_decom_bytes = encode_to_vec(&pb_decom_rep, config).unwrap();
     let total_decom_byte_len = pa_decom_bytes.len() + pb_decom_bytes.len();
-    println!("    (pa_decom, pb_decom) size: {:?} KB", (total_decom_byte_len as f64) / 1024f64);
+    println!("    (pa_decom, pb_decom) size: {:?} MB", (total_decom_byte_len as f64) / 1048576f64);
+    println!("    ==> Total communication size: {:?} MB",
+             ((preprocessing_transcript.to_byte_vec().len() as f64) + (proof_transcript.to_byte_vec().len() as f64) + (total_decom_byte_len as f64)) / 1048576f64 
+    );
 }
 
 fn main() {
@@ -225,7 +228,7 @@ fn main() {
     // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_sha256, 1);
     // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_sha256, 2);
     // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_sha256, 4);
-    benchmark::<GFVOLE128, GF2p8>(print_process, circuit_sha256, 8);
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_sha256, 8);
 
     // 256-bit security
     type GFVOLE256 = GF2p256;
@@ -238,7 +241,7 @@ fn main() {
     // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_mult64, 1);
     // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_mult64, 2);
     // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_mult64, 4);
-    //benchmark::<GFVOLE256, GF2p8>(print_process, circuit_mult64, 8);
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_mult64, 8);
 
     // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_aes_128, 1);
     // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_aes_128, 2);
@@ -248,5 +251,5 @@ fn main() {
     // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_sha256, 1);
     // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_sha256, 2);
     // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_sha256, 4);
-    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_sha256, 8);
+    benchmark::<GFVOLE256, GF2p8>(print_process, circuit_sha256, 8);
 }
