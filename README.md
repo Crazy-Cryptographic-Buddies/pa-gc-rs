@@ -1,3 +1,5 @@
+# Benchmarking for Publicly Auditable Garbled Circuits
+
 This is the PoC implementation of the paper **Publicly Auditable Garbled Circuit** *(eprint link pending, with authors San Ling, Khai Hanh Tang, Chan Nam Ngo, and Huaxiong Wang)*.
 
 **TL;DR.** We picked the basic blueprint of the actively secure Garbled Circuit protocol, namely, WRK17, which relies on V-MAC. We then adopted VOLEitH (with SoftSpokenOT) to make the utilized V-MAC public auditable. We obtained a Constant Round Publicly Auditable Garbled Circuit Protocol with inherited security and efficiency from both WRK17 and VOLEitH.
@@ -12,7 +14,7 @@ We instantiate our CRHF with blake3 and PRG with AES-128 (software). In our PoC,
 
 We benchmarked with HP Z4 G4 Workstation (x64-based PC, 1 processor with 8 threads, Intel64 Family 6 Model 85 Stepping 4 GenuineIntel ~3600 Mhz), for AES-128 and SHA-256 circuits, at security levels 128- and 256-bit.
 
-| Circuit | Security Level |  Pre-processing Time (s) | Proving Time (s) | Verification Time (s) | Pre-processing (MB) | Final Proof (incl. pre-processing) (MB) |
+| Circuit | Security level |  Pre-processing time (s) | Proving time (s) | Verification time (s) | Pre-processing (MB) | Final Proof (incl. pre-processing) (MB) |
 | -------- | -------- | -------- | -------- | -------- | -------- |-------- |
 | AES-128     | 128     | 15.2     | 0.8     | 10.5     | 3.7     | 6.7     |
 | SHA-256     | 128     | 55     | 3.2     | 37.6     | 13     | 23.6     |
