@@ -32,10 +32,9 @@ We benchmarked with HP Z4 G4 Workstation (x64-based PC, 1 processor with 8 threa
 
 [**VOLEitH**] https://ia.cr/2023/996
 
-**Corresponding Author**
-
+**Corresponding Author.**
 Khai Hanh Tang (khaihanh.tang@ntu.edu.sg)
 
-**Acknowledgement**
+**Acknowledgement.**
 The work of San Ling, Khai Hanh Tang, and Huaxiong Wang was supported by Singapore Ministry of Education Academic Research Fund Tier 2 (Grant MOE-000623-00) and Ethereum Support Program (Grant FY24-1414-A).
 
