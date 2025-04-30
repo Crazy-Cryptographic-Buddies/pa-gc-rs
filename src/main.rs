@@ -1,7 +1,7 @@
 use std::any::type_name;
 use std::fmt::Debug;
 use std::time::Instant;
-use bincode::Encode;
+use bincode::{config, encode_to_vec, Encode};
 use rand::Rng;
 use pa_gc_rs::bristol_fashion_adaptor::bristol_fashion_adaptor::BristolFashionAdaptor;
 use pa_gc_rs::functionalities_and_protocols::protocol_pa_2pc::determine_bit_trace_for_labels_in_garbling;
@@ -13,19 +13,20 @@ use pa_gc_rs::value_type::gf2p256::GF2p256;
 use pa_gc_rs::value_type::gf2p8::GF2p8;
 use pa_gc_rs::value_type::seed_u8x16::SeedU8x16;
 use pa_gc_rs::value_type::{ByteManipulation, CustomAddition, CustomMultiplyingBit, InsecureRandom, Zero};
+use pa_gc_rs::value_type::gf2p128::GF2p128;
 use pa_gc_rs::vec_type::bit_vec::BitVec;
 use pa_gc_rs::vec_type::BasicVecFunctions;
 use pa_gc_rs::value_type::U8ForGF;
 
-fn insecurely_generate_random_permutation(len: usize) -> Vec<usize> {
-    let mut random_permutation = (0..len).collect::<Vec<usize>>();
-    let mut rng = rand::rng();
-    for i in (0..len).rev() {
-        let j = rng.random::<u32>() % (i as u32 + 1u32);
-        random_permutation.swap(i, j as usize);
-    }
-    random_permutation
-}
+// fn insecurely_generate_random_permutation(len: usize) -> Vec<usize> {
+//     let mut random_permutation = (0..len).collect::<Vec<usize>>();
+//     let mut rng = rand::rng();
+//     for i in (0..len).rev() {
+//         let j = rng.random::<u32>() % (i as u32 + 1u32);
+//         random_permutation.swap(i, j as usize);
+//     }
+//     random_permutation
+// }
 
 fn determine_full_input_bit_vec(
     public_parameter: &PublicParameter,
@@ -52,13 +53,14 @@ fn determine_full_input_bit_vec(
     full_input_bit_vec
 }
 
-fn benchmark<GFVOLE, GFVOLEitH>(process_printing: bool, circuit_string_file_name: &str, num_threads: usize, tau: u8, kappa: usize, bs: usize)
+fn benchmark<GFVOLE, GFVOLEitH>(process_printing: bool, circuit_string_file_name: &str, num_threads: usize)
 where
     GFVOLE: ByteManipulation + Copy + Zero + PartialEq + CustomAddition + CustomMultiplyingBit + InsecureRandom + Send + Sync + Debug + Encode,
     GFVOLEitH: ByteManipulation + Clone + Zero + CustomMultiplyingBit + Copy + CustomAddition + U8ForGF + Send + Sync + Debug + PartialEq + Encode {
-    println!("Circuit_string_file_name: {:?}, GFVOLE: {:?}, GFVOLEitH: {:?}, num_threads: {:?}, tau: {:?}, kappa: {:?}, bs: {:?}",
-             circuit_string_file_name, type_name::<GFVOLE>(), type_name::<GFVOLEitH>(), num_threads, tau, kappa, bs
-    );
+    let security_level = GFVOLE::num_bytes() * 8;
+    let tau = 8;
+    let kappa = (security_level - 1) / (tau as usize) + 1;
+
     rayon::ThreadPoolBuilder::new()
         .num_threads(num_threads)
         .build_global()
@@ -79,7 +81,12 @@ where
     let pb_input_bit_vec = big_ib.iter().map(
         |_| rng.random::<u8>() & 1
     ).collect();
+    // let rm = bristol_fashion_adaptor.get_and_gate_output_wire_vec().len();
+    let bs = (((security_level as f64) / (kappa as f64)) / (bristol_fashion_adaptor.get_and_gate_output_wire_vec().len() as f64).log2()).ceil() as usize;
     let rm = bristol_fashion_adaptor.get_and_gate_output_wire_vec().len();
+    println!("Security level {:?}, Circuit {:?}, GFVOLE: {:?}, GFVOLEitH: {:?}, num_threads: {:?}, tau: {:?}, kappa: {:?}, bs: {:?}",
+             security_level, circuit_string_file_name, type_name::<GFVOLE>(), type_name::<GFVOLEitH>(), num_threads, tau, kappa, bs
+    );
     let public_parameter = PublicParameter::new::<GFVOLE, GFVOLEitH>(
         &bristol_fashion_adaptor,
         tau,
@@ -108,6 +115,7 @@ where
         &public_parameter,
     );
 
+    let start_preprocessing = Instant::now();
     let preprocessing_transcript = ProverInPA2PC::preprocess(
         process_printing,
         &bristol_fashion_adaptor,
@@ -116,11 +124,12 @@ where
         &mut pa_secret_state,
         &mut pb_secret_state,
     );
+    let preprocessing_time = start_preprocessing.elapsed().as_secs_f32();
 
     // let permutation_rep = (0..public_parameter.kappa).map(
     //     |_| insecurely_generate_random_permutation(public_parameter.big_l)
     // ).collect::<Vec<Vec<usize>>>();
-    // 
+    //
     // let nabla_a_rep = (0..public_parameter.kappa).map(|_|
     //     GFVOLEitH::from_u8(rng.random::<u8>())
     // ).collect::<Vec<GFVOLEitH>>();
@@ -131,6 +140,7 @@ where
     // println!("nabla_a_rep {:?}", nabla_a_rep);
     // println!("nabla_b_rep {:?}", nabla_b_rep);
 
+    let start_proving = Instant::now();
     let (proof_transcript, pa_decom_rep, pb_decom_rep) = ProverInPA2PC::prove(
         process_printing,
         &bristol_fashion_adaptor,
@@ -144,7 +154,9 @@ where
         // &nabla_a_rep,
         // &nabla_b_rep
     );
+    let proving_time = start_proving.elapsed().as_secs_f32();
 
+    let start_verifying = Instant::now();
     VerifierInPA2PC::verify::<GFVOLE, GFVOLEitH>(
         process_printing,
         &bristol_fashion_adaptor,
@@ -156,6 +168,8 @@ where
         &pa_decom_rep,
         &pb_decom_rep,
     );
+    let verifying_time = start_verifying.elapsed().as_secs_f32();
+    let total_time = start_total.elapsed().as_secs_f32();
 
     // println!("{:?}", proof_transcript.published_output_bit_vec);
     let full_input_bit_vec = determine_full_input_bit_vec(
@@ -166,20 +180,73 @@ where
     let expected_output_bit_vec = BitVec::from_vec(bristol_fashion_adaptor.compute_output_bits(&full_input_bit_vec));
     // println!("{:?}", expected_output_bit_vec);
     assert_eq!(proof_transcript.published_output_bit_vec, expected_output_bit_vec);
-    println!("+ Total running time: {:?}", start_total.elapsed().as_secs_f32());
+    println!("+ Performance for Security level {:?}, Circuit {:?}, GFVOLE: {:?}, GFVOLEitH: {:?}, num_threads: {:?}, tau: {:?}, kappa: {:?}, bs: {:?}",
+             security_level, circuit_string_file_name, type_name::<GFVOLE>(), type_name::<GFVOLEitH>(), num_threads, tau, kappa, bs
+    );
+    println!("  Running time");
+    println!("    Preprocessing time: {:?}", preprocessing_time);
+    println!("    Proving time: {:?}", proving_time);
+    println!("    Verifying time: {:?}", verifying_time);
+    println!("    ==> Total running time: {:?}", total_time);
+    println!("  Communication");
+    println!("    precessesing_transcript size: {:?} KB", (preprocessing_transcript.to_byte_vec().len() as f64) / 1024f64);
+    println!("    proof_transcript size: {:?} KB", (proof_transcript.to_byte_vec().len() as f64) / 1024f64);
+    let config = config::standard();
+    let pa_decom_bytes = encode_to_vec(&pa_decom_rep, config).unwrap();
+    let pb_decom_bytes = encode_to_vec(&pb_decom_rep, config).unwrap();
+    let total_decom_byte_len = pa_decom_bytes.len() + pb_decom_bytes.len();
+    println!("    (pa_decom, pb_decom) size: {:?} KB", (total_decom_byte_len as f64) / 1024f64);
 }
 
 fn main() {
     let print_process = true;
     let circuit_sub64 = "sub64.txt";
-    // benchmark::<GF2p256, GF2p8>(print_process, circuit_sub64, 1, 8, 32, 1);
-    // benchmark::<GF2p256, GF2p8>(print_process, circuit_sub64, 2, 8, 32, 1);
-    // benchmark::<GF2p256, GF2p8>(print_process, circuit_sub64, 4, 8, 32, 1);
-    // benchmark::<GF2p256, GF2p8>(print_process, circuit_sub64, 8, 8, 32, 1);
-
+    let circuit_mult64 = "mult64.txt";
     let circuit_aes_128 = "aes_128.txt";
-    // benchmark::<GF2p256, GF2p8>(print_process, circuit_aes_128, 1, 8, 32, 1);
-    // benchmark::<GF2p256, GF2p8>(print_process, circuit_aes_128, 2, 8, 32, 1);
-    benchmark::<GF2p256, GF2p8>(print_process, circuit_aes_128, 4, 8, 32, 1);
-    // benchmark::<GF2p256, GF2p8>(print_process, circuit_aes_128, 8, 8, 32, 1);
+    let circuit_sha256 = "sha256.txt";
+    
+    // 128-bit security
+    type GFVOLE128 = GF2p128;
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_sub64, 1);
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_sub64, 2);
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_sub64, 4);
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_sub64, 8);
+
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_mult64, 1);
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_mult64, 2);
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_mult64, 4);
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_mult64, 8);
+
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_aes_128, 1);
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_aes_128, 2);
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_aes_128, 4);
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_aes_128, 8);
+
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_sha256, 1);
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_sha256, 2);
+    // benchmark::<GFVOLE128, GF2p8>(print_process, circuit_sha256, 4);
+    benchmark::<GFVOLE128, GF2p8>(print_process, circuit_sha256, 8);
+
+    // 256-bit security
+    type GFVOLE256 = GF2p256;
+
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_sub64, 1);
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_sub64, 2);
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_sub64, 4);
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_sub64, 8);
+
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_mult64, 1);
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_mult64, 2);
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_mult64, 4);
+    //benchmark::<GFVOLE256, GF2p8>(print_process, circuit_mult64, 8);
+
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_aes_128, 1);
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_aes_128, 2);
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_aes_128, 4);
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_aes_128, 8);
+
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_sha256, 1);
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_sha256, 2);
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_sha256, 4);
+    // benchmark::<GFVOLE256, GF2p8>(print_process, circuit_sha256, 8);
 }

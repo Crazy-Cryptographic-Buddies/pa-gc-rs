@@ -116,6 +116,6 @@ where GFVOLE: Encode + Zero + Clone, GFVOLEitH: Encode + Zero + Clone + ByteMani
         nabla_a_rep[repetition_id] = GFVOLEitH::from_bytes(&full_digest, &mut cursor);
         nabla_b_rep[repetition_id] = GFVOLEitH::from_bytes(&full_digest, &mut cursor);
     }
-
+    
     (nabla_a_rep, nabla_b_rep)
 }

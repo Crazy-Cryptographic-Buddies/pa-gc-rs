@@ -4,6 +4,7 @@ pub mod gf2p256;
 pub mod gf2p8;
 pub mod seed_u8x16;
 pub(crate) mod garbled_row;
+pub mod gf2p128;
 
 pub trait InsecureRandom {
     fn insecurely_random() -> Self;
