@@ -17,8 +17,8 @@ We benchmarked with HP Z4 G4 Workstation (x64-based PC, 1 processor with 8 threa
 | Circuit | Security level |  Pre-processing time (s) | Proving time (s) | Verification time (s) | Pre-processing (MB) | Final Proof (incl. pre-processing) (MB) |
 | -------- | -------- | -------- | -------- | -------- | -------- |-------- |
 | AES-128     | 128     | 15.2     | 0.8     | 10.5     | 3.7     | 6.7     |
-| SHA-256     | 128     | 55     | 3.2     | 37.6     | 13     | 23.6     |
 | AES-128     | 256     | 30.3     | 1.7     | 20.7     |6.6     | 12.5     |
+| SHA-256     | 128     | 55     | 3.2     | 37.6     | 13     | 23.6     |
 | SHA-256     | 256     | 102.5     | 6.1     | 72.1     |23     | 43.8     |
 
 
