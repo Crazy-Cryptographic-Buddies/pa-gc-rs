@@ -1,10 +1,32 @@
+/*
+Copyright © 2019-2024 Galois, Inc.
+Copyright © 2025 Khai Hanh Tang.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+// We imitate the below link for implementing OneToTwoPRG
+// https://github.com/GaloisInc/swanky/blob/dev/schmivitz/src/all_but_one_vc.rs
 use aes::Aes128;
 use aes::cipher::{BlockEncrypt, KeyInit, generic_array::GenericArray};
 use crate::comm_types_and_constants::{SEED_BYTE_LEN};
 use crate::value_type::seed_u8x16::SeedU8x16;
 use crate::value_type::Zero;
-// We imitate the below link for implementing OneToTwoPRG
-// https://github.com/GaloisInc/swanky/blob/dev/schmivitz/src/all_but_one_vc.rs
 
 pub struct OneToTwoPRG {
     aes_cipher_0: Aes128,

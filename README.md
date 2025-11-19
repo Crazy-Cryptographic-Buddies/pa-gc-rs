@@ -42,3 +42,6 @@ Khai Hanh Tang (khaihanhtang@gmail.com or khaihanh.tang@ntu.edu.sg)
 **Acknowledgement.**
 The work of San Ling, Khai Hanh Tang, and Huaxiong Wang was supported by Singapore Ministry of Education Academic Research Fund Tier 2 (Grant MOE-000623-00) and Ethereum Support Program (Grant FY24-1414-A).
 
+## License
+
+This source code licensed under [Apache-2.0](./LICENSE)
