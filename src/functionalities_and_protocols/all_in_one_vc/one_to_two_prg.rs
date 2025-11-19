@@ -21,7 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 // We imitate the below link for implementing OneToTwoPRG
-// https://github.com/GaloisInc/swanky/blob/dev/schmivitz/src/all_but_one_vc.rs
+// https://github.com/GaloisInc/swanky/blob/a363bd3d9ea176baaedee4b29472a215eb85c301/edge/schmivitz/src/all_but_one_vc.rs
 use aes::Aes128;
 use aes::cipher::{BlockEncrypt, KeyInit, generic_array::GenericArray};
 use crate::comm_types_and_constants::{SEED_BYTE_LEN};
